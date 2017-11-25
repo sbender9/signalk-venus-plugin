@@ -1,0 +1,29 @@
+{
+  "name": "venus-signalk",
+  "version": "0.0.1",
+  "description": "Victron Venus-SignalK Integration",
+  "main": "index.js",
+  "dependencies": {
+    "dbus-native": "^0.2.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mpvader/venus-signalk.git"
+  },
+  "contributors": [
+    {
+      "name": "Matthijs Vader"
+    },
+    {
+      "name": "Teppo Kurki"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mpvader/venus-signalk/issues"
+  },
+  "homepage": "https://github.com/mpvader/venus-signalk#readme"
+}

@@ -1,6 +1,6 @@
 # venus-signalk
 
-Depends on dbus-native, run npm install dbus-native
+First run `npm install`.
 
 Then, for now, remove [line 300 from dbus-native/lib/bus.js](https://github.com/sidorares/dbus-native/blob/master/lib/bus.js#L300).
 
