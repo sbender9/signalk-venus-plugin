@@ -3,6 +3,8 @@ const PLUGIN_NAME = 'VEDiret plugin'
 
 const debug = require('debug')(PLUGIN_ID)
 
+const createDbusListener = require('./dbus-listener')
+
 module.exports = function (app) {
   const plugin = {}
 
@@ -22,16 +24,25 @@ module.exports = function (app) {
     }
   }
 
+  let stopDbus
   /*
     Called when the plugin is started (server is started with plugin enabled 
     or the plugin is enabled from ui on a running server).
   */
-  plugin.start = function (options) {}
+  plugin.start = function (options) {
+    stopDbus = createDbusListener((delta) => {
+      app.handleMessage(PLUGIN_ID, delta)
+    })
+  }
 
   /*
     Called when the plugin is disabled on a running server with the plugin enabled.
   */
   plugin.stop = function () {
+    if (stopDbus) {
+      dbusStop()
+      stopDbus = undefined
+    }
   }
 
   return plugin
