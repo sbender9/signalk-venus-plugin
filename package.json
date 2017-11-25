@@ -7,8 +7,10 @@
     "dbus-native": "^0.2.3"
   },
   "devDependencies": {},
-  "scripts": {
-  },
+  "scripts": {},
+  "keywords": [
+    "signalk-node-server-plugin"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mpvader/venus-signalk.git"
