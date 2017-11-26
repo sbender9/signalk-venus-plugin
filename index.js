@@ -1,5 +1,5 @@
-const PLUGIN_ID = 'vedirect'
-const PLUGIN_NAME = 'VEDiret plugin'
+const PLUGIN_ID = 'venus'
+const PLUGIN_NAME = 'Venus plugin'
 
 const debug = require('debug')(PLUGIN_ID)
 
@@ -10,7 +10,7 @@ module.exports = function (app) {
 
   plugin.id = PLUGIN_ID
   plugin.name = PLUGIN_NAME
-  plugin.description = 'Plugin that does.....'
+  plugin.description = 'Plugin taking Battery, and other, from the D-Bus in Venus'
 
   plugin.schema = {
     title: PLUGIN_NAME,
@@ -26,7 +26,7 @@ module.exports = function (app) {
 
   let stopDbus
   /*
-    Called when the plugin is started (server is started with plugin enabled 
+    Called when the plugin is started (server is started with plugin enabled
     or the plugin is enabled from ui on a running server).
   */
   plugin.start = function (options) {
