@@ -2,18 +2,13 @@
 
 First run `npm install`.
 
-Then, for now, remove [line 300 from dbus-native/lib/bus.js](https://github.com/sidorares/dbus-native/blob/master/lib/bus.js#L300).
+Use ./demo.sh to run the code with full debug logging and the produced delta
+serialised to stdout.
 
-I don't know why yet, but for some reason the code in that library prohibits the user to register a
-signal without requesting a name first. And on dbus it is not at all required to register a name for
-that.
+When not tested on an actual Venus device, there will be no output since there
+is no data coming in. Use a dummy data script to test / develop on a pc:
 
-To run:
+https://gist.github.com/mpvader/94672c05d68bb6762859ba70240ea887
 
-    nodejs dbus-listener.js
-
-Once running, run a script that generates Venus style dbus data in another terminal. For example this
-one: https://gist.github.com/mpvader/94672c05d68bb6762859ba70240ea887
-
-The other file in this repo, `dbus-listener.py`, does more or less the same, but then written in
-python.
+dbus-listener.py is an example of how similar data would be read in Python. It
+is not required to use the plugin.

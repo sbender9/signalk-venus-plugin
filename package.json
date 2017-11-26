@@ -4,7 +4,7 @@
   "description": "Victron Venus-SignalK Integration",
   "main": "index.js",
   "dependencies": {
-    "dbus-native": "^0.2.3",
+    "dbus-native": "sidorares/dbus-native",
     "debug": "^3.1.0"
   },
   "devDependencies": {},
