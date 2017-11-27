@@ -1,7 +1,7 @@
 const dbus = require('dbus-native')
 const debug = require('debug')('vedirect:dbus')
 
-module.exports = function (handleDelta) {
+module.exports = function (messageCallback) {
   const bus = dbus.sessionBus()
 
   if (!bus) {
@@ -51,32 +51,13 @@ module.exports = function (handleDelta) {
     m.text = m.body[0][0][1][1][0]
     m.value = m.body[0][1][1][1][0]
 
-    debug(`Receiving signal ${m.serial}`)
-    debug('  ' + m.path) // '/Dc/0/Voltage'
-    debug('  ' + m.sender) // ':1.104'
-    debug('  ' + services[m.sender]) // 'com.victronenergy.battery.ttyO1'
-    debug('  ' + m.text) // The new value as a (sometimes formatted) string
-    debug('  ' + m.value) // The new value as a plain value
-    debug('  ' + Object.prototype.toString.call(m.value))
-
-    handleDelta({
-      updates: [
-        {
-          $source: 'plugins.vedirect',
-          values: [
-            {
-              path: 'electrical.batteries.1.voltage',
-              value: Number(m.value)
-            }
-          ]
-        }
-      ]
-    })
+    debug(`Receiving signal ${JSON.stringify(m, null, 2)}`)
 
     return true
   }
 
   bus.connection.on('message', signal_receive)
+  bus.connection.on('message', messageCallback)
   bus.addMatch(
     "type='signal',interface='com.victronenergy.BusItem',member='PropertiesChanged'",
     d => {}

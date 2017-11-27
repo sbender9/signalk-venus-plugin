@@ -4,6 +4,7 @@ const PLUGIN_NAME = 'Venus plugin'
 const debug = require('debug')(PLUGIN_ID)
 
 const createDbusListener = require('./dbus-listener')
+const venusToDeltas = require('./venusToDeltas')
 
 module.exports = function (app) {
   const plugin = {}
@@ -30,8 +31,10 @@ module.exports = function (app) {
     or the plugin is enabled from ui on a running server).
   */
   plugin.start = function (options) {
-    stopDbus = createDbusListener((delta) => {
-      app.handleMessage(PLUGIN_ID, delta)
+    stopDbus = createDbusListener(venusMessage => {
+      venusToDeltas(venusMessage).forEach(delta => {
+        app.handleMessage(PLUGIN_ID, delta)
+      })
     })
   }
 
