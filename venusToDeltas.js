@@ -1,4 +1,8 @@
 module.exports = function (venusMessage) {
+  if (venusMessage.interface != 'com.victronenergy.BusItem' ||
+      venusMessage.member != 'PropertiesChanged')
+    return []
+
   return [
     {
       updates: [
