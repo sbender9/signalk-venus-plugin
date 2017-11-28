@@ -2,7 +2,7 @@ const dbus = require('dbus-native')
 const debug = require('debug')('vedirect:dbus')
 
 module.exports = function (messageCallback) {
-  const bus = dbus.sessionBus()
+  const bus = process.env.DBUS_SESSION_BUS_ADDRESS ? dbus.sessionBus() : dbus.systemBus()
 
   if (!bus) {
     throw new Error('Could not connect to the DBus session bus.')
