@@ -97,6 +97,8 @@ function batOrCharger(msg, path) {
     type = 'batteries'
   } else if ( msg.senderName.startsWith('com.victronenergy.solarcharger') ) {
     type = 'chargers'
+  } else if ( msg.senderName.startsWith('com.victronenergy.inverter') ) {
+    type = 'inverters'
   } else {
     //TODO:  are there others needed here?
     type = 'chargers'
