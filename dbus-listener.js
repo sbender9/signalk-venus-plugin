@@ -52,8 +52,6 @@ module.exports = function (messageCallback) {
     m.value = m.body[0][1][1][1][0]
     m.senderName = services[m.sender]
 
-    debug(`Receiving signal ${JSON.stringify(m, null, 2)}`)
-
     // TODO at startup get a list of existing services, and use that to
     //      populate the services dict. Otherwise it will only be able
     //      to translate a number (like :1.023) into a name (like
