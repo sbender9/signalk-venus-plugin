@@ -84,7 +84,8 @@ module.exports = function (venusMessage) {
               path: thePath,
               value: theValue
             }
-          ]
+          ],
+          timestamp: (new Date()).toISOString()
         }
       ]
     }
@@ -119,11 +120,11 @@ function batOrCharger(msg, path) {
   
 const stateMap= {
   0: 'not charging',
-  2: 'fault',
-  3: 'charging bulk',
-  4: 'charging absorption',
-  5: 'charging float',
-  6: 'storage',
+  2: 'other',
+  3: 'bulk',
+  4: 'acceptance',
+  5: 'float',
+  6: 'other',
   7: 'equalize',
 };
   
@@ -178,5 +179,5 @@ function convertErrorToNotification(venusMessage) {
 }
 
 function ahToCoulomb(venusMessage) {
-  return venusMessage.value * 3600;
+  return Number(venusMessage.value) * 3600;
 }

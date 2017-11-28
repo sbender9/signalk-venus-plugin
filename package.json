@@ -10,7 +10,9 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
-    "mocha": "^4.0.1"
+    "chai-things": "0.2",
+    "mocha": "^4.0.1",
+    "@signalk/signalk-schema": "0.0.1-12"
   },
   "scripts": {
     "test": "mocha"

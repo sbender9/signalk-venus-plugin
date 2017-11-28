@@ -1,6 +1,21 @@
+var chai = require('chai')
 const assert = require('assert')
 const venusToDeltas = require('../venustodeltas')
-const expect = require('chai').expect
+const expect = chai.expect
+const signalkSchema = require('@signalk/signalk-schema')
+
+chai.Should()
+chai.use(require('chai-things'))
+chai.use(signalkSchema.chaiModule)
+
+function toFull(delta) {
+  if (!delta.context) {
+    delta.context = 'vessels.' + signalkSchema.fakeMmsiId
+  }
+  var contextParts = delta.context.split('.')
+  var full = signalkSchema.deltaToFull(delta)
+  return full[contextParts[0]][contextParts[1]]
+}
 
 describe('venustodeltas', function () {
   describe('Battery Voltage', function () {
@@ -54,6 +69,8 @@ describe('venustodeltas', function () {
           value: 4459.099999998691
         }
       })
+      var tree = toFull(deltas[0])
+      tree.should.be.validSignalKVesselIgnoringIdentity
     })
   })
 
@@ -111,6 +128,8 @@ describe('venustodeltas', function () {
           value: -81
         }
       })
+      var tree = toFull(deltas[0])
+      tree.should.be.validSignalKVesselIgnoringIdentity
     })
   })
 
@@ -168,6 +187,8 @@ describe('venustodeltas', function () {
           value: .58099998474121094
         }
       })
+      var tree = toFull(deltas[0])
+      tree.should.be.validSignalKVesselIgnoringIdentity
     })
   })
 
@@ -225,6 +246,8 @@ describe('venustodeltas', function () {
           value: 19739.998046875
         }
       })
+      var tree = toFull(deltas[0])
+      tree.should.be.validSignalKVesselIgnoringIdentity
     })
   })
 
@@ -282,6 +305,8 @@ describe('venustodeltas', function () {
           value: 16.143278121948242
         }
       })
+      var tree = toFull(deltas[0])
+      tree.should.be.validSignalKVesselIgnoringIdentity
     })
   })
 
@@ -336,9 +361,11 @@ describe('venustodeltas', function () {
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
           path: 'electrical.solar.vedirect0.chargingMode',
-          value: 'charging bulk'
+          value: 'bulk'
         }
       })
+      var tree = toFull(deltas[0])
+      tree.should.be.validSignalKVesselIgnoringIdentity
     })
   })
 
@@ -403,6 +430,8 @@ describe('venustodeltas', function () {
           }
         }
       })
+      var tree = toFull(deltas[0])
+      tree.should.be.validSignalKVesselIgnoringIdentity
     })
   })
   
@@ -467,6 +496,8 @@ describe('venustodeltas', function () {
           }
         }
       })
+      var tree = toFull(deltas[0])
+      tree.should.be.validSignalKVesselIgnoringIdentity
     })
   })
 
@@ -525,6 +556,8 @@ describe('venustodeltas', function () {
           value: -177120.00274658202000
         }
       })
+      var tree = toFull(deltas[0])
+      tree.should.be.validSignalKVesselIgnoringIdentity
     })
   })
 
@@ -582,6 +615,8 @@ describe('venustodeltas', function () {
           value: -2099879.9560546876800
         }
       })
+      //var tree = toFull(deltas[0])
+      //tree.should.be.validSignalKVesselIgnoringIdentity
     })
   })
 })
