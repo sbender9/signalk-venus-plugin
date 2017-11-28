@@ -405,4 +405,68 @@ describe('venustodeltas', function () {
       })
     })
   })
+  
+  describe('Unknown Error Notification', function () {
+    it('should raise an unknown notification', function () {
+      const deltas = venusToDeltas({
+        "serial": 28,
+        "path": "/ErrorCode",
+        "interface": "com.victronenergy.BusItem",
+        "member": "PropertiesChanged",
+        "signature": "a{sv}",
+        "sender": ":1.49",
+        "type": 4,
+        "flags": 1,
+        "body": [
+          [
+            [
+              "Text",
+              [
+                [
+                  {
+                    "type": "s",
+                    "child": []
+                  }
+                ],
+                [
+                  "Battery voltage too high"
+                ]
+              ]
+            ],
+            [
+              "Value",
+              [
+                [
+                  {
+                    "type": "d",
+                    "child": []
+                  }
+                ],
+                [
+                  55
+                ]
+              ]
+            ]
+          ]
+        ],
+        "text": "Something went wrong",
+        "value": 55,
+        "senderName": 'com.victronenergy.pvinverter.ttyO0'
+      })
+      expect(deltas.length).to.equal(1)
+      expect(deltas[0]).to.nested.deep.include({
+        'updates[0].values[0]': {
+          path: 'notifications.electrical.chargers.vedirect0.error',
+          value: {
+            "message": "Unknown Error 55: Something went wrong",
+            "method": [
+              "visual",
+              "sound"
+            ],
+            "state": "alarm"
+          }
+        }
+      })
+    })
+  })
 })

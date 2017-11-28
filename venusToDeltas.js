@@ -99,7 +99,7 @@ function batOrCharger(msg, path) {
     type = 'chargers'
   } else {
     //TODO:  are there others needed here?
-    type = 'charger'
+    type = 'chargers'
   }
   return 'electrical.' + type + '.' + path;
 }
@@ -140,16 +140,20 @@ const solorErrorCodeMap = {
 }
 
   
-function convertErrorToNotification(msg) {
+function convertErrorToNotification(venusMessage) {
   var value;
-  if ( msg.value == 0 ) {
+  if ( venusMessage.value == 0 ) {
     value = { state: 'normal', message: 'No Error' }
   } else {
-    var msg = solorErrorCodeMap[msg.value];
-    if ( ! msg ) {
-      msg = "Unknown Error";
+    var msg;
+    if ( venusMessage.senderName.startsWith('com.victronenergy.solarcharger') ) {
+      msg = solorErrorCodeMap[venusMessage.value];
     }
-
+    
+    if ( !msg ) {
+      msg = `Unknown Error ${venusMessage.value}: ${venusMessage.text}`
+    }
+    
     value = {
       state: 'alarm',
       message: msg,
