@@ -284,4 +284,61 @@ describe('venustodeltas', function () {
       })
     })
   })
+
+    describe('Charger State', function () {
+    it('should return panel charger state in normal case', function () {
+      const deltas = venusToDeltas({
+        "serial": 28,
+        "path": "/State",
+        "interface": "com.victronenergy.BusItem",
+        "member": "PropertiesChanged",
+        "signature": "a{sv}",
+        "sender": ":1.49",
+        "type": 4,
+        "flags": 1,
+        "body": [
+          [
+            [
+              "Text",
+              [
+                [
+                  {
+                    "type": "s",
+                    "child": []
+                  }
+                ],
+                [
+                  "Bulk"
+                ]
+              ]
+            ],
+            [
+              "Value",
+              [
+                [
+                  {
+                    "type": "d",
+                    "child": []
+                  }
+                ],
+                [
+                  3
+                ]
+              ]
+            ]
+          ]
+        ],
+        "text": "Bulk",
+        "value": 3,
+        "senderName": 'com.victronenergy.solarcharger.ttyO0'
+      })
+      expect(deltas.length).to.equal(1)
+      expect(deltas[0]).to.nested.deep.include({
+        'updates[0].values[0]': {
+          path: 'electrical.chargers.vedirect0.mode',
+          value: 'charging bulk'
+        }
+      })
+    })
+  })
 })

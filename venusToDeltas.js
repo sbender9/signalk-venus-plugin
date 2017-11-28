@@ -19,6 +19,10 @@ const mappings = {
   },
   '/Pv/I': {
     path: 'electrical.chargers.${instance}.panelCurrent'
+  },
+  '/State': {
+    path: 'electrical.chargers.${instance}.mode',
+    conversion: convertState
   }
 }
 
@@ -37,6 +41,9 @@ module.exports = function (venusMessage) {
   if ( mapping.conversion )
     theValue = mapping.conversion(theValue)
 
+  if ( !theValue )
+    return []
+  
   var thePath;
   
   thePath = _.isFunction(mapping.path) ?
@@ -90,3 +97,18 @@ function batOrCharger(msg, path) {
   }
   return 'electrical.' + type + '.' + path;
 }
+
+const stateMap= {
+  0: 'not charging',
+  2: 'fault',
+  3: 'charging bulk',
+  4: 'charging absorption',
+  5: 'charging float',
+  6: 'storage',
+  7: 'equalize',
+};
+
+function convertState(code) {
+  return stateMap[Number(code)]
+}
+
