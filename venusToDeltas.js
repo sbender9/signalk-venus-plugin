@@ -1,3 +1,4 @@
+const _ = require('lodash')
 
 const mappings = {
   '/Dc/0/Voltage': {
@@ -35,6 +36,10 @@ module.exports = function (venusMessage) {
 
   if ( mapping.conversion )
     theValue = mapping.conversion(theValue)
+
+  var thePath;
+  
+  thePath = _.isFunction(mapping.path) ? mapping.path(venusMessage) : mapping.path.replace(/\$\{instance\}/g, instance);
   
   return [
     {
@@ -42,7 +47,7 @@ module.exports = function (venusMessage) {
         {
           values: [
             {
-              path: mapping.path.replace(/\$\{instance\}/g, instance),
+              path: thePath,
               value: theValue
             }
           ]
