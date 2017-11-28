@@ -1,0 +1,10318 @@
+{
+  "serial": 5,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.51",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1789"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1789
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1789",
+  "value": 1789
+}
+{
+  "serial": 6,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.51",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1790"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1790
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1790",
+  "value": 1790
+}
+{
+  "serial": 5,
+  "path": "/History/TotalAhDrawn",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-583.1Ah"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -583.0999755859375
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-583.1Ah",
+  "value": -583.0999755859375
+}
+{
+  "serial": 5,
+  "path": "/Dc/0/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-795W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -794.9879760742188
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-795W",
+  "value": -794.9879760742188
+}
+{
+  "serial": 6,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "2192s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            2192
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "2192s",
+  "value": 2192
+}
+{
+  "serial": 6,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-15.3A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -15.300000190734863
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-15.3A",
+  "value": -15.300000190734863
+}
+{
+  "serial": 7,
+  "path": "/ConsumedAmphours",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-49.1Ah"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -49.099998474121094
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-49.1Ah",
+  "value": -49.099998474121094
+}
+{
+  "serial": 7,
+  "path": "/TimeToGo",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "19620s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            19619.998046875
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "19620s",
+  "value": 19619.998046875
+}
+{
+  "serial": 8,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "2193s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            2193
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "2193s",
+  "value": 2193
+}
+{
+  "serial": 8,
+  "path": "/Dc/0/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-795W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -795.1409912109375
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-795W",
+  "value": -795.1409912109375
+}
+{
+  "serial": 9,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.97V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.970001220703125
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.97V",
+  "value": 51.970001220703125
+}
+{
+  "serial": 5,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.55",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1785"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1785
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1785",
+  "value": 1785
+}
+{
+  "serial": 6,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.55",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1786"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1786
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1786",
+  "value": 1786
+}
+{
+  "serial": 7,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.55",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1787"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1787
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1787",
+  "value": 1787
+}
+{
+  "serial": 8,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.55",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1788"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1788
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1788",
+  "value": 1788
+}
+{
+  "serial": 7,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.51",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1791"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1791
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1791",
+  "value": 1791
+}
+{
+  "serial": 9,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "2194s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            2194
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "2194s",
+  "value": 2194
+}
+{
+  "serial": 10,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "36s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            36
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "36s",
+  "value": 36
+}
+{
+  "serial": 5,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.56",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1788"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1788
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1788",
+  "value": 1788
+}
+{
+  "serial": 6,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.56",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1789"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1789
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1789",
+  "value": 1789
+}
+{
+  "serial": 7,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.56",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1790"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1790
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1790",
+  "value": 1790
+}
+{
+  "serial": 5,
+  "path": "/ExtraBatteryCurrent",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "17.9A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            17.899999618530273
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "17.9A",
+  "value": 17.899999618530273
+}
+{
+  "serial": 6,
+  "path": "/ExtraBatteryCurrent",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "19.1A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            19.100000381469727
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "19.1A",
+  "value": 19.100000381469727
+}
+{
+  "serial": 7,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.38V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.380001068115234
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.38V",
+  "value": 51.380001068115234
+}
+{
+  "serial": 8,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-80.5A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -80.5
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-80.5A",
+  "value": -80.5
+}
+{
+  "serial": 9,
+  "path": "/Ac/Out/P",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "3966W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            3966
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "3966W",
+  "value": 3966
+}
+{
+  "serial": 10,
+  "path": "/Ac/Out/L1/P",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "3966W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            3966
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "3966W",
+  "value": 3966
+}
+{
+  "serial": 11,
+  "path": "/Energy/InverterToAcOut",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "0.25kWh"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            0.2548622190952301
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "0.25kWh",
+  "value": 0.2548622190952301
+}
+{
+  "serial": 5,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.52",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1784"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1784
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1784",
+  "value": 1784
+}
+{
+  "serial": 6,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.52",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1785"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1785
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1785",
+  "value": 1785
+}
+{
+  "serial": 7,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.52",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1786"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1786
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1786",
+  "value": 1786
+}
+{
+  "serial": 8,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.52",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1787"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1787
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1787",
+  "value": 1787
+}
+{
+  "serial": 9,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.55",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1789"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1789
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1789",
+  "value": 1789
+}
+{
+  "serial": 8,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.51",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1792"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1792
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1792",
+  "value": 1792
+}
+{
+  "serial": 10,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "2195s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            2195
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "2195s",
+  "value": 2195
+}
+{
+  "serial": 11,
+  "path": "/Dc/0/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-800W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -800.3380126953125
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-800W",
+  "value": -800.3380126953125
+}
+{
+  "serial": 12,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-15.4A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -15.399999618530273
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-15.4A",
+  "value": -15.399999618530273
+}
+{
+  "serial": 13,
+  "path": "/TimeToGo",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "19680s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            19679.998046875
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "19680s",
+  "value": 19679.998046875
+}
+{
+  "serial": 14,
+  "path": "/Dc/0/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-800W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -800.4920043945312
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-800W",
+  "value": -800.4920043945312
+}
+{
+  "serial": 15,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.98V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.97999954223633
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.98V",
+  "value": 51.97999954223633
+}
+{
+  "serial": 8,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.56",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1791"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1791
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1791",
+  "value": 1791
+}
+{
+  "serial": 12,
+  "path": "/ExtraBatteryCurrent",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "18.3A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            18.299999237060547
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "18.3A",
+  "value": 18.299999237060547
+}
+{
+  "serial": 13,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.39V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.38999938964844
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.39V",
+  "value": 51.38999938964844
+}
+{
+  "serial": 14,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-80.9A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -80.9000015258789
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-80.9A",
+  "value": -80.9000015258789
+}
+{
+  "serial": 15,
+  "path": "/Dc/0/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-3966W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            -3966
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-3966W",
+  "value": -3966
+}
+{
+  "serial": 16,
+  "path": "/Ac/Out/P",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "3967W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            3967
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "3967W",
+  "value": 3967
+}
+{
+  "serial": 17,
+  "path": "/Ac/Out/L1/P",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "3967W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            3967
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "3967W",
+  "value": 3967
+}
+{
+  "serial": 18,
+  "path": "/Ac/Out/L1/F",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "49.9Hz"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            49.89822006225586
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "49.9Hz",
+  "value": 49.89822006225586
+}
+{
+  "serial": 9,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.52",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1788"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1788
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1788",
+  "value": 1788
+}
+{
+  "serial": 10,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.55",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1790"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1790
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1790",
+  "value": 1790
+}
+{
+  "serial": 9,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.51",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1793"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1793
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1793",
+  "value": 1793
+}
+{
+  "serial": 11,
+  "path": "/Dc/0/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-3429W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -3429.047119140625
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-3429W",
+  "value": -3429.047119140625
+}
+{
+  "serial": 12,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-66.7A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -66.69999694824219
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-66.7A",
+  "value": -66.69999694824219
+}
+{
+  "serial": 16,
+  "path": "/History/MaximumVoltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.96V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.959999084472656
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.96V",
+  "value": 51.959999084472656
+}
+{
+  "serial": 17,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "38s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            38
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "38s",
+  "value": 38
+}
+{
+  "serial": 13,
+  "path": "/History/DischargedEnergy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "9.08kWh"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            9.079999923706055
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "9.08kWh",
+  "value": 9.079999923706055
+}
+{
+  "serial": 14,
+  "path": "/History/LastDischarge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-49.1Ah"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -49.099998474121094
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-49.1Ah",
+  "value": -49.099998474121094
+}
+{
+  "serial": 15,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "2196s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            2196
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "2196s",
+  "value": 2196
+}
+{
+  "serial": 9,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.56",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1792"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1792
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1792",
+  "value": 1792
+}
+{
+  "serial": 19,
+  "path": "/ExtraBatteryCurrent",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "17.7A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            17.700000762939453
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "17.7A",
+  "value": 17.700000762939453
+}
+{
+  "serial": 10,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.52",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1789"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1789
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1789",
+  "value": 1789
+}
+{
+  "serial": 11,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.55",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1791"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1791
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1791",
+  "value": 1791
+}
+{
+  "serial": 10,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.51",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1794"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1794
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1794",
+  "value": 1794
+}
+{
+  "serial": 16,
+  "path": "/History/TotalAhDrawn",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-583.2Ah"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -583.2000122070312
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-583.2Ah",
+  "value": -583.2000122070312
+}
+{
+  "serial": 17,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "2197s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            2197
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "2197s",
+  "value": 2197
+}
+{
+  "serial": 10,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.56",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1793"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1793
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1793",
+  "value": 1793
+}
+{
+  "serial": 20,
+  "path": "/ExtraBatteryCurrent",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "18.7A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            18.700000762939453
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "18.7A",
+  "value": 18.700000762939453
+}
+{
+  "serial": 21,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.38V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.380001068115234
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.38V",
+  "value": 51.380001068115234
+}
+{
+  "serial": 22,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-81.0A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -81
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-81.0A",
+  "value": -81
+}
+{
+  "serial": 23,
+  "path": "/Dc/0/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-3967W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            -3967
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-3967W",
+  "value": -3967
+}
+{
+  "serial": 11,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.52",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1790"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1790
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1790",
+  "value": 1790
+}
+{
+  "serial": 12,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.55",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1792"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1792
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1792",
+  "value": 1792
+}
+{
+  "serial": 11,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.51",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1795"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1795
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1795",
+  "value": 1795
+}
+{
+  "serial": 18,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "2198s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            2198
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "2198s",
+  "value": 2198
+}
+{
+  "serial": 18,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "40s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            40
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "40s",
+  "value": 40
+}
+{
+  "serial": 11,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.56",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1794"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1794
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1794",
+  "value": 1794
+}
+{
+  "serial": 24,
+  "path": "/ExtraBatteryCurrent",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "19.2A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            19.200000762939453
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "19.2A",
+  "value": 19.200000762939453
+}
+{
+  "serial": 25,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.41V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.40999984741211
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.41V",
+  "value": 51.40999984741211
+}
+{
+  "serial": 26,
+  "path": "/Ac/Out/P",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "3968W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            3968
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "3968W",
+  "value": 3968
+}
+{
+  "serial": 12,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.52",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1791"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1791
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1791",
+  "value": 1791
+}
+{
+  "serial": 13,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.55",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1793"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1793
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1793",
+  "value": 1793
+}
+{
+  "serial": 12,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.51",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1796"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1796
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1796",
+  "value": 1796
+}
+{
+  "serial": 19,
+  "path": "/ConsumedAmphours",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-49.2Ah"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -49.20000076293945
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-49.2Ah",
+  "value": -49.20000076293945
+}
+{
+  "serial": 19,
+  "path": "/Dc/0/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-806W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -805.6900024414062
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-806W",
+  "value": -805.6900024414062
+}
+{
+  "serial": 20,
+  "path": "/Soc",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "58.1%"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            58.099998474121094
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "58.1%",
+  "value": 58.099998474121094
+}
+{
+  "serial": 20,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-15.5A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -15.5
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-15.5A",
+  "value": -15.5
+}
+{
+  "serial": 21,
+  "path": "/TimeToGo",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "19740s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            19739.998046875
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "19740s",
+  "value": 19739.998046875
+}
+{
+  "serial": 21,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "2199s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            2199
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "2199s",
+  "value": 2199
+}
+{
+  "serial": 22,
+  "path": "/Dc/0/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-806W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -805.844970703125
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-806W",
+  "value": -805.844970703125
+}
+{
+  "serial": 12,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.56",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1795"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1795
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1795",
+  "value": 1795
+}
+{
+  "serial": 23,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.99V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.9900016784668
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.99V",
+  "value": 51.9900016784668
+}
+{
+  "serial": 27,
+  "path": "/Ac/Out/L1/P",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "3968W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            3968
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "3968W",
+  "value": 3968
+}
+{
+  "serial": 28,
+  "path": "/Ac/Out/L1/F",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "50.0Hz"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            50.0255126953125
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "50.0Hz",
+  "value": 50.0255126953125
+}
+{
+  "serial": 29,
+  "path": "/ExtraBatteryCurrent",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "19.1A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            19.100000381469727
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "19.1A",
+  "value": 19.100000381469727
+}
+{
+  "serial": 13,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.52",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1792"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1792
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1792",
+  "value": 1792
+}
+{
+  "serial": 14,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.55",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1794"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1794
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1794",
+  "value": 1794
+}
+{
+  "serial": 13,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.51",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1797"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1797
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1797",
+  "value": 1797
+}
+{
+  "serial": 22,
+  "path": "/Dc/0/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-3424W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -3423.906005859375
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-3424W",
+  "value": -3423.906005859375
+}
+{
+  "serial": 23,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-66.6A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -66.5999984741211
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-66.6A",
+  "value": -66.5999984741211
+}
+{
+  "serial": 24,
+  "path": "/History/MaximumVoltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.97V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.970001220703125
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.97V",
+  "value": 51.970001220703125
+}
+{
+  "serial": 25,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "42s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            42
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "42s",
+  "value": 42
+}
+{
+  "serial": 24,
+  "path": "/TimeToGo",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "3540s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            3539.999755859375
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "3540s",
+  "value": 3539.999755859375
+}
+{
+  "serial": 25,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "2200s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            2200
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "2200s",
+  "value": 2200
+}
+{
+  "serial": 13,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.56",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1796"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1796
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1796",
+  "value": 1796
+}
+{
+  "serial": 5,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.92V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.91999816894531
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.92V",
+  "value": 51.91999816894531
+}
+{
+  "serial": 6,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "19.2A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            19.200000762939453
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "19.2A",
+  "value": 19.200000762939453
+}
+{
+  "serial": 7,
+  "path": "/Yield/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "989W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            989
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "989W",
+  "value": 989
+}
+{
+  "serial": 8,
+  "path": "/Pv/I",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "16.2A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            16.175989151000977
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "16.2A",
+  "value": 16.175989151000977
+}
+{
+  "serial": 9,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.93V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.93000030517578
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.93V",
+  "value": 51.93000030517578
+}
+{
+  "serial": 10,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "19.1A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            19.100000381469727
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "19.1A",
+  "value": 19.100000381469727
+}
+{
+  "serial": 11,
+  "path": "/Yield/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "985W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            985
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "985W",
+  "value": 985
+}
+{
+  "serial": 12,
+  "path": "/Pv/I",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "16.1A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            16.110565185546875
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "16.1A",
+  "value": 16.110565185546875
+}
+{
+  "serial": 13,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.90V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.900001525878906
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.90V",
+  "value": 51.900001525878906
+}
+{
+  "serial": 14,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "18.3A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            18.299999237060547
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "18.3A",
+  "value": 18.299999237060547
+}
+{
+  "serial": 15,
+  "path": "/Yield/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "976W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            976
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "976W",
+  "value": 976
+}
+{
+  "serial": 16,
+  "path": "/Pv/I",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "16.0A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            15.963362693786621
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "16.0A",
+  "value": 15.963362693786621
+}
+{
+  "serial": 17,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.88V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.880001068115234
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.88V",
+  "value": 51.880001068115234
+}
+{
+  "serial": 18,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "17.8A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            17.799999237060547
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "17.8A",
+  "value": 17.799999237060547
+}
+{
+  "serial": 19,
+  "path": "/Yield/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "977W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            977
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "977W",
+  "value": 977
+}
+{
+  "serial": 20,
+  "path": "/Pv/I",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "16.0A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            15.979719161987305
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "16.0A",
+  "value": 15.979719161987305
+}
+{
+  "serial": 21,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.89V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.88999938964844
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.89V",
+  "value": 51.88999938964844
+}
+{
+  "serial": 22,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "18.6A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            18.600000381469727
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "18.6A",
+  "value": 18.600000381469727
+}
+{
+  "serial": 23,
+  "path": "/Yield/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "984W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            984
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "984W",
+  "value": 984
+}
+{
+  "serial": 24,
+  "path": "/Pv/I",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "16.1A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            16.094209671020508
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "16.1A",
+  "value": 16.094209671020508
+}
+{
+  "serial": 25,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.93V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.93000030517578
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.93V",
+  "value": 51.93000030517578
+}
+{
+  "serial": 26,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "19.2A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            19.200000762939453
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "19.2A",
+  "value": 19.200000762939453
+}
+{
+  "serial": 27,
+  "path": "/Yield/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "987W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            987
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "987W",
+  "value": 987
+}
+{
+  "serial": 28,
+  "path": "/Pv/I",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "16.1A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            16.143278121948242
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "16.1A",
+  "value": 16.143278121948242
+}
+{
+  "serial": 29,
+  "path": "/Yield/System",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "0.82kWh"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            0.8199999928474426
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "0.82kWh",
+  "value": 0.8199999928474426
+}
+{
+  "serial": 30,
+  "path": "/Yield/User",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "0.82kWh"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            0.8199999928474426
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "0.82kWh",
+  "value": 0.8199999928474426
+}
+{
+  "serial": 31,
+  "path": "/History/Overall/Raw",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "buffer (24 bytes)"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "a",
+              "child": [
+                {
+                  "type": "y",
+                  "child": []
+                }
+              ]
+            }
+          ],
+          [
+            {
+              "type": "Buffer",
+              "data": [
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                82,
+                0,
+                0,
+                0,
+                82,
+                0,
+                0,
+                0,
+                74,
+                29,
+                58,
+                21,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "buffer (24 bytes)",
+  "value": {
+    "type": "Buffer",
+    "data": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      82,
+      0,
+      0,
+      0,
+      82,
+      0,
+      0,
+      0,
+      74,
+      29,
+      58,
+      21,
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}
+{
+  "serial": 32,
+  "path": "/History/Daily/0/Yield",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            0.8199999928474426
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1",
+  "value": 0.8199999928474426
+}
+{
+  "serial": 33,
+  "path": "/History/Daily/0/Raw",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "buffer (40 bytes)"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "a",
+              "child": [
+                {
+                  "type": "y",
+                  "child": []
+                }
+              ]
+            }
+          ],
+          [
+            {
+              "type": "Buffer",
+              "data": [
+                0,
+                0,
+                0,
+                0,
+                82,
+                0,
+                0,
+                0,
+                255,
+                255,
+                255,
+                255,
+                58,
+                21,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                78,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                169,
+                6,
+                0,
+                0,
+                61,
+                1,
+                74,
+                29,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "buffer (40 bytes)",
+  "value": {
+    "type": "Buffer",
+    "data": [
+      0,
+      0,
+      0,
+      0,
+      82,
+      0,
+      0,
+      0,
+      255,
+      255,
+      255,
+      255,
+      58,
+      21,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      78,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      169,
+      6,
+      0,
+      0,
+      61,
+      1,
+      74,
+      29,
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}
+{
+  "serial": 34,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "19.1A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            19.100000381469727
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "19.1A",
+  "value": 19.100000381469727
+}
+{
+  "serial": 35,
+  "path": "/Yield/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "985W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            985
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "985W",
+  "value": 985
+}
+{
+  "serial": 36,
+  "path": "/Pv/I",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "16.1A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            16.110565185546875
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "16.1A",
+  "value": 16.110565185546875
+}
+{
+  "serial": 37,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.88V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.880001068115234
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.88V",
+  "value": 51.880001068115234
+}
+{
+  "serial": 38,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "17.9A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            17.899999618530273
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "17.9A",
+  "value": 17.899999618530273
+}
+{
+  "serial": 39,
+  "path": "/Yield/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "977W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            977
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "977W",
+  "value": 977
+}
+{
+  "serial": 40,
+  "path": "/Pv/I",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "16.0A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            15.979719161987305
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "16.0A",
+  "value": 15.979719161987305
+}
+{
+  "serial": 30,
+  "path": "/ExtraBatteryCurrent",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "17.8A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            17.799999237060547
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "17.8A",
+  "value": 17.799999237060547
+}
+{
+  "serial": 31,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.37V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.369998931884766
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.37V",
+  "value": 51.369998931884766
+}
+{
+  "serial": 32,
+  "path": "/Dc/0/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-3968W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            -3968
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-3968W",
+  "value": -3968
+}
+{
+  "serial": 33,
+  "path": "/Ac/Out/P",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "3970W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            3970
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "3970W",
+  "value": 3970
+}
+{
+  "serial": 34,
+  "path": "/Ac/Out/L1/P",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "3970W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            3970
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "3970W",
+  "value": 3970
+}
+{
+  "serial": 35,
+  "path": "/Ac/Out/L1/F",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "49.9Hz"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            49.89822006225586
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "49.9Hz",
+  "value": 49.89822006225586
+}
+{
+  "serial": 14,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.52",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1793"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1793
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1793",
+  "value": 1793
+}
+{
+  "serial": 15,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.55",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1795"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1795
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1795",
+  "value": 1795
+}
+{
+  "serial": 14,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.51",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1798"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1798
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1798",
+  "value": 1798
+}
+{
+  "serial": 26,
+  "path": "/Dc/0/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-3429W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -3429.047119140625
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-3429W",
+  "value": -3429.047119140625
+}
+{
+  "serial": 27,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-66.7A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -66.69999694824219
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-66.7A",
+  "value": -66.69999694824219
+}
+{
+  "serial": 26,
+  "path": "/ConsumedAmphours",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-0.4Ah"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -0.4000000059604645
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-0.4Ah",
+  "value": -0.4000000059604645
+}
+{
+  "serial": 28,
+  "path": "/History/LastDischarge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-49.2Ah"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -49.20000076293945
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-49.2Ah",
+  "value": -49.20000076293945
+}
+{
+  "serial": 27,
+  "path": "/Dc/0/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-811W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -811.0440063476562
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-811W",
+  "value": -811.0440063476562
+}
+{
+  "serial": 28,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-15.6A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -15.600000381469727
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-15.6A",
+  "value": -15.600000381469727
+}
+{
+  "serial": 29,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "2201s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            2201
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "2201s",
+  "value": 2201
+}
+{
+  "serial": 29,
+  "path": "/Soc",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "99.7%"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            99.69999694824219
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "99.7%",
+  "value": 99.69999694824219
+}
+{
+  "serial": 30,
+  "path": "/Dc/1/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "0.00V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            0
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "0.00V",
+  "value": 0
+}
+{
+  "serial": 14,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.56",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1797"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1797
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1797",
+  "value": 1797
+}
+{
+  "serial": 41,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.89V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.88999938964844
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.89V",
+  "value": 51.88999938964844
+}
+{
+  "serial": 42,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "17.8A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            17.799999237060547
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "17.8A",
+  "value": 17.799999237060547
+}
+{
+  "serial": 43,
+  "path": "/Yield/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "979W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            979
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "979W",
+  "value": 979
+}
+{
+  "serial": 44,
+  "path": "/Pv/I",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "16.0A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            16.01243019104004
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "16.0A",
+  "value": 16.01243019104004
+}
+{
+  "serial": 45,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.90V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.900001525878906
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.90V",
+  "value": 51.900001525878906
+}
+{
+  "serial": 46,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "18.6A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            18.600000381469727
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "18.6A",
+  "value": 18.600000381469727
+}
+{
+  "serial": 47,
+  "path": "/Yield/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "984W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            984
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "984W",
+  "value": 984
+}
+{
+  "serial": 48,
+  "path": "/Pv/I",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "16.1A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            16.094209671020508
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "16.1A",
+  "value": 16.094209671020508
+}
+{
+  "serial": 15,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.52",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1794"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1794
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1794",
+  "value": 1794
+}
+{
+  "serial": 16,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.55",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1796"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1796
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1796",
+  "value": 1796
+}
+{
+  "serial": 15,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.51",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1799"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1799
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1799",
+  "value": 1799
+}
+{
+  "serial": 30,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "2202s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            2202
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "2202s",
+  "value": 2202
+}
+{
+  "serial": 31,
+  "path": "/History/MaximumVoltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.98V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.97999954223633
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.98V",
+  "value": 51.97999954223633
+}
+{
+  "serial": 16,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.51",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1789"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1789
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1789",
+  "value": 1789
+}
+{
+  "serial": 32,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "44s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            44
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "44s",
+  "value": 44
+}
+{
+  "serial": 15,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.56",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1798"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1798
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1798",
+  "value": 1798
+}
+{
+  "serial": 49,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.93V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.93000030517578
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.93V",
+  "value": 51.93000030517578
+}
+{
+  "serial": 50,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "19.2A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            19.200000762939453
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "19.2A",
+  "value": 19.200000762939453
+}
+{
+  "serial": 51,
+  "path": "/Yield/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "987W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            987
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "987W",
+  "value": 987
+}
+{
+  "serial": 52,
+  "path": "/Pv/I",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "16.1A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            16.143278121948242
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "16.1A",
+  "value": 16.143278121948242
+}
+{
+  "serial": 36,
+  "path": "/ExtraBatteryCurrent",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "18.6A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            18.600000381469727
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "18.6A",
+  "value": 18.600000381469727
+}
+{
+  "serial": 37,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.36V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.36000061035156
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.36V",
+  "value": 51.36000061035156
+}
+{
+  "serial": 38,
+  "path": "/Dc/0/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-3970W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            -3970
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-3970W",
+  "value": -3970
+}
+{
+  "serial": 39,
+  "path": "/Ac/Out/P",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "3967W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            3967
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "3967W",
+  "value": 3967
+}
+{
+  "serial": 40,
+  "path": "/Ac/Out/L1/P",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "3967W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            3967
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "3967W",
+  "value": 3967
+}
+{
+  "serial": 16,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.52",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1795"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1795
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1795",
+  "value": 1795
+}
+{
+  "serial": 17,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.55",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1797"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1797
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1797",
+  "value": 1797
+}
+{
+  "serial": 17,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.51",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1790"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1790
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1790",
+  "value": 1790
+}
+{
+  "serial": 31,
+  "path": "/History/TotalAhDrawn",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-583.3Ah"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -583.2999877929688
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-583.3Ah",
+  "value": -583.2999877929688
+}
+{
+  "serial": 33,
+  "path": "/TimeToGo",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "19800s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            19799.998046875
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "19800s",
+  "value": 19799.998046875
+}
+{
+  "serial": 32,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "2203s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            2203
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "2203s",
+  "value": 2203
+}
+{
+  "serial": 34,
+  "path": "/Dc/1/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "0.01V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            0.009999999776482582
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "0.01V",
+  "value": 0.009999999776482582
+}
+{
+  "serial": 16,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.56",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1799"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1799
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1799",
+  "value": 1799
+}
+{
+  "serial": 53,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.91V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.90999984741211
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.91V",
+  "value": 51.90999984741211
+}
+{
+  "serial": 54,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "19.1A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            19.100000381469727
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "19.1A",
+  "value": 19.100000381469727
+}
+{
+  "serial": 55,
+  "path": "/Yield/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "979W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            979
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "979W",
+  "value": 979
+}
+{
+  "serial": 56,
+  "path": "/Pv/I",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "16.0A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            16.01243019104004
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "16.0A",
+  "value": 16.01243019104004
+}
+{
+  "serial": 41,
+  "path": "/ExtraBatteryCurrent",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "19.1A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            19.100000381469727
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "19.1A",
+  "value": 19.100000381469727
+}
+{
+  "serial": 17,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.52",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1796"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1796
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1796",
+  "value": 1796
+}
+{
+  "serial": 18,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.51",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1791"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1791
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1791",
+  "value": 1791
+}
+{
+  "serial": 33,
+  "path": "/ConsumedAmphours",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-49.3Ah"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -49.29999923706055
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-49.3Ah",
+  "value": -49.29999923706055
+}
+{
+  "serial": 34,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "2204s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            2204
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "2204s",
+  "value": 2204
+}
+{
+  "serial": 35,
+  "path": "/History/TotalAhDrawn",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-2333.3Ah"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -2333.300048828125
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-2333.3Ah",
+  "value": -2333.300048828125
+}
+{
+  "serial": 36,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "46s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            46
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "46s",
+  "value": 46
+}
+{
+  "serial": 57,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.88V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.880001068115234
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.88V",
+  "value": 51.880001068115234
+}
+{
+  "serial": 58,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "17.8A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            17.799999237060547
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "17.8A",
+  "value": 17.799999237060547
+}
+{
+  "serial": 59,
+  "path": "/Yield/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "976W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            976
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "976W",
+  "value": 976
+}
+{
+  "serial": 60,
+  "path": "/Pv/I",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.49",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "16.0A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            15.963362693786621
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "16.0A",
+  "value": 15.963362693786621
+}
+{
+  "serial": 42,
+  "path": "/ExtraBatteryCurrent",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "18.3A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            18.299999237060547
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "18.3A",
+  "value": 18.299999237060547
+}
+{
+  "serial": 43,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "51.40V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            51.400001525878906
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "51.40V",
+  "value": 51.400001525878906
+}
+{
+  "serial": 44,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-80.5A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -80.5
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-80.5A",
+  "value": -80.5
+}
+{
+  "serial": 45,
+  "path": "/Dc/0/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-3967W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            -3967
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-3967W",
+  "value": -3967
+}
+{
+  "serial": 46,
+  "path": "/Ac/Out/P",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "3969W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            3969
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "3969W",
+  "value": 3969
+}
+{
+  "serial": 47,
+  "path": "/Ac/Out/L1/P",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "3969W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            3969
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "3969W",
+  "value": 3969
+}
+{
+  "serial": 48,
+  "path": "/Ac/Out/L1/F",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.50",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "50.0Hz"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            50.0255126953125
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "50.0Hz",
+  "value": 50.0255126953125
+}
+{
+  "serial": 18,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.52",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1797"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1797
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1797",
+  "value": 1797
+}
+{
+  "serial": 18,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.55",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1785"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1785
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1785",
+  "value": 1785
+}
+{
+  "serial": 19,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.55",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1786"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1786
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1786",
+  "value": 1786
+}
+{
+  "serial": 20,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.55",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1787"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1787
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1787",
+  "value": 1787
+}
+{
+  "serial": 21,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.55",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1788"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1788
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1788",
+  "value": 1788
+}
+{
+  "serial": 19,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.51",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1792"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1792
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1792",
+  "value": 1792
+}
+{
+  "serial": 35,
+  "path": "/Dc/0/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-3424W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -3423.906005859375
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-3424W",
+  "value": -3423.906005859375
+}
+{
+  "serial": 36,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-66.6A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -66.5999984741211
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-66.6A",
+  "value": -66.5999984741211
+}
+{
+  "serial": 37,
+  "path": "/Dc/0/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-816W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -816.2429809570312
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-816W",
+  "value": -816.2429809570312
+}
+{
+  "serial": 37,
+  "path": "/History/TimeSinceLastFullCharge",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.54",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "2205s"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "u",
+              "child": []
+            }
+          ],
+          [
+            2205
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "2205s",
+  "value": 2205
+}
+{
+  "serial": 38,
+  "path": "/Dc/0/Current",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-15.7A"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -15.699999809265137
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-15.7A",
+  "value": -15.699999809265137
+}
+{
+  "serial": 39,
+  "path": "/Dc/0/Power",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "-816W"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            -816.4000244140625
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "-816W",
+  "value": -816.4000244140625
+}
+{
+  "serial": 17,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.56",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1788"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1788
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1788",
+  "value": 1788
+}
+{
+  "serial": 40,
+  "path": "/Dc/0/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "52.00V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            52
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "52.00V",
+  "value": 52
+}
+{
+  "serial": 18,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.56",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1789"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1789
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1789",
+  "value": 1789
+}
+{
+  "serial": 19,
+  "path": "/Dummy",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.56",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "1790"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "i",
+              "child": []
+            }
+          ],
+          [
+            1790
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "1790",
+  "value": 1790
+}
+{
+  "serial": 41,
+  "path": "/Dc/1/Voltage",
+  "interface": "com.victronenergy.BusItem",
+  "member": "PropertiesChanged",
+  "signature": "a{sv}",
+  "sender": ":1.53",
+  "type": 4,
+  "flags": 1,
+  "body": [
+    [
+      [
+        "Text",
+        [
+          [
+            {
+              "type": "s",
+              "child": []
+            }
+          ],
+          [
+            "0.00V"
+          ]
+        ]
+      ],
+      [
+        "Value",
+        [
+          [
+            {
+              "type": "d",
+              "child": []
+            }
+          ],
+          [
+            0
+          ]
+        ]
+      ]
+    ]
+  ],
+  "text": "0.00V",
+  "value": 0
+}

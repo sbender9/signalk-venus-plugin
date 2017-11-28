@@ -2,13 +2,13 @@ const _ = require('lodash')
 
 const mappings = {
   '/Dc/0/Voltage': {
-    path: 'electrical.batteries.${instance}.voltage'
+    path: (msg) => { return batOrCharger(msg, '${instance}.voltage') }
   },
   '/Dc/1/Voltage': {
-    path: 'electrical.batteries.${instance}.voltage'
+    path: (msg) => { return batOrCharger(msg, '${instance}.voltage') }
   },
   "/Dc/0/Current": {
-    path: 'electrical.batteries.${instance}.current'
+    path: (msg) => { return batOrCharger(msg, '${instance}.current') }
   },
   '/Soc': {
     path: 'electrical.batteries.${instance}.capacity.stateOfCharge',
@@ -31,7 +31,7 @@ module.exports = function (venusMessage) {
   if ( !mapping || !venusMessage.senderName )
     return []
 
-  var instance = venusMessage.senderName
+  var instance = instanceFromSenderName(venusMessage.senderName)
   var theValue = venusMessage.value
 
   if ( mapping.conversion )
@@ -39,7 +39,11 @@ module.exports = function (venusMessage) {
 
   var thePath;
   
-  thePath = _.isFunction(mapping.path) ? mapping.path(venusMessage) : mapping.path.replace(/\$\{instance\}/g, instance);
+  thePath = _.isFunction(mapping.path) ?
+    mapping.path(venusMessage) :
+    mapping.path;
+
+  thePath = thePath.replace(/\$\{instance\}/g, instance);
   
   return [
     {
@@ -67,3 +71,22 @@ function percentToRatio(percent) {
   return percent / 100.0
 }
 
+function instanceFromSenderName(senderName) {
+  //FIXME: hmmm??
+  return 'vedirect' + senderName[senderName.length-1];
+}
+
+
+function batOrCharger(msg, path) {
+  var type;
+
+  if ( msg.senderName.startsWith('com.victronenergy.battery') ) {
+    type = 'batteries'
+  } else if ( msg.senderName.startsWith('com.victronenergy.solarcharger') ) {
+    type = 'chargers'
+  } else {
+    //TODO:  are there others needed here?
+    type = 'charger'
+  }
+  return 'electrical.' + type + '.' + path;
+}

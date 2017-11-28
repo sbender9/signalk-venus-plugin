@@ -44,13 +44,13 @@ describe('venustodeltas', function () {
         ],
         text: '4459.1',
         value: 4459.099999998691,
-        senderName: '1'
+        senderName: 'com.victronenergy.battery.ttyO0'
       })
 
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
-          path: 'electrical.batteries.1.voltage',
+          path: 'electrical.batteries.vedirect0.voltage',
           value: 4459.099999998691
         }
       })
@@ -102,12 +102,12 @@ describe('venustodeltas', function () {
         ],
         "text": "-81.0A",
         "value": -81,
-        "senderName": 1
+        "senderName": 'com.victronenergy.battery.ttyO0'
       })
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
-          path: 'electrical.batteries.1.current',
+          path: 'electrical.batteries.vedirect0.current',
           value: -81
         }
       })
@@ -159,12 +159,12 @@ describe('venustodeltas', function () {
         ],
         "text": "58.1%",
         "value": 58.099998474121094,
-        "senderName": 1
+        "senderName": 'com.victronenergy.battery.ttyO0'
       })
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
-          path: 'electrical.batteries.1.capacity.stateOfCharge',
+          path: 'electrical.batteries.vedirect0.capacity.stateOfCharge',
           value: .58099998474121094
         }
       })
@@ -216,12 +216,12 @@ describe('venustodeltas', function () {
         ],
         "text": "19740s",
         "value": 19739.998046875,
-        "senderName": 1
+        "senderName": 'com.victronenergy.battery.ttyO0'
       })
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
-          path: 'electrical.batteries.1.capacity.timeRemaining',
+          path: 'electrical.batteries.vedirect0.capacity.timeRemaining',
           value: 19739.998046875
         }
       })
@@ -273,12 +273,12 @@ describe('venustodeltas', function () {
         ],
         "text": "16.1A",
         "value": 16.143278121948242,
-        "senderName": "1"
+        "senderName": 'com.victronenergy.solarcharger.ttyO0'
       })
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
-          path: 'electrical.chargers.1.panelCurrent',
+          path: 'electrical.chargers.vedirect0.panelCurrent',
           value: 16.143278121948242
         }
       })
