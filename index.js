@@ -31,11 +31,15 @@ module.exports = function (app) {
     or the plugin is enabled from ui on a running server).
   */
   plugin.start = function (options) {
-    stopDbus = createDbusListener(venusMessage => {
-      venusToDeltas(venusMessage).forEach(delta => {
-        app.handleMessage(PLUGIN_ID, delta)
+    try {
+      stopDbus = createDbusListener(venusMessage => {
+        venusToDeltas(venusMessage).forEach(delta => {
+          app.handleMessage(PLUGIN_ID, delta)
+        })
       })
-    })
+    } catch ( error ) {
+      console.error(`error creating dbus listener: ${error}`)
+    }
   }
 
   /*
