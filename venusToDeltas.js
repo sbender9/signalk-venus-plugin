@@ -18,10 +18,13 @@ const mappings = {
     path: 'electrical.batteries.${instance}.capacity.timeRemaining'
   },
   '/Pv/I': {
-    path: 'electrical.chargers.${instance}.panelCurrent'
+    path: 'electrical.solar.${instance}.panelCurrent'
+  },
+  '/Pv/V': {
+    path: 'electrical.solar.${instance}.panelVoltage'
   },
   '/State': {
-    path: 'electrical.chargers.${instance}.mode',
+    path: 'electrical.solar.${instance}.chargingMode',
     conversion: convertState
   },
   '/ErrorCode': {
@@ -96,7 +99,7 @@ function batOrCharger(msg, path) {
   if ( msg.senderName.startsWith('com.victronenergy.battery') ) {
     type = 'batteries'
   } else if ( msg.senderName.startsWith('com.victronenergy.solarcharger') ) {
-    type = 'chargers'
+    type = 'solar'
   } else if ( msg.senderName.startsWith('com.victronenergy.inverter') ) {
     type = 'inverters'
   } else {
@@ -121,7 +124,7 @@ function convertState(msg) {
 }
 
 
-const solorErrorCodeMap = {
+const solarErrorCodeMap = {
   0: 'No error',
   1: 'Battery temperature too high',
   2: 'Battery voltage too high',
@@ -149,7 +152,7 @@ function convertErrorToNotification(venusMessage) {
   } else {
     var msg;
     if ( venusMessage.senderName.startsWith('com.victronenergy.solarcharger') ) {
-      msg = solorErrorCodeMap[venusMessage.value];
+      msg = solarErrorCodeMap[venusMessage.value];
     }
     
     if ( !msg ) {

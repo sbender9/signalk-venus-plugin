@@ -278,7 +278,7 @@ describe('venustodeltas', function () {
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
-          path: 'electrical.chargers.vedirect0.panelCurrent',
+          path: 'electrical.solar.vedirect0.panelCurrent',
           value: 16.143278121948242
         }
       })
@@ -335,7 +335,7 @@ describe('venustodeltas', function () {
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
-          path: 'electrical.chargers.vedirect0.mode',
+          path: 'electrical.solar.vedirect0.chargingMode',
           value: 'charging bulk'
         }
       })
@@ -392,7 +392,7 @@ describe('venustodeltas', function () {
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
-          path: 'notifications.electrical.chargers.vedirect0.error',
+          path: 'notifications.electrical.solar.vedirect0.error',
           value: {
             "message": "Battery voltage too high",
             "method": [
@@ -451,12 +451,12 @@ describe('venustodeltas', function () {
         ],
         "text": "Something went wrong",
         "value": 55,
-        "senderName": 'com.victronenergy.pvinverter.ttyO0'
+        "senderName": 'com.victronenergy.inverter.ttyO0'
       })
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
-          path: 'notifications.electrical.chargers.vedirect0.error',
+          path: 'notifications.electrical.inverters.vedirect0.error',
           value: {
             "message": "Unknown Error 55: Something went wrong",
             "method": [
