@@ -45,6 +45,12 @@ module.exports = function (venusMessage) {
     {
       updates: [
         {
+          source: {
+            label: 'venus',
+            sender: venusMessage.sender,
+            senderName: venusMessage.senderName,
+            venusPath: venusMessage.path
+          },
           values: [
             {
               path: thePath,
