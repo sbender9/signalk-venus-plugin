@@ -341,4 +341,68 @@ describe('venustodeltas', function () {
       })
     })
   })
+
+  describe('Error Notification', function () {
+    it('should raise a notification', function () {
+      const deltas = venusToDeltas({
+        "serial": 28,
+        "path": "/ErrorCode",
+        "interface": "com.victronenergy.BusItem",
+        "member": "PropertiesChanged",
+        "signature": "a{sv}",
+        "sender": ":1.49",
+        "type": 4,
+        "flags": 1,
+        "body": [
+          [
+            [
+              "Text",
+              [
+                [
+                  {
+                    "type": "s",
+                    "child": []
+                  }
+                ],
+                [
+                  "Battery voltage too high"
+                ]
+              ]
+            ],
+            [
+              "Value",
+              [
+                [
+                  {
+                    "type": "d",
+                    "child": []
+                  }
+                ],
+                [
+                  2
+                ]
+              ]
+            ]
+          ]
+        ],
+        "text": "Battery voltage too high",
+        "value": 2,
+        "senderName": 'com.victronenergy.solarcharger.ttyO0'
+      })
+      expect(deltas.length).to.equal(1)
+      expect(deltas[0]).to.nested.deep.include({
+        'updates[0].values[0]': {
+          path: 'notifications.electrical.chargers.vedirect0.error',
+          value: {
+            "message": "Battery voltage too high",
+            "method": [
+              "visual",
+              "sound"
+            ],
+            "state": "alarm"
+          }
+        }
+      })
+    })
+  })
 })

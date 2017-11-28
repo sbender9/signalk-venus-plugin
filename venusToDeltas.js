@@ -23,6 +23,12 @@ const mappings = {
   '/State': {
     path: 'electrical.chargers.${instance}.mode',
     conversion: convertState
+  },
+  '/ErrorCode': {
+    path: (msg) => {
+      return 'notifications.' + batOrCharger(msg, '${instance}.error')
+    },
+    conversion: convertErrorToNotification
   }
 }
 
@@ -39,7 +45,7 @@ module.exports = function (venusMessage) {
   var theValue = venusMessage.value
 
   if ( mapping.conversion )
-    theValue = mapping.conversion(theValue)
+    theValue = mapping.conversion(venusMessage)
 
   if ( !theValue )
     return []
@@ -74,8 +80,8 @@ module.exports = function (venusMessage) {
   ]
 }
 
-function percentToRatio(percent) {
-  return percent / 100.0
+function percentToRatio(msg) {
+  return msg.value / 100.0
 }
 
 function instanceFromSenderName(senderName) {
@@ -97,7 +103,7 @@ function batOrCharger(msg, path) {
   }
   return 'electrical.' + type + '.' + path;
 }
-
+  
 const stateMap= {
   0: 'not charging',
   2: 'fault',
@@ -107,8 +113,50 @@ const stateMap= {
   6: 'storage',
   7: 'equalize',
 };
+  
+function convertState(msg) {
+  return stateMap[Number(msg.value)]
+}
 
-function convertState(code) {
-  return stateMap[Number(code)]
+
+const solorErrorCodeMap = {
+  0: 'No error',
+  1: 'Battery temperature too high',
+  2: 'Battery voltage too high',
+  3: 'Battery temperature sensor miswired (+)',
+  4: 'Battery temperature sensor miswired (-)',
+  5: 'Battery temperature sensor disconnected',
+  6: 'Battery voltage sense miswired (+)',
+  7: 'Battery voltage sense miswired (-)',
+  8: 'Battery voltage sense disconnected',
+  9: 'Battery voltage wire losses too high',
+  17: 'Charger temperature too high',
+  18: 'Charger over-current',
+  19: 'Charger current polarity reversed',
+  20: 'Bulk time limit reached',
+  22: 'Charger temperature sensor miswired',
+  23: 'Charger temperature sensor disconnected',
+  34: 'Input current too high'
+}
+
+  
+function convertErrorToNotification(msg) {
+  var value;
+  if ( msg.value == 0 ) {
+    value = { state: 'normal', message: 'No Error' }
+  } else {
+    var msg = solorErrorCodeMap[msg.value];
+    if ( ! msg ) {
+      msg = "Unknown Error";
+    }
+
+    value = {
+      state: 'alarm',
+      message: msg,
+      method: [ "visual", "sound" ]
+    }
+  }
+
+  return value;
 }
 
