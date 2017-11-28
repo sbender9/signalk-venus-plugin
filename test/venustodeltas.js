@@ -469,4 +469,119 @@ describe('venustodeltas', function () {
       })
     })
   })
+
+
+  describe('LastDischarge', function () {
+    it('should return last discharge in normal case', function () {
+      const deltas = venusToDeltas({
+        "serial": 28,
+        "path": "/History/LastDischarge",
+        "interface": "com.victronenergy.BusItem",
+        "member": "PropertiesChanged",
+        "signature": "a{sv}",
+        "sender": ":1.54",
+        "type": 4,
+        "flags": 1,
+        "body": [
+          [
+            [
+              "Text",
+              [
+                [
+                  {
+                    "type": "s",
+                    "child": []
+                  }
+                ],
+                [
+                  "-49.2Ah"
+                ]
+              ]
+            ],
+            [
+              "Value",
+              [
+                [
+                  {
+                    "type": "d",
+                    "child": []
+                  }
+                ],
+                [
+                  -49.20000076293945
+                ]
+              ]
+            ]
+          ]
+        ],
+        "text": "-49.2Ah",
+        "value": -49.20000076293945,
+        "senderName": "com.victronenergy.battery.ttyO0"
+      })
+      expect(deltas.length).to.equal(1)
+      expect(deltas[0]).to.nested.deep.include({
+        'updates[0].values[0]': {
+          path: 'electrical.batteries.vedirect0.capacity.dischargeSinceFull',
+          value: -177120.00274658202000
+        }
+      })
+    })
+  })
+
+  describe('Total aH Drawn', function () {
+    it('should return TotalAhDrawn in normal case', function () {
+      const deltas = venusToDeltas({
+        "serial": 31,
+        "path": "/History/TotalAhDrawn",
+        "interface": "com.victronenergy.BusItem",
+        "member": "PropertiesChanged",
+        "signature": "a{sv}",
+        "sender": ":1.54",
+        "type": 4,
+        "flags": 1,
+        "body": [
+          [
+            [
+              "Text",
+              [
+                [
+                  {
+                    "type": "s",
+                    "child": []
+                  }
+                ],
+                [
+                  "-583.3Ah"
+                ]
+              ]
+            ],
+            [
+              "Value",
+              [
+                [
+                  {
+                    "type": "d",
+                    "child": []
+                  }
+                ],
+                [
+                  -583.2999877929688
+                ]
+              ]
+            ]
+          ]
+        ],
+        "text": "-583.3Ah",
+        "value": -583.2999877929688,
+        "senderName": "com.victronenergy.battery.ttyO0"
+      })
+      expect(deltas.length).to.equal(1)
+      expect(deltas[0]).to.nested.deep.include({
+        'updates[0].values[0]': {
+          path: 'electrical.batteries.vedirect0.lifetimeDischarge',
+          value: -2099879.9560546876800
+        }
+      })
+    })
+  })
 })

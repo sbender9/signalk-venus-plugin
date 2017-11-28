@@ -17,6 +17,14 @@ const mappings = {
   '/TimeToGo': {
     path: 'electrical.batteries.${instance}.capacity.timeRemaining'
   },
+  '/History/LastDischarge': {
+    path: 'electrical.batteries.${instance}.capacity.dischargeSinceFull',
+    conversion: ahToCoulomb
+  },
+  '/History/TotalAhDrawn': {
+    path: 'electrical.batteries.${instance}.lifetimeDischarge',
+    conversion: ahToCoulomb
+  },
   '/Pv/I': {
     path: 'electrical.solar.${instance}.panelCurrent'
   },
@@ -169,3 +177,6 @@ function convertErrorToNotification(venusMessage) {
   return value;
 }
 
+function ahToCoulomb(venusMessage) {
+  return venusMessage.value * 3600;
+}
