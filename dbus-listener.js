@@ -8,7 +8,20 @@ module.exports = function (messageCallback) {
     throw new Error('Could not connect to the DBus session bus.')
   }
 
+  // name owner (:0132 for example) is the key. In signals this is the sender
+  // service name (com.victronenergy.battery.ttyO1) is the value
   var services = {}
+
+  // get info on all existing D-Bus services at startup
+  bus.listNames((props, args) => {
+    args.forEach(name => {
+      if ( name.startsWith('com.victronenergy') ) {
+        bus.getNameOwner(name, (props, args) => {
+          services[args] = name
+        })
+      }
+    })
+  })
 
   function signal_receive (m) {
     if (
@@ -51,12 +64,6 @@ module.exports = function (messageCallback) {
     m.text = m.body[0][0][1][1][0]
     m.value = m.body[0][1][1][1][0]
     m.senderName = services[m.sender]
-
-    // TODO at startup get a list of existing services, and use that to
-    //      populate the services dict. Otherwise it will only be able
-    //      to translate a number (like :1.023) into a name (like
-    //      com.victronenergy.battery.ttyO1) when the services sending the
-    //      signales are started *after* this plugin was started.
   }
 
   bus.connection.on('message', signal_receive)
