@@ -2,13 +2,13 @@ const _ = require('lodash')
 
 const mappings = {
   '/Dc/0/Voltage': {
-    path: (msg) => { return batOrCharger(msg, '${instance}.voltage') }
+    path: (msg) => { return makePath(msg, '${instance}.voltage') }
   },
   '/Dc/1/Voltage': {
-    path: (msg) => { return batOrCharger(msg, '${instance}.voltage') }
+    path: (msg) => { return makePath(msg, '${instance}.voltage') }
   },
   "/Dc/0/Current": {
-    path: (msg) => { return batOrCharger(msg, '${instance}.current') }
+    path: (msg) => { return makePath(msg, '${instance}.current') }
   },
   '/Soc': {
     path: 'electrical.batteries.${instance}.capacity.stateOfCharge',
@@ -37,7 +37,7 @@ const mappings = {
   },
   '/ErrorCode': {
     path: (msg) => {
-      return 'notifications.' + batOrCharger(msg, '${instance}.error')
+      return 'notifications.' + makePath(msg, '${instance}.error')
     },
     conversion: convertErrorToNotification
   }
@@ -60,15 +60,15 @@ module.exports = function (venusMessage) {
 
   if ( !theValue )
     return []
-  
+
   var thePath;
-  
+
   thePath = _.isFunction(mapping.path) ?
     mapping.path(venusMessage) :
     mapping.path;
 
   thePath = thePath.replace(/\$\{instance\}/g, instance);
-  
+
   return [
     {
       updates: [
@@ -102,7 +102,7 @@ function instanceFromSenderName(senderName) {
 }
 
 
-function batOrCharger(msg, path) {
+function makePath(msg, path) {
   var type;
 
   if ( msg.senderName.startsWith('com.victronenergy.battery') ) {
@@ -117,7 +117,7 @@ function batOrCharger(msg, path) {
   }
   return 'electrical.' + type + '.' + path;
 }
-  
+
 const stateMap= {
   0: 'not charging',
   2: 'other',
@@ -127,7 +127,7 @@ const stateMap= {
   6: 'other',
   7: 'equalize',
 };
-  
+
 function convertState(msg) {
   return stateMap[Number(msg.value)]
 }
@@ -153,7 +153,7 @@ const solarErrorCodeMap = {
   34: 'Input current too high'
 }
 
-  
+
 function convertErrorToNotification(venusMessage) {
   var value;
   if ( venusMessage.value == 0 ) {
@@ -163,11 +163,11 @@ function convertErrorToNotification(venusMessage) {
     if ( venusMessage.senderName.startsWith('com.victronenergy.solarcharger') ) {
       msg = solarErrorCodeMap[venusMessage.value];
     }
-    
+
     if ( !msg ) {
       msg = `Unknown Error ${venusMessage.value}: ${venusMessage.text}`
     }
-    
+
     value = {
       state: 'alarm',
       message: msg,
