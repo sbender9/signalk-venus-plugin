@@ -1,6 +1,6 @@
 var chai = require('chai')
 const assert = require('assert')
-const venusToDeltas = require('../venustodeltas')
+const venusToDeltas = require('../venusToDeltas')
 const expect = chai.expect
 const signalkSchema = require('@signalk/signalk-schema')
 
