@@ -43,20 +43,20 @@ const mappings = {
   }
 }
 
-module.exports = function (venusMessage) {
-  if (venusMessage.interface != 'com.victronenergy.BusItem' ||
-      venusMessage.member != 'PropertiesChanged')
+module.exports = function (m) {
+  if (m.interface != 'com.victronenergy.BusItem' ||
+      m.member != 'PropertiesChanged')
     return []
 
-  var mapping = mappings[venusMessage.path]
-  if ( !mapping || !venusMessage.senderName )
+  var mapping = mappings[m.path]
+  if ( !mapping || !m.senderName )
     return []
 
-  var instance = instanceFromSenderName(venusMessage.senderName)
-  var theValue = venusMessage.value
+  var instance = instanceFromSenderName(m.senderName)
+  var theValue = m.value
 
   if ( mapping.conversion )
-    theValue = mapping.conversion(venusMessage)
+    theValue = mapping.conversion(m)
 
   if ( !theValue )
     return []
@@ -64,7 +64,7 @@ module.exports = function (venusMessage) {
   var thePath;
 
   thePath = _.isFunction(mapping.path) ?
-    mapping.path(venusMessage) :
+    mapping.path(m) :
     mapping.path;
 
   thePath = thePath.replace(/\$\{instance\}/g, instance);
@@ -75,9 +75,9 @@ module.exports = function (venusMessage) {
         {
           source: {
             label: 'venus',
-            sender: venusMessage.sender,
-            senderName: venusMessage.senderName,
-            venusPath: venusMessage.path
+            sender: m.sender,
+            senderName: m.senderName,
+            venusPath: m.path
           },
           values: [
             {
@@ -154,18 +154,18 @@ const solarErrorCodeMap = {
 }
 
 
-function convertErrorToNotification(venusMessage) {
+function convertErrorToNotification(m) {
   var value;
-  if ( venusMessage.value == 0 ) {
+  if ( m.value == 0 ) {
     value = { state: 'normal', message: 'No Error' }
   } else {
     var msg;
-    if ( venusMessage.senderName.startsWith('com.victronenergy.solarcharger') ) {
-      msg = solarErrorCodeMap[venusMessage.value];
+    if ( m.senderName.startsWith('com.victronenergy.solarcharger') ) {
+      msg = solarErrorCodeMap[m.value];
     }
 
     if ( !msg ) {
-      msg = `Unknown Error ${venusMessage.value}: ${venusMessage.text}`
+      msg = `Unknown Error ${m.value}: ${m.text}`
     }
 
     value = {
@@ -178,6 +178,6 @@ function convertErrorToNotification(venusMessage) {
   return value;
 }
 
-function ahToCoulomb(venusMessage) {
-  return Number(venusMessage.value) * 3600;
+function ahToCoulomb(m) {
+  return Number(m.value) * 3600;
 }
