@@ -66,7 +66,13 @@ module.exports = function (messageCallback) {
     m.text = m.body[0][0][1][1][0]
     m.value = m.body[0][1][1][1][0]
     m.senderName = services[m.sender].name
-    m.instanceName = services[m.sender].deviceInstance
+
+    if (m.path == '/DeviceInstance') {
+      services[m.sender].deviceInstance = m.value
+      m.instanceName = m.value
+    } else {
+      m.instanceName = services[m.sender].deviceInstance
+    }
   }
 
   bus.connection.on('message', signal_receive)
