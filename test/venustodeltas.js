@@ -59,13 +59,14 @@ describe('venustodeltas', function () {
         ],
         text: '4459.1',
         value: 4459.099999998691,
-        senderName: 'com.victronenergy.battery.ttyO0'
+        senderName: 'com.victronenergy.battery.ttyO0',
+        instanceName: 0
       })
 
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
-          path: 'electrical.batteries.vedirect0.voltage',
+          path: 'electrical.batteries.0.voltage',
           value: 4459.099999998691
         }
       })
@@ -119,12 +120,13 @@ describe('venustodeltas', function () {
         ],
         "text": "-81.0A",
         "value": -81,
-        "senderName": 'com.victronenergy.battery.ttyO0'
+        "senderName": 'com.victronenergy.battery.ttyO0',
+        "instanceName": 0
       })
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
-          path: 'electrical.batteries.vedirect0.current',
+          path: 'electrical.batteries.0.current',
           value: -81
         }
       })
@@ -178,12 +180,13 @@ describe('venustodeltas', function () {
         ],
         "text": "58.1%",
         "value": 58.099998474121094,
-        "senderName": 'com.victronenergy.battery.ttyO0'
+        "senderName": 'com.victronenergy.battery.ttyO0',
+        "instanceName": 0
       })
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
-          path: 'electrical.batteries.vedirect0.capacity.stateOfCharge',
+          path: 'electrical.batteries.0.capacity.stateOfCharge',
           value: .58099998474121094
         }
       })
@@ -237,12 +240,13 @@ describe('venustodeltas', function () {
         ],
         "text": "19740s",
         "value": 19739.998046875,
-        "senderName": 'com.victronenergy.battery.ttyO0'
+        "senderName": 'com.victronenergy.battery.ttyO0',
+        "instanceName": 0
       })
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
-          path: 'electrical.batteries.vedirect0.capacity.timeRemaining',
+          path: 'electrical.batteries.0.capacity.timeRemaining',
           value: 19739.998046875
         }
       })
@@ -296,12 +300,13 @@ describe('venustodeltas', function () {
         ],
         "text": "16.1A",
         "value": 16.143278121948242,
-        "senderName": 'com.victronenergy.solarcharger.ttyO0'
+        "senderName": 'com.victronenergy.solarcharger.ttyO0',
+        "instanceName": 0
       })
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
-          path: 'electrical.solar.vedirect0.panelCurrent',
+          path: 'electrical.solar.0.panelCurrent',
           value: 16.143278121948242
         }
       })
@@ -355,12 +360,13 @@ describe('venustodeltas', function () {
         ],
         "text": "Bulk",
         "value": 3,
-        "senderName": 'com.victronenergy.solarcharger.ttyO0'
+        "senderName": 'com.victronenergy.solarcharger.ttyO0',
+        "instanceName": 0
       })
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
-          path: 'electrical.solar.vedirect0.chargingMode',
+          path: 'electrical.solar.0.chargingMode',
           value: 'bulk'
         }
       })
@@ -414,12 +420,13 @@ describe('venustodeltas', function () {
         ],
         "text": "Battery voltage too high",
         "value": 2,
-        "senderName": 'com.victronenergy.solarcharger.ttyO0'
+        "senderName": 'com.victronenergy.solarcharger.ttyO0',
+        "instanceName": 0
       })
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
-          path: 'notifications.electrical.solar.vedirect0.error',
+          path: 'notifications.electrical.solar.0.error',
           value: {
             "message": "Battery voltage too high",
             "method": [
@@ -480,12 +487,13 @@ describe('venustodeltas', function () {
         ],
         "text": "Something went wrong",
         "value": 55,
-        "senderName": 'com.victronenergy.inverter.ttyO0'
+        "senderName": 'com.victronenergy.inverter.ttyO0',
+        "instanceName": 0
       })
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
-          path: 'notifications.electrical.inverters.vedirect0.error',
+          path: 'notifications.electrical.inverters.0.error',
           value: {
             "message": "Unknown Error 55: Something went wrong",
             "method": [
@@ -547,12 +555,13 @@ describe('venustodeltas', function () {
         ],
         "text": "-49.2Ah",
         "value": -49.20000076293945,
-        "senderName": "com.victronenergy.battery.ttyO0"
+        "senderName": "com.victronenergy.battery.ttyO0",
+        "instanceName": 0
       })
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
-          path: 'electrical.batteries.vedirect0.capacity.dischargeSinceFull',
+          path: 'electrical.batteries.0.capacity.dischargeSinceFull',
           value: -177120.00274658202000
         }
       })
@@ -606,12 +615,13 @@ describe('venustodeltas', function () {
         ],
         "text": "-583.3Ah",
         "value": -583.2999877929688,
-        "senderName": "com.victronenergy.battery.ttyO0"
+        "senderName": "com.victronenergy.battery.ttyO0",
+        "instanceName": 0
       })
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
-          path: 'electrical.batteries.vedirect0.lifetimeDischarge',
+          path: 'electrical.batteries.0.lifetimeDischarge',
           value: -2099879.9560546876800
         }
       })

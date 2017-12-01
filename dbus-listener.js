@@ -17,7 +17,8 @@ module.exports = function (messageCallback) {
     args.forEach(name => {
       if ( name.startsWith('com.victronenergy') ) {
         bus.getNameOwner(name, (props, args) => {
-          services[args] = name
+          services[args] = { name: name }
+          getDeviceInstanceForService(args, name)
         })
       }
     })
@@ -43,7 +44,8 @@ module.exports = function (messageCallback) {
     new_owner = m.body[2]
 
     if (new_owner != '') {
-      services[new_owner] = name
+      services[new_owner] = { name: name }
+      getDeviceInstanceForService(new_owner, name)
     } else {
       delete services[old_owner]
     }
@@ -63,7 +65,8 @@ module.exports = function (messageCallback) {
 
     m.text = m.body[0][0][1][1][0]
     m.value = m.body[0][1][1][1][0]
-    m.senderName = services[m.sender]
+    m.senderName = services[m.sender].name
+    m.instanceName = services[m.sender].deviceInstance
   }
 
   bus.connection.on('message', signal_receive)
@@ -73,6 +76,22 @@ module.exports = function (messageCallback) {
     d => {}
   )
   bus.addMatch("type='signal',member='NameOwnerChanged'", d => {})
+
+  function getDeviceInstanceForService(owner, name) {
+    var service = bus.getService(name);
+    bus.invoke({
+      path: '/DeviceInstance',
+      destination: name,
+      interface: 'com.victronenergy.BusItem',
+      member: "GetValue"
+    }, function(err, res) {
+      if ( err ) {
+        console.err(`error geting device instance for ${name} ${err}`)
+      } else {
+        services[owner].deviceInstance = res[1][0];
+      }
+    })
+  }
 
   // TODO return a function to stop the dbus listener
   return () => {}

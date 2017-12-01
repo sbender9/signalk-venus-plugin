@@ -52,7 +52,7 @@ module.exports = function (m) {
   if ( !mapping || !m.senderName )
     return []
 
-  var instance = instanceFromSenderName(m.senderName)
+  var instance = m.instanceName
   var theValue = m.value
 
   if ( mapping.conversion )
@@ -95,12 +95,6 @@ module.exports = function (m) {
 function percentToRatio(msg) {
   return msg.value / 100.0
 }
-
-function instanceFromSenderName(senderName) {
-  //FIXME: hmmm??
-  return 'vedirect' + senderName[senderName.length-1];
-}
-
 
 function makePath(msg, path) {
   var type;
