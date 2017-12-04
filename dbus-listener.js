@@ -63,8 +63,16 @@ module.exports = function (messageCallback) {
     //   flags: 1,
     //   body: [ [ [Object], [Object] ] ]}
 
-    m.text = m.body[0][0][1][1][0]
-    m.value = m.body[0][1][1][1][0]
+    m.body[0].forEach(entry => {
+      if ( entry[0] == 'Text' ) {
+        m.text = entry[1][1][0]
+      } else if ( entry[0] == 'Value' ) {
+        m.value = entry[1][1][0]
+      } else if ( entry[0] == 'Valid' ) {
+        //Ignoring Valid because it is deprecated
+      }
+    })
+
     m.senderName = services[m.sender].name
 
     if (m.path == '/DeviceInstance') {
