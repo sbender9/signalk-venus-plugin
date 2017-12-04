@@ -5,7 +5,7 @@ module.exports = function (messageCallback) {
   const bus = process.env.DBUS_SESSION_BUS_ADDRESS ? dbus.sessionBus() : dbus.systemBus()
 
   if (!bus) {
-    throw new Error('Could not connect to the DBus session bus.')
+    throw new Error('Could not connect to the D-Bus')
   }
 
   // name owner (:0132 for example) is the key. In signals this is the sender
