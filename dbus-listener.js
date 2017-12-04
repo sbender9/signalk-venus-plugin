@@ -73,18 +73,27 @@ module.exports = function (messageCallback) {
       }
     })
 
-    m.senderName = services[m.sender].name
+    var service = services[m.sender]
+
+    if ( !service || !service.name || !service.deviceInstance) {
+      debug(`unknown service; ${m.sender}`)
+      return
+    }
+
+    m.senderName = service.name
 
     if (m.path == '/DeviceInstance') {
       services[m.sender].deviceInstance = m.value
       m.instanceName = m.value
     } else {
-      m.instanceName = services[m.sender].deviceInstance
+      m.instanceName = service.deviceInstance
     }
+
+    //debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${m.value}`);
+    messageCallback(m)
   }
 
   bus.connection.on('message', signal_receive)
-  bus.connection.on('message', messageCallback)
   bus.addMatch(
     "type='signal',interface='com.victronenergy.BusItem',member='PropertiesChanged'",
     d => {}
