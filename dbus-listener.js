@@ -17,12 +17,42 @@ module.exports = function (messageCallback) {
     args.forEach(name => {
       if ( name.startsWith('com.victronenergy') ) {
         bus.getNameOwner(name, (props, args) => {
-          services[args] = { name: name }
-          getDeviceInstanceForService(args, name)
+        initService(args, name)
         })
       }
     })
   })
+
+  function initService(owner, name) {
+    services[owner] = { name: name }
+
+    bus.invoke({
+      path: '/DeviceInstance',
+      destination: name,
+      interface: 'com.victronenergy.BusItem',
+      member: "GetValue"
+    }, function(err, res) {
+      if ( err ) {
+        console.error(`error getting device instance for ${name}:\n ${err}`)
+      } else {
+        services[owner].deviceInstance = res[1][0];
+      }
+    })
+
+    bus.invoke({
+      path: '/',
+      destination: name,
+      interface: 'com.victronenergy.BusItem',
+      member: "GetValue"
+    }, function(err, res) {
+      if ( err ) {
+        console.error(`error during GetValue on / for ${name}:\n ${err}`)
+      } else {
+        console.log("TODO: do something with all this data:\n")
+        console.log(res)
+      }
+    })
+  }
 
   function signal_receive (m) {
     if (
@@ -43,9 +73,8 @@ module.exports = function (messageCallback) {
     old_owner = m.body[1]
     new_owner = m.body[2]
 
-    if (new_owner != '') {
-      services[new_owner] = { name: name }
-      getDeviceInstanceForService(new_owner, name)
+    if (new_owner.startsWith('com.victronenergy')) {
+      initService(new_owner, name)
     } else {
       delete services[old_owner]
     }
@@ -99,22 +128,6 @@ module.exports = function (messageCallback) {
     d => {}
   )
   bus.addMatch("type='signal',member='NameOwnerChanged'", d => {})
-
-  function getDeviceInstanceForService(owner, name) {
-    var service = bus.getService(name);
-    bus.invoke({
-      path: '/DeviceInstance',
-      destination: name,
-      interface: 'com.victronenergy.BusItem',
-      member: "GetValue"
-    }, function(err, res) {
-      if ( err ) {
-        console.error(`error geting device instance for ${name} ${err}`)
-      } else {
-        services[owner].deviceInstance = res[1][0];
-      }
-    })
-  }
 
   // TODO return a function to stop the dbus listener
   return () => {}

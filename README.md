@@ -43,6 +43,11 @@ To see data, without having actual Victron or other Venus compatible hardware se
 get and run below explained Dummy data script. Or, clone
 [dbus-recorder](https://github.com/victronenergy/dbus-recorder) and run play.sh.
 
+Note that using the test harness will cause for some errors during init, as it
+doesn't support doing a GetValue on the root item (/). See
+https://github.com/mpvader/venus-signalk/issues/8 for details. For testing, there
+errors are harmless.
+
 ## How to develop outside of Signal K
 
 First run `npm install`.
