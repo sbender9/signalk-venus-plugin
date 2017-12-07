@@ -276,5 +276,5 @@ const fluidTypeMapping = {
 
 function getFluidType(typeId) {
   debug(`getFluidType ${typeId} ${fluidTypeMapping[typeId]}`)
-  return fluidTypeMapping[typeId] | 'unknown';
+  return fluidTypeMapping[typeId] || 'unknown';
 }
