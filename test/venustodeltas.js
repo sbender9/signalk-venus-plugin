@@ -20,7 +20,7 @@ function toFull(delta) {
 describe('venustodeltas', function () {
   describe('Battery Voltage', function () {
     it('should return voltage in normal case', function () {
-      const deltas = venusToDeltas({
+      const deltas = venusToDeltas([{
         serial: 177394,
         path: '/Dc/0/Voltage',
         interface: 'com.victronenergy.BusItem',
@@ -61,7 +61,7 @@ describe('venustodeltas', function () {
         value: 4459.099999998691,
         senderName: 'com.victronenergy.battery.ttyO0',
         instanceName: 0
-      })
+      }])
 
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
@@ -77,7 +77,7 @@ describe('venustodeltas', function () {
 
   describe('Battery Current', function () {
     it('should return curent in normal case', function () {
-      const deltas = venusToDeltas({
+      const deltas = venusToDeltas([{
         "serial": 22,
         "path": "/Dc/0/Current",
         "interface": "com.victronenergy.BusItem",
@@ -122,7 +122,7 @@ describe('venustodeltas', function () {
         "value": -81,
         "senderName": 'com.victronenergy.battery.ttyO0',
         "instanceName": 0
-      })
+      }])
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
@@ -137,7 +137,7 @@ describe('venustodeltas', function () {
 
   describe('Battery State Of Charge', function () {
     it('should return state of charge in normal case', function () {
-      const deltas = venusToDeltas({
+      const deltas = venusToDeltas([{
         "serial": 20,
         "path": "/Soc",
         "interface": "com.victronenergy.BusItem",
@@ -182,7 +182,7 @@ describe('venustodeltas', function () {
         "value": 58.099998474121094,
         "senderName": 'com.victronenergy.battery.ttyO0',
         "instanceName": 0
-      })
+      }])
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
@@ -197,7 +197,7 @@ describe('venustodeltas', function () {
 
   describe('Time Remaining', function () {
     it('should return time remaining in normal case', function () {
-      const deltas = venusToDeltas({
+      const deltas = venusToDeltas([{
         "serial": 21,
         "path": "/TimeToGo",
         "interface": "com.victronenergy.BusItem",
@@ -242,7 +242,7 @@ describe('venustodeltas', function () {
         "value": 19739.998046875,
         "senderName": 'com.victronenergy.battery.ttyO0',
         "instanceName": 0
-      })
+      }])
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
@@ -257,7 +257,7 @@ describe('venustodeltas', function () {
 
   describe('Panel Current', function () {
     it('should return panel curent in normal case', function () {
-      const deltas = venusToDeltas({
+      const deltas = venusToDeltas([{
         "serial": 28,
         "path": "/Pv/I",
         "interface": "com.victronenergy.BusItem",
@@ -302,7 +302,7 @@ describe('venustodeltas', function () {
         "value": 16.143278121948242,
         "senderName": 'com.victronenergy.solarcharger.ttyO0',
         "instanceName": 0
-      })
+      }])
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
@@ -317,7 +317,7 @@ describe('venustodeltas', function () {
 
     describe('Charger State', function () {
     it('should return panel charger state in normal case', function () {
-      const deltas = venusToDeltas({
+      const deltas = venusToDeltas([{
         "serial": 28,
         "path": "/State",
         "interface": "com.victronenergy.BusItem",
@@ -362,7 +362,7 @@ describe('venustodeltas', function () {
         "value": 3,
         "senderName": 'com.victronenergy.solarcharger.ttyO0',
         "instanceName": 0
-      })
+      }])
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
@@ -377,7 +377,7 @@ describe('venustodeltas', function () {
 
   describe('Error Notification', function () {
     it('should raise a notification', function () {
-      const deltas = venusToDeltas({
+      const deltas = venusToDeltas([{
         "serial": 28,
         "path": "/ErrorCode",
         "interface": "com.victronenergy.BusItem",
@@ -422,7 +422,7 @@ describe('venustodeltas', function () {
         "value": 2,
         "senderName": 'com.victronenergy.solarcharger.ttyO0',
         "instanceName": 0
-      })
+      }])
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
@@ -444,7 +444,7 @@ describe('venustodeltas', function () {
   
   describe('Unknown Error Notification', function () {
     it('should raise an unknown notification', function () {
-      const deltas = venusToDeltas({
+      const deltas = venusToDeltas([{
         "serial": 28,
         "path": "/ErrorCode",
         "interface": "com.victronenergy.BusItem",
@@ -489,7 +489,7 @@ describe('venustodeltas', function () {
         "value": 55,
         "senderName": 'com.victronenergy.inverter.ttyO0',
         "instanceName": 0
-      })
+      }])
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
@@ -512,7 +512,7 @@ describe('venustodeltas', function () {
 
   describe('LastDischarge', function () {
     it('should return last discharge in normal case', function () {
-      const deltas = venusToDeltas({
+      const deltas = venusToDeltas([{
         "serial": 28,
         "path": "/History/LastDischarge",
         "interface": "com.victronenergy.BusItem",
@@ -557,7 +557,7 @@ describe('venustodeltas', function () {
         "value": -49.20000076293945,
         "senderName": "com.victronenergy.battery.ttyO0",
         "instanceName": 0
-      })
+      }])
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {
@@ -572,7 +572,7 @@ describe('venustodeltas', function () {
 
   describe('Total aH Drawn', function () {
     it('should return TotalAhDrawn in normal case', function () {
-      const deltas = venusToDeltas({
+      const deltas = venusToDeltas([{
         "serial": 31,
         "path": "/History/TotalAhDrawn",
         "interface": "com.victronenergy.BusItem",
@@ -617,7 +617,7 @@ describe('venustodeltas', function () {
         "value": -583.2999877929688,
         "senderName": "com.victronenergy.battery.ttyO0",
         "instanceName": 0
-      })
+      }])
       expect(deltas.length).to.equal(1)
       expect(deltas[0]).to.nested.deep.include({
         'updates[0].values[0]': {

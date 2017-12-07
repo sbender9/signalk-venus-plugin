@@ -32,8 +32,8 @@ module.exports = function (app) {
   */
   plugin.start = function (options) {
     try {
-      stopDbus = createDbusListener(venusMessage => {
-        venusToDeltas(venusMessage).forEach(delta => {
+      stopDbus = createDbusListener(venusMessages => {
+        venusToDeltas(venusMessages).forEach(delta => {
           app.handleMessage(PLUGIN_ID, delta)
         })
       })

@@ -1,5 +1,6 @@
 const dbus = require('dbus-native')
 const debug = require('debug')('vedirect:dbus')
+const _ = require('lodash')
 
 module.exports = function (messageCallback) {
   const bus = process.env.DBUS_SESSION_BUS_ADDRESS ? dbus.sessionBus() : dbus.systemBus()
@@ -24,7 +25,10 @@ module.exports = function (messageCallback) {
   })
 
   function initService(owner, name) {
-    services[owner] = { name: name }
+    var service = { name: name }
+    services[owner] = service
+
+    debug(`${name} is sender ${owner}`)
 
     bus.invoke({
       path: '/DeviceInstance',
@@ -48,8 +52,28 @@ module.exports = function (messageCallback) {
       if ( err ) {
         console.error(`error during GetValue on / for ${name}:\n ${err}`)
       } else {
-        console.log("TODO: do something with all this data:\n")
-        console.log(res)
+        var data = {};
+        res[1][0].forEach(kp => {
+          data[kp[0]] = kp[1][1][0];
+        })
+
+        service.deviceInstance = data.DeviceInstance;
+
+        if ( !_.isUndefined(data.FluidType) ) {
+          service.fluidType = data.FluidType;
+        }
+
+        var messages = []
+        _.keys(data).forEach(path => {
+          messages.push({
+            path: '/' + path,
+            senderName: service.name,
+            value: data[path],
+            instanceName: service.deviceInstance,
+            fluidType: service.fluidType
+          })
+        })
+        messageCallback(messages)
       }
     })
   }
@@ -119,7 +143,7 @@ module.exports = function (messageCallback) {
     }
 
     //debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${m.value}`);
-    messageCallback(m)
+    messageCallback([m])
   }
 
   bus.connection.on('message', signal_receive)

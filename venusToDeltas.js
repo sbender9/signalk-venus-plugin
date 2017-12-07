@@ -103,34 +103,36 @@ const mappings = {
   },
 }
 
-module.exports = function (m) {
-  var mapping = mappings[m.path]
-  if ( !mapping || !m.senderName )
-    return []
+module.exports = function (messages) {
+  var deltas = []
 
-  var instance = m.instanceName
-  var theValue = m.value
+  messages.forEach(m => {
+    var mapping = mappings[m.path]
+    if ( !mapping || !m.senderName )
+      return []
 
-  if ( mapping.conversion )
-    theValue = mapping.conversion(m)
+    var instance = m.instanceName
+    var theValue = m.value
 
-  if ( !theValue )
-    return []
+    if ( mapping.conversion )
+      theValue = mapping.conversion(m)
 
-  if ( !makePath(m) ) {
-    return []
-  }
+    if ( !theValue )
+      return []
 
-  var thePath;
+    if ( !makePath(m) ) {
+      return []
+    }
 
-  thePath = _.isFunction(mapping.path) ?
-    mapping.path(m) :
-    mapping.path;
+    var thePath;
 
-  thePath = thePath.replace(/\$\{instance\}/g, instance);
+    thePath = _.isFunction(mapping.path) ?
+      mapping.path(m) :
+      mapping.path;
 
-  return [
-    {
+    thePath = thePath.replace(/\$\{instance\}/g, instance);
+
+    deltas.push({
       updates: [
         {
           source: {
@@ -148,8 +150,9 @@ module.exports = function (m) {
           timestamp: (new Date()).toISOString()
         }
       ]
-    }
-  ]
+    });
+  });
+  return deltas;
 }
 
 function percentToRatio(msg) {
@@ -165,6 +168,10 @@ function makePath(msg, path) {
     type = 'solar'
   } else if ( msg.senderName.startsWith('com.victronenergy.inverter') ) {
     type = 'inverters'
+  } else if ( msg.senderName.startsWith('com.victronenergy.vebus') ) {
+    type = 'batteries'
+  } else if ( msg.senderName.startsWith('com.victronenergy.tank') ) {
+    type = 'tanks'
   } else {
     return null
   }
