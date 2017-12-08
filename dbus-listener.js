@@ -97,7 +97,7 @@ module.exports = function (messageCallback) {
     old_owner = m.body[1]
     new_owner = m.body[2]
 
-    if (new_owner.startsWith('com.victronenergy')) {
+    if (name.startsWith('com.victronenergy')) {
       initService(new_owner, name)
     } else {
       delete services[old_owner]
