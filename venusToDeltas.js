@@ -11,8 +11,11 @@ const mappings = {
   "/Dc/0/Current": {
     path: (msg) => { return makePath(msg, '${instance}.current') }
   },
+  "/Dc/0/Power": {
+    path: (msg) => { return makePath(msg, '${instance}.power') }
+  },
   '/Soc': {
-    path: 'electrical.batteries.${instance}.capacity.stateOfCharge',
+    path: (msg) => { return makePath(msg, '${instance}.capacity.stateOfCharge') },
     conversion: percentToRatio
   },
   '/TimeToGo': {
@@ -32,9 +35,19 @@ const mappings = {
   '/Pv/V': {
     path: 'electrical.solar.${instance}.panelVoltage'
   },
+  '/Yield/Power': {
+    path: 'electrical.solar.${instance}.panelPower'
+  },
+  '/History/Daily/0/Yield': {
+    path: 'electrical.solar.${instance}.yieldToday'
+  },
   '/State': {
-    path: 'electrical.solar.${instance}.chargingMode',
+    path: (msg) => { return makePath(msg, '${instance}.chargingMode') },
     conversion: convertState
+  },
+  '/Mode': {
+    path: (msg) => { return makePath(msg, '${instance}.mode') },
+    conversion: convertMode
   },
   '/ErrorCode': {
     path: (msg) => {
@@ -101,6 +114,63 @@ const mappings = {
     },
     conversion: percentToRatio
   },
+  '/Ac/ActiveIn/L1/I': {
+    path: (msg) => { return makePath(msg, '${instance}.acin.current') }
+  },
+  '/Ac/ActiveIn/L1/P': {
+    path: (msg) => { return makePath(msg, '${instance}.acin.power') }
+  },
+  '/Ac/ActiveIn/L1/V': {
+    path: (msg) => { return makePath(msg, '${instance}.acin.voltage') }
+  },
+  '/Ac/ActiveIn/L2/I': {
+    path: (msg) => { return makePath(msg, '${instance}.acin2.current') }
+  },
+  '/Ac/ActiveIn/L2/P': {
+    path: (msg) => { return makePath(msg, '${instance}.acin2.power') }
+  },
+  '/Ac/ActiveIn/L2/V': {
+    path: (msg) => { return makePath(msg, '${instance}.acin2.voltage') }
+  },
+  '/Ac/ActiveIn/L3/I': {
+    path: (msg) => { return makePath(msg, '${instance}.acin3.current') }
+    },
+  '/Ac/ActiveIn/L3/P': {
+    path: (msg) => { return makePath(msg, '${instance}.acin3.power') }
+  },
+  '/Ac/ActiveIn/L3/V': {
+    path: (msg) => { return makePath(msg, '${instance}.acin3.voltage') }
+  },
+  '/Ac/Out/L1/I': {
+    path: (msg) => { return makePath(msg, '${instance}.acout.current') }
+  },
+  '/Ac/Out/L1/P': {
+    path: (msg) => { return makePath(msg, '${instance}.acout.power') }
+  },
+  '/Ac/Out/L1/V': {
+    path: (msg) => { return makePath(msg, '${instance}.acout.voltage') }
+  },
+  '/Ac/Out/L2/I': {
+    path: (msg) => { return makePath(msg, '${instance}.acout2.current') }
+  },
+  '/Ac/Out/L2/P': {
+    path: (msg) => { return makePath(msg, '${instance}.acout2.power') }
+  },
+  '/Ac/Out/L2/V': {
+    path: (msg) => { return makePath(msg, '${instance}.acout2.voltage') }
+  },
+  '/Ac/Out/L3/I': {
+    path: (msg) => { return makePath(msg, '${instance}.acout3.current') }
+  },
+  '/Ac/Out/L3/P': {
+    path: (msg) => { return makePath(msg, '${instance}.acout3.power') }
+  },
+  '/Ac/Out/L3/V': {
+    path: (msg) => { return makePath(msg, '${instance}.acout3.voltage') }
+  },
+  '/ExtraBatteryCurrent': {
+    path: (msg) => { return 'electrical.batteries.${instance}b.current' }
+  }
 }
 
 module.exports = function (messages) {
@@ -114,15 +184,18 @@ module.exports = function (messages) {
     var instance = m.instanceName
     var theValue = m.value
 
-    if ( mapping.conversion )
-      theValue = mapping.conversion(m)
-
-    if ( !theValue )
-      return []
-
     if ( !makePath(m) ) {
       return []
     }
+
+    if ( mapping.conversion )
+      theValue = mapping.conversion(m)
+
+    if ( _.isUndefined(theValue) || theValue == null )
+      return []
+
+    if ( _.isArray(theValue) ) //seem to get this for some unknown values
+      return []
 
     var thePath;
 
@@ -169,7 +242,7 @@ function makePath(msg, path) {
   } else if ( msg.senderName.startsWith('com.victronenergy.inverter') ) {
     type = 'inverters'
   } else if ( msg.senderName.startsWith('com.victronenergy.vebus') ) {
-    type = 'batteries'
+    type = 'inverterCharger'
   } else if ( msg.senderName.startsWith('com.victronenergy.tank') ) {
     type = 'tanks'
   } else {
@@ -178,7 +251,7 @@ function makePath(msg, path) {
   return 'electrical.' + type + '.' + (path || '');
 }
 
-const stateMap= {
+const solarStateMap= {
   0: 'not charging',
   2: 'other',
   3: 'bulk',
@@ -188,10 +261,42 @@ const stateMap= {
   7: 'equalize',
 };
 
-function convertState(msg) {
-  return stateMap[Number(msg.value)] || 'unknown'
+const vebusStateMap = {
+  0: 'off',
+  1: 'low power',
+  2: 'fault',
+  3: 'bulk',
+  4: 'absortion',
+  5: 'float',
+  6: 'storage',
+  7: 'equalize',
+  8: 'passthru',
+  9: 'inverting',
+  10: 'power assist',
+  11: 'power supply',
+  252: 'bulk protection'
 }
 
+function convertState(msg) {
+  var map
+  if ( msg.senderName.startsWith('com.victronenergy.solarcharger') ) {
+    map = solarStateMap
+  } else if ( msg.senderName.startsWith('com.victronenergy.vebus') ) {
+    map = vebusStateMap
+  }
+  return map[Number(msg.value)] || 'unknown'
+}
+
+const vebusModeMap = {
+  1: 'charger only',
+  2: 'inverter only',
+  3: 'on',
+  4: 'off'
+}
+
+function convertMode(msg) {
+  return vebusModeMap[Number(msg.value)] || 'unknown'
+}
 
 const solarErrorCodeMap = {
   0: 'No error',
