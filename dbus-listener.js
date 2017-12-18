@@ -2,8 +2,16 @@ const dbus = require('dbus-native')
 const debug = require('debug')('vedirect:dbus')
 const _ = require('lodash')
 
-module.exports = function (messageCallback) {
-  const bus = process.env.DBUS_SESSION_BUS_ADDRESS ? dbus.sessionBus() : dbus.systemBus()
+module.exports = function (messageCallback, address) {
+  var bus
+  if (address) {
+    bus = dbus.createClient({
+      busAddress: address,
+      authMethods: ['ANONYMOUS']
+    })
+  } else {
+    bus = process.env.DBUS_SESSION_BUS_ADDRESS ? dbus.sessionBus() : dbus.systemBus()
+  }
 
   if (!bus) {
     throw new Error('Could not connect to the D-Bus')

@@ -17,10 +17,19 @@ module.exports = function (app) {
     title: PLUGIN_NAME,
     type: 'object',
     properties: {
-      someParameter: {
-        type: 'number',
-        title: "Some configurable thing in SK servers' plugin config ui",
-        default: 60
+      installType : {
+        type: 'string',
+        title: 'How to connect to Venus D-Bus',
+        enum: [ 'local', 'remote' ],
+        enumNames: [
+          'Connect to localhost (signalk-server is running on a Venus device)',
+          'Connect to remote Venus installation'],
+        default: 'local'
+      },
+      dbusAddress: {
+        type: 'string',
+        title: 'Address for remote Venus device (D-Bus address notation)' ,
+        default: 'tcp:host=192.168.1.57,port=78'
       }
     }
   }
@@ -36,7 +45,7 @@ module.exports = function (app) {
         venusToDeltas(venusMessages).forEach(delta => {
           app.handleMessage(PLUGIN_ID, delta)
         })
-      })
+      }, options.installType == 'remote' ? options.dbusAddress : '')
     } catch ( error ) {
       console.error(`error creating dbus listener: ${error}`)
     }
