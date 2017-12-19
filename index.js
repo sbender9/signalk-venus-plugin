@@ -34,14 +34,13 @@ module.exports = function (app) {
     }
   }
 
-  let stopDbus
   /*
     Called when the plugin is started (server is started with plugin enabled
     or the plugin is enabled from ui on a running server).
   */
   plugin.start = function (options) {
     try {
-      stopDbus = createDbusListener(venusMessages => {
+      dbusStop = createDbusListener(venusMessages => {
         venusToDeltas(venusMessages).forEach(delta => {
           app.handleMessage(PLUGIN_ID, delta)
         })
@@ -55,9 +54,9 @@ module.exports = function (app) {
     Called when the plugin is disabled on a running server with the plugin enabled.
   */
   plugin.stop = function () {
-    if (stopDbus) {
+    if (typeof dbusStop !== 'undefined') {
       dbusStop()
-      stopDbus = undefined
+      dbusStop = undefined
     }
   }
 

@@ -162,5 +162,7 @@ module.exports = function (messageCallback, address) {
   bus.addMatch("type='signal',member='NameOwnerChanged'", d => {})
 
   // TODO return a function to stop the dbus listener
-  return () => {}
+  return () => {
+    bus.connection.end()
+  }
 }
