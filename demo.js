@@ -4,4 +4,7 @@ const venusSignalk = require('./')({
     }
 })
 
-venusSignalk.start()
+venusSignalk.start({
+  installType: 'local',
+  dbusAddress: ''
+})
