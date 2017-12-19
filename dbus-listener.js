@@ -45,7 +45,12 @@ module.exports = function (messageCallback, address) {
       member: "GetValue"
     }, function(err, res) {
       if ( err ) {
-        console.error(`error getting device instance for ${name}:\n ${err}`)
+        // There are several dbus services that don't have the /DeviceInstance
+        // path. They are services that are not interesting for signalk, like
+        // a process to manage settings on the dbus, the logger to VRM Portal
+        // and others. All services that send out data for connected devices do
+        // have the /DeviceInstance path.
+        debug(`warning: error getting device instance for ${name}`)
       } else {
         services[owner].deviceInstance = res[1][0];
       }
@@ -58,7 +63,9 @@ module.exports = function (messageCallback, address) {
       member: "GetValue"
     }, function(err, res) {
       if ( err ) {
-        console.error(`error during GetValue on / for ${name}:\n ${err}`)
+        // Some services don't support requesting the root path. They are not
+        // interesting to signalk, see above in the comments on /DeviceInstance
+        debug(`warning: error during GetValue on / for ${name}`)
       } else {
         var data = {};
         res[1][0].forEach(kp => {
@@ -137,7 +144,9 @@ module.exports = function (messageCallback, address) {
     var service = services[m.sender]
 
     if ( !service || !service.name || !service.deviceInstance) {
-      debug(`unknown service; ${m.sender}`)
+      // See comment above explaining why some services don't have the
+      // /DeviceInstance path
+      debug(`warning: unknown service; ${m.sender}`)
       return
     }
 
