@@ -8,6 +8,7 @@ const venusToDeltas = require('./venusToDeltas')
 
 module.exports = function (app) {
   const plugin = {}
+  var venusToDeltaStop
 
   plugin.id = PLUGIN_ID
   plugin.name = PLUGIN_NAME
@@ -34,17 +35,24 @@ module.exports = function (app) {
     }
   }
 
+  function handleMessage(delta) {
+    app.handleMessage(PLUGIN_ID, delta);
+  }
+
   /*
     Called when the plugin is started (server is started with plugin enabled
     or the plugin is enabled from ui on a running server).
   */
   plugin.start = function (options) {
+    var {stop, toDelta} = venusToDeltas(app, options, handleMessage);
+
+    venusToDeltaStop = stop
     try {
       dbusStop = createDbusListener(venusMessages => {
-        venusToDeltas(venusMessages).forEach(delta => {
+        toDelta(venusMessages).forEach(delta => {
           app.handleMessage(PLUGIN_ID, delta)
         })
-      }, options.installType == 'remote' ? options.dbusAddress : '')
+      }, options.installType == 'remote' ? options.dbusAddress : '', stop)
     } catch ( error ) {
       console.error(`error creating dbus listener: ${error}`)
     }
@@ -57,6 +65,10 @@ module.exports = function (app) {
     if (typeof dbusStop !== 'undefined') {
       dbusStop()
       dbusStop = undefined
+    }
+    if ( venusToDeltaStop ) {
+      venusToDeltaStop();
+      venusToDeltaStop = undefined
     }
   }
 

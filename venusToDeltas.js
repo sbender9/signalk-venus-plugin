@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const debug = require("debug")("venusToDeltas")
 
-const mappings = {
+const venusToSignalKMapping = {
   '/Dc/0/Voltage': {
     path: (msg) => { return makePath(msg, '${instance}.voltage') }
   },
@@ -173,59 +173,114 @@ const mappings = {
   }
 }
 
-module.exports = function (messages) {
-  var deltas = []
+module.exports = function(app, options, handleMessage) {
+  var deltaCache = {}
+  var resendTimer
+  var lastMessageTimw
+  const resendTimeout = 10*1000
+  const sourceTimeout = 60*1000
 
-  messages.forEach(m => {
-    var mapping = mappings[m.path]
-    if ( !mapping || !m.senderName )
-      return []
-
-    var instance = m.instanceName
-    var theValue = m.value
-
-    if ( !makePath(m) ) {
-      return []
+  function resendDeltas() {
+    debug(`resendDeltas`)
+    if ( lastMessageTimw &&  Date.now() - lastMessageTimw > sourceTimeout ) {
+      debug(`too long since last message, stopping resend`)
+      deltaCache = {}
+      clearInterval(resendTimer)
+      return
     }
 
-    if ( mapping.conversion )
-      theValue = mapping.conversion(m)
-
-    if ( _.isUndefined(theValue) || theValue == null )
-      return []
-
-    if ( _.isArray(theValue) ) //seem to get this for some unknown values
-      return []
-
-    var thePath;
-
-    thePath = _.isFunction(mapping.path) ?
-      mapping.path(m) :
-      mapping.path;
-
-    thePath = thePath.replace(/\$\{instance\}/g, instance);
-
-    deltas.push({
-      updates: [
-        {
-          source: {
-            label: 'venus',
-            sender: m.sender,
-            senderName: m.senderName,
-            venusPath: m.path
-          },
-          values: [
-            {
-              path: thePath,
-              value: theValue
-            }
-          ],
-          timestamp: (new Date()).toISOString()
-        }
-      ]
+    _.values(deltaCache).forEach(info => {
+      if ( Date.now() - info.timestamp > resendTimeout ) {
+        debug(`resending delta for: ${info.path}`)
+        handleMessage(delta)
+      }
     });
-  });
-  return deltas;
+  }
+  
+  function stop() {
+    if ( resendTimer ) {
+      clearTimeout(resendTimer)
+    }
+  }
+  
+  function toDelta(messages) {
+    var deltas = []
+
+    lastMessageTimw = new Date();
+
+    if ( !resendTimer ) {
+      resendTimer = setInterval(resendDeltas, resendTimeout);
+    }
+
+    messages.forEach(m => {
+      var mappings = venusToSignalKMapping[m.path]
+      if ( !mappings || !m.senderName )
+        return []
+
+      if ( !_.isArray(mappings) ) {
+        mappings = [ mappings ]
+      }
+      
+      mappings.forEach(mapping => {
+        var instance = m.instanceName
+        var theValue = m.value
+
+        if ( !makePath(m) ) {
+          return []
+        }
+
+        if ( mapping.conversion )
+          theValue = mapping.conversion(m)
+
+        if ( _.isUndefined(theValue) || theValue == null )
+          return []
+
+        if ( _.isArray(theValue) ) //seem to get this for some unknown values
+          return []
+
+        var thePath;
+
+        thePath = _.isFunction(mapping.path) ?
+          mapping.path(m) :
+          mapping.path;
+
+        thePath = thePath.replace(/\$\{instance\}/g, instance);
+
+        var timestamp = new Date();
+        delta = {
+          updates: [
+            {
+              source: {
+                label: 'venus',
+                sender: m.sender,
+                senderName: m.senderName,
+                venusPath: m.path
+              },
+              values: [
+                {
+                  path: thePath,
+                  value: theValue
+                }
+              ],
+              timestamp: timestamp.toISOString()
+            }
+          ]
+        }
+
+        deltaCache[thePath] = {
+          timestamp: timestamp,
+          path: thePath,
+          delta: delta
+        };
+
+        deltas.push(delta);
+      });
+    });
+    
+    return deltas;
+  }
+
+  return { stop: stop, toDelta: toDelta }
 }
 
 function percentToRatio(msg) {
@@ -380,6 +435,5 @@ const fluidTypeMapping = {
 }
 
 function getFluidType(typeId) {
-  debug(`getFluidType ${typeId} ${fluidTypeMapping[typeId]}`)
   return fluidTypeMapping[typeId] || 'unknown';
 }

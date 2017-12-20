@@ -2,7 +2,7 @@ const dbus = require('dbus-native')
 const debug = require('debug')('vedirect:dbus')
 const _ = require('lodash')
 
-module.exports = function (messageCallback, address) {
+module.exports = function (messageCallback, address, stopCallback) {
   var bus
   if (address) {
     bus = dbus.createClient({
@@ -146,7 +146,7 @@ module.exports = function (messageCallback, address) {
     if ( !service || !service.name || !service.deviceInstance) {
       // See comment above explaining why some services don't have the
       // /DeviceInstance path
-      debug(`warning: unknown service; ${m.sender}`)
+      //debug(`warning: unknown service; ${m.sender}`)
       return
     }
 
@@ -169,6 +169,11 @@ module.exports = function (messageCallback, address) {
     d => {}
   )
   bus.addMatch("type='signal',member='NameOwnerChanged'", d => {})
+
+  bus.connection.on('end', () => {
+    stopCallback();
+  });
+                   
 
   // TODO return a function to stop the dbus listener
   return () => {
