@@ -41,14 +41,22 @@ const venusToSignalKMapping = {
   '/History/Daily/0/Yield': {
     path: 'electrical.solar.${instance}.yieldToday'
   },
-  '/State': {
-    path: (msg) => { return makePath(msg, '${instance}.chargingMode') },
-    conversion: convertState
-  },
-  '/Mode': {
-    path: (msg) => { return makePath(msg, '${instance}.mode') },
-    conversion: convertMode
-  },
+  '/State':  [
+    {
+      path: (msg) => { return makePath(msg, '${instance}.chargingMode') },
+      conversion: convertState
+    }, {
+      path: (msg) => { return makePath(msg, '${instance}.chargingModeNumber') },
+    }
+  ],
+  '/Mode': [
+    {
+      path: (msg) => { return makePath(msg, '${instance}.mode') },
+      conversion: convertMode
+    }, {
+      path: (msg) => { return makePath(msg, '${instance}.modeNumber') },
+    }
+  ],
   '/ErrorCode': {
     path: (msg) => {
       return 'notifications.' + makePath(msg, '${instance}.error')
@@ -169,7 +177,7 @@ const venusToSignalKMapping = {
     path: (msg) => { return makePath(msg, '${instance}.acout3.voltage') }
   },
   '/ExtraBatteryCurrent': {
-    path: (msg) => { return 'electrical.batteries.${instance}b.current' }
+    path: (msg) => { return 'electrical.batteries.${instance}starter.current' }
   }
 }
 
@@ -177,7 +185,7 @@ module.exports = function(app, options, handleMessage) {
   var deltaCache = {}
   var resendTimer
   var lastMessageTimw
-  const resendTimeout = 10*1000
+  const resendTimeout = 30*1000
   const sourceTimeout = 60*1000
 
   function resendDeltas() {
@@ -191,8 +199,10 @@ module.exports = function(app, options, handleMessage) {
 
     _.values(deltaCache).forEach(info => {
       if ( Date.now() - info.timestamp > resendTimeout ) {
-        debug(`resending delta for: ${info.path}`)
-        handleMessage(delta)
+        info.timestamp = Date.now();
+        info.delta.updates[0].timestamp = new Date().toISOString();
+        debug(`resending delta for: ${info.path} ${JSON.stringify(info.delta)}`)
+        handleMessage(info.delta)
       }
     });
   }
@@ -247,7 +257,7 @@ module.exports = function(app, options, handleMessage) {
         thePath = thePath.replace(/\$\{instance\}/g, instance);
 
         var timestamp = new Date();
-        delta = {
+        var delta = {
           updates: [
             {
               source: {
@@ -268,7 +278,7 @@ module.exports = function(app, options, handleMessage) {
         }
 
         deltaCache[thePath] = {
-          timestamp: timestamp,
+          timestamp: timestamp.getTime(),
           path: thePath,
           delta: delta
         };
