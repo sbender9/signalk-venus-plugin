@@ -2,7 +2,7 @@ const dbus = require('dbus-native')
 const debug = require('debug')('vedirect:dbus')
 const _ = require('lodash')
 
-module.exports = function (messageCallback, address) {
+module.exports = function (messageCallback, address, stopCallback) {
   var bus
   if (address) {
     bus = dbus.createClient({
@@ -56,6 +56,7 @@ module.exports = function (messageCallback, address) {
       }
     })
 
+    debug(`getValue / ${name}`)
     bus.invoke({
       path: '/',
       destination: name,
@@ -65,7 +66,7 @@ module.exports = function (messageCallback, address) {
       if ( err ) {
         // Some services don't support requesting the root path. They are not
         // interesting to signalk, see above in the comments on /DeviceInstance
-        debug(`warning: error during GetValue on / for ${name}`)
+        debug(`warning: error during GetValue on / for ${name} ${err}`)
       } else {
         var data = {};
         res[1][0].forEach(kp => {
@@ -77,6 +78,8 @@ module.exports = function (messageCallback, address) {
         if ( !_.isUndefined(data.FluidType) ) {
           service.fluidType = data.FluidType;
         }
+
+        //debug(`${service.name} ${JSON.stringify(data)}`)
 
         var messages = []
         _.keys(data).forEach(path => {
@@ -141,12 +144,14 @@ module.exports = function (messageCallback, address) {
       }
     })
 
+              
     var service = services[m.sender]
 
-    if ( !service || !service.name || !service.deviceInstance) {
+ 
+    if ( !service || !service.name ) {
       // See comment above explaining why some services don't have the
       // /DeviceInstance path
-      debug(`warning: unknown service; ${m.sender}`)
+      //debug(`warning: unknown service; ${m.sender}`)
       return
     }
 
@@ -160,7 +165,27 @@ module.exports = function (messageCallback, address) {
     }
 
     //debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${m.value}`);
+    //debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${JSON.stringify(m.body)}`);
+    
     messageCallback([m])
+  }
+
+  function setValue(destination, path, value) {
+    debug(`setValue: ${destination} ${path} = ${value}`)
+    bus.invoke({
+      path: path,
+      destination: destination,
+      interface: 'com.victronenergy.BusItem',
+      member: "SetValue",
+      body: [ // top level struct is js array
+        ['n', value], // variant, type is number, value = 1
+      ],
+      signature: 'v'
+    }, function(err, res) {
+      if ( err ) {
+        console.error(err)
+      }
+    })
   }
 
   bus.connection.on('message', signal_receive)
@@ -170,8 +195,13 @@ module.exports = function (messageCallback, address) {
   )
   bus.addMatch("type='signal',member='NameOwnerChanged'", d => {})
 
-  // TODO return a function to stop the dbus listener
-  return () => {
-    bus.connection.end()
+  bus.connection.on('end', () => {
+    stopCallback();
+  });
+                   
+
+  return {
+    stop: () => bus.connection.end(),
+    setValue: setValue
   }
 }
