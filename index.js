@@ -1,5 +1,5 @@
 const PLUGIN_ID = 'venus'
-const PLUGIN_NAME = 'Venus plugin'
+const PLUGIN_NAME = 'Victron Venus Plugin'
 
 const debug = require('debug')(PLUGIN_ID)
 

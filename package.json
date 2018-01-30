@@ -1,6 +1,6 @@
 {
-  "name": "venus-signalk",
-  "version": "0.0.1",
+  "name": "signalk-venus-plugin",
+  "version": "1.0.0",
   "description": "Victron Venus-SignalK Integration",
   "main": "index.js",
   "dependencies": {
@@ -22,7 +22,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mpvader/venus-signalk.git"
+    "url": "git+https://github.com/sbender9/venus-signalk.git"
   },
   "contributors": [
     {
@@ -34,7 +34,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mpvader/venus-signalk/issues"
+    "url": "https://github.com/sbender9/venus-signalk/issues"
   },
-  "homepage": "https://github.com/mpvader/venus-signalk#readme"
+  "homepage": "https://github.com/sbender9/venus-signalk#readme"
 }
