@@ -25,21 +25,24 @@ Venus device itself.
 Use the #victron channel on the [Signal K Slack](http://slack-invite.signalk.org/).
 
 ## Plugin installation & configuration
-Install the plugin by running `npm install mpvader/venus-signalk` from the node_modules directory
-in your Signal K install.
+Installing is simple: the plugin is available in the signalk app store. Simply click to
+install.
 
-Restart signalk-noder-server. It will automatically pick-up the new plugin.
+Then there are two settings. The first is how to connect to the Venus communication bus,
+called D-Bus. Choose between these two:
 
-Then configure it from the Signal K website, usually available on `http://[ip-address]:3000/`
+A. Connect to localhost
+B. Connect to a Venus device over tcp
 
-First, configure how to connect to the Venus D-bus:
-1. Connect to localhost (choose this when the Signal K server is running on the Venus device
-2. Connect to a Venus device over tcp
+Use option one when signalk-server is installed on to Venus itself. Use option 2 in case
+that signalk is one device, for example a raspberrypi running Raspbian, which needs to connect
+to for example a Venus GX or Color Control GX elsewhere on the network.
 
-Then, only when option 2 was chosen, set the right address. Besides setting that address, the
-Venus device must in this case also be configured to allow D-Bus connections via tcp, as its by
-default not binding its D-Bus daemon to tcp. To make it do so, add these three lines to
-`/etc/dbus-1/system.conf` on the Venus device:
+When using option B, also put in the ipaddress and port.
+
+When using option B, its also necessary to open up the port on the Venus device. It must be
+configured to allow D-Bus connections via tcp, as its by default not binding its D-Bus daemon
+to tcp. To make it do so, add these three lines to `/etc/dbus-1/system.conf` on the Venus device:
     
       <listen>tcp:host=0.0.0.0,port=78</listen>
       <auth>ANONYMOUS</auth>
@@ -51,40 +54,6 @@ setting instead of a hack. __Make sure to only do this on a trusted network.__
 
 To make above change, you'll need
 [root access to the Venus device](https://www.victronenergy.com/live/ccgx:root_access).
-
-## How to install Signal K Node Server & this plugin
-
-Ofcourse, the proper thing to do is to read the signalk docs. But for the impatient souls
-such as myself, herewith a short instruction to get up & running:
-
-- Install nodejs. Version 6 or newer.
-- Clone signalk node server.
-- Go into the dir and run `npm install`. This will install all dependencies in a
-  subdir names `node_modules`
-- Then run `npm install mpvader/venus-signalk`. This install this repo in to the
-  same `node_modules` dir.
-- Then go back to the root of signa lk node server, and start it:
-
-```
-$ ./bin/signalk-server
-signalk-server running at 0.0.0.0:3000
-
-Error reading /home/matthijs/dev/signalk-server-node/public/mapcache
-GET / 304 4.750 ms - -
-GET /bootstrap/dist/css/bootstrap.min.css 304 4.364 ms - -
-GET /jquery/dist/jquery.min.js 304 2.982 ms - -
-GET /plugins/configure/ 304 0.620 ms - -
-GET /bootstrap/dist/css/bootstrap.min.css 304 2.124 ms - -
-GET /jquery/dist/jquery.min.js 304 2.094 ms - -
-GET /bootstrap/dist/js/bootstrap.min.js 304 1.862 ms - -
-GET /plugins/configure/main.js 304 1.425 ms - -
-GET /plugins 200 3.164 ms - 26342
-... etcetera
-```
-
-- Open a browser and navigate to http://127.0.0.1/ to get to its config.
-
-And then there is plenty more, see signalk docs for that.
 
 ## Test harness
 
