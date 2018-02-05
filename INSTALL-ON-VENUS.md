@@ -73,10 +73,66 @@ opkg install git
 ### Installing signalk server
 
 ```
-npm install git+https://github.com/SignalK/signalk-server-node.git
+npm install -g --unsafe-perm signalk-server
 ```
 
+### Full process of installing the signalk server and the venus plugin on a CCGX
+```
+# Insert a sdcard into the CCGX and formart it as ext4. 
+# Stop the vrmlogger service to unlock the partition
+svc -d /service/vrmlogger
 
+# Umount the partition
+umount /media/mmcblk0p1
+
+# Format it as ext4
+mkfs.ext4 /dev/mmcblk0p1
+
+# Mount the partition and create the necessary directories
+mount /dev/mmcblk0p1 /media/mmcblk0p1
+cd /media/mmcblk0p1
+mkdir signalk
+mkdir tmp
+
+# Edit the opkg config /etc/opkg/opkg.conf
+# and add the following line to create a new destination
+dest signalk /media/mmcblk0p1/signalk
+
+# Edit /etc/profile and modify the PATH enviroment variable to include
+# the previouly created opkg destination
+PATH="/usr/local/bin:/usr/bin:/bin:/media/mmcblk0p1/signalk/usr/bin"
+
+# Install nodejs and npm packages
+opkg -d signalk install libcrypto1.0.0_1.0.2h-r0_cortexa8hf-vfp-neon.ipk
+opkg -d signalk install libssl1.0.0_1.0.2h-r0_cortexa8hf-vfp-neon.ipk
+opkg -d signalk install nodejs_8.4.0-r0_cortexa8hf-vfp-neon.ipk
+opkg -d signalk install nodejs-npm_8.4.0-r0_cortexa8hf-vfp-neon.ipk
+
+# This packages will be need later to build some of the signalsk-server 
+# dependencies (bcrypto) and for installing the venus signalk plugin
+opkg install packagegroup-core-buildessential  python-compiler python-misc git-perltools
+
+# Configure npm to use the sdcard for the cache files
+npm config set cache /media/mmcblk0p1/tmp/.npm
+
+# npm uses a large amount of RAM during the packages install process, this can
+# cause a reboot by the wachdog service. To prevent this situation
+# stop temporaly some services to free some MB of RAM.
+svc -d /service/gui/
+svc -d /service/dbus-qwacs
+svc -d /service/dbus-generator-starter
+svc -d /service/dbus-fronius
+
+# Install the signalk-server
+npm install -g --unsafe-perm signalk-server
+
+# Now the signalk-server is installed, configure and start it
+signalk-server-setup
+signalk-server
+
+# Once the server is up and running the web interface is available on http://CCGXIPADDRESS:3000.
+# The venus signalk plugin can be installed from the appstore available in the web interface.
+```
 ### Some notes on required diskspace, needs to be amended and calculated
 
 ```
