@@ -26,57 +26,13 @@ Steps to install outside the rootfs on a Venus GX:
 
 Then to all opkg commands add `-d signalk`, which specifies an alternate destination.
 
-For the CCGX you could the same, but then on an sdcard. Note that most sdcards
+For the CCGX you could do the same, but then on an sdcard. Note that most sdcards
 will be formatted with vfat, which doesn't support the (required) symlinks. So re-
 format the partition to ext3 or ext4 for example. mkfs.ext4 is installed on the ccgx.
 
-### Installing the dependencies
+### Installing the signalk server and this plugin on a CCGX
+Some of the required files are in the [/venus-ipks](/venus-ipks) folder in this repo.
 
-Raspberrypis: take & install the cortexa7hf files.
-CCGX & Venus GX: take & install the cortexa8hf files.
-
-The files are in the [/venus-ipks](/venus-ipks) folder in this repo.
-
-```
-libssl1.0.0_1.0.2h-r0_cortexa7hf-vfp-vfpv4-neon.ipk
-libcrypto1.0.0_1.0.2h-r0_cortexa7hf-vfp-vfpv4-neon.ipk
-nodejs_6.12.0-r1.7_cortexa7hf-vfp-vfpv4-neon.ipk
-nodejs-npm_6.12.0-r1.7_cortexa7hf-vfp-vfpv4-neon.ipk
-```
-
-Login to the target and install the packages:
-
-```
-ssh root@192.168.178.57
-
-opkg update
-opkg install ./libcrypto1.0.0_1.0.2h-r0_cortexa7hf-vfp-vfpv4-neon.ipk
-opkg install ./libssl1.0.0_1.0.2h-r0_cortexa7hf-vfp-vfpv4-neon.ipk
-opkg install ./nodejs_6.12.0-r1.7_cortexa7hf-vfp-vfpv4-neon.ipk
-opkg install ./nodejs-npm_6.12.0-r1.7_cortexa7hf-vfp-vfpv4-neon.ipk
-```
-
-Besides those packages that are not (yet) available from the Venus OS opkg
-feed, there are also some that are available. They need and can be installed
-without copying around packages yourself:
-
-```
-# git is required by npm when downloading from github
-opkg install git
-
-# MVA 2018-02-01: outcommented this one, the idea is that all npm packages
-# should now have been fixed to no longer require git-submodules.
-# git-perltools includes git-submodule, which is required by npm
-#opkg install git-perltools
-```
-
-### Installing signalk server
-
-```
-npm install -g --unsafe-perm signalk-server
-```
-
-### Full process of installing the signalk server and the venus plugin on a CCGX
 ```
 # Insert a sdcard into the CCGX and formart it as ext4. 
 # Stop the vrmlogger service to unlock the partition
