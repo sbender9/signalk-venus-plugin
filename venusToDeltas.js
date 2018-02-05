@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const debug = require("debug")("venusToDeltas")
+const debug = require("debug")("signalk-venus-plugin:venusToDeltas")
 
 const venusToSignalKMapping = {
   '/Dc/0/Voltage': {

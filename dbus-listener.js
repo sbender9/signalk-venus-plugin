@@ -1,5 +1,5 @@
 const dbus = require('dbus-native')
-const debug = require('debug')('vedirect:dbus')
+const debug = require('debug')('signalk-venus-plugin:dbus')
 const _ = require('lodash')
 
 module.exports = function (messageCallback, address, stopCallback) {

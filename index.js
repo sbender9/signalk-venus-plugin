@@ -1,8 +1,6 @@
 const PLUGIN_ID = 'venus'
 const PLUGIN_NAME = 'Victron Venus Plugin'
 
-const debug = require('debug')(PLUGIN_ID)
-
 const createDbusListener = require('./dbus-listener')
 const venusToDeltas = require('./venusToDeltas')
 
@@ -63,8 +61,8 @@ module.exports = function (app) {
       dbusSetValue = dbus.setValue
       app.on('venusSetValue', setValueCallback)
     } catch ( error ) {
-      console.log(error.stack)
-      console.error(`error creating dbus listener: ${error}`)
+      app.error(error.stack)
+      app.error(`error creating dbus listener: ${error}`)
     }
   }
 
