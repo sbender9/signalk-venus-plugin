@@ -4,8 +4,11 @@ const PLUGIN_NAME = 'Victron Venus Plugin'
 const createDbusListener = require('./dbus-listener')
 const venusToDeltas = require('./venusToDeltas')
 
+const gpsDestination = 'com.victronenergy.gps'
+
 module.exports = function (app) {
   const plugin = {}
+  var onStop = []
   var venusToDeltaStop
   var dbusSetValue
 
@@ -30,7 +33,12 @@ module.exports = function (app) {
         type: 'string',
         title: 'Address for remote Venus device (D-Bus address notation)' ,
         default: 'tcp:host=192.168.1.57,port=78'
-      }
+      }/*,
+      sendPosistion: {
+        type: 'boolean',
+        title: 'Send Signal K position, course and speed to venus',
+        default: false
+      }*/
     }
   }
 
@@ -60,16 +68,70 @@ module.exports = function (app) {
       dbusStop = dbus.stop
       dbusSetValue = dbus.setValue
       app.on('venusSetValue', setValueCallback)
+
+      /*
+      if ( options.sendPosistion ) {
+        var subscription = {
+          context: 'vessels.self',
+          subscribe: [
+            {
+              path: 'navigation.position',
+            },
+            {
+              path: 'navigation.courseOverGroundTrue',
+            },
+            {
+              path: 'navigation.speedOverGround'
+            }
+          ]
+        }
+        app.subscriptionmanager.subscribe(subscription,
+                                          onStop,
+                                          (err) => {
+                                            console.error("error: " + err)
+                                          },
+                                          handleDelta);
+      }
+      */
     } catch ( error ) {
-      app.error(error.stack)
-      app.error(`error creating dbus listener: ${error}`)
+      console.error(error.stack)
+      console.error(`error creating dbus listener: ${error}`)
     }
   }
+
+  /*
+  function handleDelta(delta) {
+    if ( delta.updates ) {
+      delta.updates.forEach(update => {
+        if ( typeof update.source !== 'undefined'
+             && typeof update.source.label !== 'undefined'
+             && update.source.label === "venus") {
+          //don't reset data we got from venus
+          return
+        }
+        update.values.forEach((valuePath) => {
+          if ( valuePath.path === 'navigation.speedOverGround' ) {
+            dbusSetValue(gpsDestination, '/Speed', Math.round(valuePath.value * 100))
+            
+          } else if ( valuePath.path === 'navigation.courseOverGroundTrue' ) {
+            dbusSetValue(gpsDestination, '/Course', Math.round(radsToDeg(valuePath.value)))
+          } else if ( valuePath.path === 'navigation.position' ) {
+            dbusSetValue(gpsDestination, '/Location/Latitude', Math.round(valuePath.value.latitude*100000))
+            dbusSetValue(gpsDestination, '/Location/Longitude', Math.round(valuePath.value.longitude*10000))
+          }
+        })
+      })
+    }
+  }
+*/
 
   /*
     Called when the plugin is disabled on a running server with the plugin enabled.
   */
   plugin.stop = function () {
+    onStop.forEach(f => f());
+    onStop = []
+    
     if (typeof dbusStop !== 'undefined') {
       dbusStop()
       dbusStop = undefined
@@ -82,4 +144,9 @@ module.exports = function (app) {
   }
 
   return plugin
+}
+
+
+function radsToDeg(radians) {
+  return radians * 180 / Math.PI
 }

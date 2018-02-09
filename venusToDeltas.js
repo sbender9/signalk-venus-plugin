@@ -1,6 +1,8 @@
 const _ = require('lodash')
 const debug = require("debug")("signalk-venus-plugin:venusToDeltas")
 
+var lastLat, lastLon
+
 const venusToSignalKMapping = {
   '/Dc/0/Voltage': {
     path: (m) => { return makePath(m, `${m.instanceName}.voltage`) }
@@ -167,6 +169,35 @@ const venusToSignalKMapping = {
   '/Dc/System/Power': {
     path: 'electrical.venus.dcPower',
     requiresInstnace: false
+  },
+  '/Course': {
+    path: 'navigation.courseOverGroundTrue',
+    requiresInstnace: false,
+    conversion: (msg) => degsToRad
+  },
+  '/Speed': {
+    path: 'navigation.speedOverGround',
+    requiresInstnace: false
+  },
+  '/Position/Latitude': {
+    path: 'navigation.position',
+    requiresInstnace: false,
+    conversion: (msg) => {
+      if ( lastLon ) {
+        lastLat = msg.value
+        return { latitude: msg.value, longitude: lastLon }
+      }
+    }
+  },
+  '/Position/longitude': {
+    path: 'navigation.position',
+    requiresInstnace: false,
+    conversion: (msg) => {
+      if ( lastLat ) {
+        lastLon = msg.value
+        return { latitude: lastLat, longitude: msg.value }
+      }
+    }
   }
 }
 
@@ -478,6 +509,11 @@ function ahToCoulomb(m) {
 function celsiusToKelvin(m) {
   return Number(m.value) + 273.15
 }
+
+function degsToRad(m) {
+  return Number(m.value) * (Math.PI/180.0);
+}
+
 
 const fluidTypeMapping = {
   0: "fuel",
