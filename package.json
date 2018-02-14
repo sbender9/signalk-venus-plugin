@@ -1,10 +1,10 @@
 {
   "name": "signalk-venus-plugin",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Victron Venus-SignalK Integration",
   "main": "index.js",
   "dependencies": {
-    "dbus-native": "sidorares/dbus-native",
+    "dbus-native": "^0.2.5",
     "debug": "^3.1.0",
     "lodash": "^4.17.4"
   },

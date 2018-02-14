@@ -189,6 +189,11 @@ module.exports = function (messageCallback, address, stopCallback) {
   }
 
   bus.connection.on('message', signal_receive)
+
+  bus.connection.on('error', (error) => {
+    console.error(`ERROR: signalk-venus-plugin: ${error.message}`)
+  })
+  
   bus.addMatch(
     "type='signal',interface='com.victronenergy.BusItem',member='PropertiesChanged'",
     d => {}
@@ -198,7 +203,6 @@ module.exports = function (messageCallback, address, stopCallback) {
   bus.connection.on('end', () => {
     stopCallback();
   });
-                   
 
   return {
     stop: () => bus.connection.end(),
