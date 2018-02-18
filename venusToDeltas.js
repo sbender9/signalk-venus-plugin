@@ -74,7 +74,7 @@ const venusToSignalKMapping = {
       },
       conversion: (msg) => { return isVEBus(msg) ? msg.value : null }
     }
-      
+
   ],
   '/Mode': [
     {
@@ -209,47 +209,9 @@ forIn(venusToSignalKMapping, (value, key) => {
 })
 
 module.exports = function(app, options, handleMessage) {
-  var deltaCache = {}
-  var resendTimer
-  var lastMessageTimw
-  const resendTimeout = 30*1000
-  const sourceTimeout = 60*1000
-
-  function resendDeltas() {
-    debug(`resendDeltas`)
-    if ( lastMessageTimw &&  Date.now() - lastMessageTimw > sourceTimeout ) {
-      debug(`too long since last message, stopping resend`)
-      deltaCache = {}
-      clearInterval(resendTimer)
-      resendTimer = undefined
-      return
-    }
-
-    values(deltaCache).forEach(info => {
-      if ( Date.now() - info.timestamp > resendTimeout ) {
-        info.timestamp = Date.now();
-        info.delta.updates[0].timestamp = new Date().toISOString();
-        debug(`resending delta for: ${info.path} ${JSON.stringify(info.delta)}`)
-        handleMessage(info.delta)
-      }
-    });
-  }
-  
-  function stop() {
-    if ( resendTimer ) {
-      clearTimeout(resendTimer)
-    }
-  }
-  
   function toDelta(messages) {
     var deltas = []
 
-    lastMessageTimw = new Date();
-
-    if ( app && !resendTimer ) {
-      resendTimer = setInterval(resendDeltas, resendTimeout);
-    }
-    
     messages.forEach(m => {
       debug(`${m.path}:${m.value}`)
       if ( m.path.startsWith('/Alarms') ) {
@@ -262,7 +224,7 @@ module.exports = function(app, options, handleMessage) {
       }
 
       const mappings = venusToSignalKMapping[m.path] || []
-      
+
       mappings.forEach(mapping => {
         let theValue = m.value
 
@@ -292,13 +254,6 @@ module.exports = function(app, options, handleMessage) {
           mapping.path;
 
         var delta = makeDelta(m, thePath, theValue);
-
-        deltaCache[thePath] = {
-          timestamp: new Date().getTime(),
-          path: thePath,
-          delta: delta
-        };
-
         deltas.push(delta);
       });
     });
@@ -307,7 +262,7 @@ module.exports = function(app, options, handleMessage) {
     return deltas;
   }
 
-  return { stop: stop, toDelta: toDelta }
+  return {toDelta: toDelta }
 }
 
 function percentToRatio(msg) {

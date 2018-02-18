@@ -9,7 +9,6 @@ const gpsDestination = 'com.victronenergy.gps'
 module.exports = function (app) {
   const plugin = {}
   var onStop = []
-  var venusToDeltaStop
   var dbusSetValue
 
   plugin.id = PLUGIN_ID
@@ -55,17 +54,15 @@ module.exports = function (app) {
     or the plugin is enabled from ui on a running server).
   */
   plugin.start = function (options) {
-    var {stop, toDelta} = venusToDeltas(app, options, handleMessage);
-    venusToDeltaStop = stop
-    
+    var {toDelta} = venusToDeltas(app, options, handleMessage);
+
     try {
       var dbus = createDbusListener(venusMessages => {
         toDelta(venusMessages).forEach(delta => {
           app.handleMessage(PLUGIN_ID, delta)
         })
-      }, options.installType == 'remote' ? options.dbusAddress : null, stop)
+      }, options.installType == 'remote' ? options.dbusAddress : null)
 
-      dbusStop = dbus.stop
       dbusSetValue = dbus.setValue
       app.on('venusSetValue', setValueCallback)
 
@@ -131,15 +128,7 @@ module.exports = function (app) {
   plugin.stop = function () {
     onStop.forEach(f => f());
     onStop = []
-    
-    if (typeof dbusStop !== 'undefined') {
-      dbusStop()
-      dbusStop = undefined
-    }
-    if ( venusToDeltaStop ) {
-      venusToDeltaStop();
-      venusToDeltaStop = undefined
-    }
+
     app.removeListener('venusSetValue', setValueCallback)
   }
 

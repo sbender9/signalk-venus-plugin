@@ -2,7 +2,7 @@ const dbus = require('dbus-native')
 const debug = require('debug')('signalk-venus-plugin:dbus')
 const _ = require('lodash')
 
-module.exports = function (messageCallback, address, stopCallback) {
+module.exports = function (messageCallback, address) {
   var bus
   if (address) {
     bus = dbus.createClient({
@@ -198,12 +198,7 @@ module.exports = function (messageCallback, address, stopCallback) {
   )
   bus.addMatch("type='signal',member='NameOwnerChanged'", d => {})
 
-  bus.connection.on('end', () => {
-    stopCallback();
-  });
-
   return {
-    stop: () => bus.connection.end(),
     setValue: setValue
   }
 }
