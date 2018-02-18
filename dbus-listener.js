@@ -208,6 +208,12 @@ module.exports = function (messageCallback, address, onStop) {
     console.error(`ERROR: signalk-venus-plugin: ${error.message}`)
   })
 
+  bus.connection.on('end', () => {
+    console.error(`ERROR: lost connection to D-Bus`);
+    // here we could (should?) also clear the polling timer. But decided not to do that;
+    // to be looked at when properly fixing the dbus-connection lost issue.
+  })
+
   bus.addMatch(
     "type='signal',interface='com.victronenergy.BusItem',member='PropertiesChanged'",
     d => {}
