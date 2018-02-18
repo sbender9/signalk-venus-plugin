@@ -1,4 +1,4 @@
-const _ = require('lodash')
+const {isArray, isFunction, isUndefined, values, forIn} = require('lodash')
 const debug = require("debug")("signalk-venus-plugin:venusToDeltas")
 
 var lastLat, lastLon
@@ -160,28 +160,28 @@ const venusToSignalKMapping = {
   },
   '/Relay/0/State': {
     path: 'electrical.venus.relay.0',
-    requiresInstnace: false
+    requiresInstance: false
   },
   '/Relay/1/State': {
     path: 'electrical.venus.relay.1',
-    requiresInstnace: false
+    requiresInstance: false
   },
   '/Dc/System/Power': {
     path: 'electrical.venus.dcPower',
-    requiresInstnace: false
+    requiresInstance: false
   },
   '/Course': {
     path: 'navigation.courseOverGroundTrue',
-    requiresInstnace: false,
+    requiresInstance: false,
     conversion: (msg) => degsToRad
   },
   '/Speed': {
     path: 'navigation.speedOverGround',
-    requiresInstnace: false
+    requiresInstance: false
   },
   '/Position/Latitude': {
     path: 'navigation.position',
-    requiresInstnace: false,
+    requiresInstance: false,
     conversion: (msg) => {
       if ( lastLon ) {
         lastLat = msg.value
@@ -191,7 +191,7 @@ const venusToSignalKMapping = {
   },
   '/Position/longitude': {
     path: 'navigation.position',
-    requiresInstnace: false,
+    requiresInstance: false,
     conversion: (msg) => {
       if ( lastLat ) {
         lastLon = msg.value
@@ -200,6 +200,13 @@ const venusToSignalKMapping = {
     }
   }
 }
+
+//make all mappings arrays
+forIn(venusToSignalKMapping, (value, key) => {
+  if (!isArray(value)) {
+    venusToSignalKMapping[key] = [value]
+  }
+})
 
 module.exports = function(app, options, handleMessage) {
   var deltaCache = {}
@@ -218,7 +225,7 @@ module.exports = function(app, options, handleMessage) {
       return
     }
 
-    _.values(deltaCache).forEach(info => {
+    values(deltaCache).forEach(info => {
       if ( Date.now() - info.timestamp > resendTimeout ) {
         info.timestamp = Date.now();
         info.delta.updates[0].timestamp = new Date().toISOString();
@@ -244,41 +251,43 @@ module.exports = function(app, options, handleMessage) {
     }
     
     messages.forEach(m => {
+      debug(`${m.path}:${m.value}`)
       if ( m.path.startsWith('/Alarms') ) {
         deltas.push(getAlarmDelta(m));
         return
       }
-           
-      var mappings = venusToSignalKMapping[m.path]
-      if ( !mappings || !m.senderName )
-        return []
 
-      if ( !_.isArray(mappings) ) {
-        mappings = [ mappings ]
+      if ( !m.senderName ) {
+        return
       }
+
+      const mappings = venusToSignalKMapping[m.path] || []
       
       mappings.forEach(mapping => {
-        var theValue = m.value
+        let theValue = m.value
 
-        if ( (_.isUndefined(mapping.requiresInstnace) ||
-              mapping.requiresInstnace)
+        if ( (isUndefined(mapping.requiresInstance) ||
+              mapping.requiresInstance)
              && !makePath(m) ) {
-          debug(`skippinng: ${m.senderName} ${mapping.requiresInstnace}`)
-          return []
+          debug(`mapping: skipping: ${m.senderName} ${mapping.requiresInstance}`)
+          return
         }
 
-        if ( mapping.conversion )
+        if ( mapping.conversion ) {
           theValue = mapping.conversion(m)
+        }
 
-        if ( _.isUndefined(theValue) || theValue == null )
-          return []
+        if ( isUndefined(theValue) || theValue == null ) {
+          debug('mapping: no value')
+          return
+        }
 
-        if ( _.isArray(theValue) ) //seem to get this for some unknown values
-          return []
+        if ( isArray(theValue) ) {//seem to get this for some unknown values
+          debug('mapping: value is array')
+          return
+        }
 
-        var thePath;
-
-        thePath = _.isFunction(mapping.path) ?
+        var thePath = isFunction(mapping.path) ?
           mapping.path(m) :
           mapping.path;
 
@@ -293,7 +302,8 @@ module.exports = function(app, options, handleMessage) {
         deltas.push(delta);
       });
     });
-    
+
+    debug(`produced ${deltas.length} deltas`)
     return deltas;
   }
 
@@ -316,7 +326,7 @@ function makePath(msg, path, vebusIsInverterValue) {
   } else if ( msg.senderName.startsWith('com.victronenergy.inverter') ) {
     type = 'inverters'
   } else if ( msg.senderName.startsWith('com.victronenergy.vebus') ) {
-    type = _.isUndefined(vebusIsInverterValue) ? 'chargers' : 'inverters'
+    type = isUndefined(vebusIsInverterValue) ? 'chargers' : 'inverters'
   } else if ( msg.senderName.startsWith('com.victronenergy.tank') ) {
     type = 'tanks'
   } else {
