@@ -214,7 +214,7 @@ module.exports = function(app, options, handleMessage) {
       debug(`too long since last message, stopping resend`)
       deltaCache = {}
       clearInterval(resendTimer)
-      resendTimer = unknown
+      resendTimer = undefined
       return
     }
 
@@ -238,8 +238,8 @@ module.exports = function(app, options, handleMessage) {
     var deltas = []
 
     lastMessageTimw = new Date();
-    
-    if ( !resendTimer ) {
+
+    if ( app && !resendTimer ) {
       resendTimer = setInterval(resendDeltas, resendTimeout);
     }
     
