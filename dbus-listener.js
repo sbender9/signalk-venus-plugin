@@ -52,7 +52,7 @@ module.exports = function (messageCallback, address, stopCallback) {
         // have the /DeviceInstance path.
         debug(`warning: error getting device instance for ${name}`)
       } else {
-        services[owner].deviceInstance = res[1][0];
+        services[owner].deviceInstance = res[1][0]
       }
     })
 
@@ -144,10 +144,8 @@ module.exports = function (messageCallback, address, stopCallback) {
       }
     })
 
-              
     var service = services[m.sender]
 
- 
     if ( !service || !service.name ) {
       // See comment above explaining why some services don't have the
       // /DeviceInstance path
@@ -166,7 +164,7 @@ module.exports = function (messageCallback, address, stopCallback) {
 
     //debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${m.value}`);
     //debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${JSON.stringify(m.body)}`);
-    
+
     messageCallback([m])
   }
 
@@ -193,7 +191,7 @@ module.exports = function (messageCallback, address, stopCallback) {
   bus.connection.on('error', (error) => {
     console.error(`ERROR: signalk-venus-plugin: ${error.message}`)
   })
-  
+
   bus.addMatch(
     "type='signal',interface='com.victronenergy.BusItem',member='PropertiesChanged'",
     d => {}
