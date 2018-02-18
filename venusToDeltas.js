@@ -160,28 +160,28 @@ const venusToSignalKMapping = {
   },
   '/Relay/0/State': {
     path: 'electrical.venus.relay.0',
-    requiresInstnace: false
+    requiresInstance: false
   },
   '/Relay/1/State': {
     path: 'electrical.venus.relay.1',
-    requiresInstnace: false
+    requiresInstance: false
   },
   '/Dc/System/Power': {
     path: 'electrical.venus.dcPower',
-    requiresInstnace: false
+    requiresInstance: false
   },
   '/Course': {
     path: 'navigation.courseOverGroundTrue',
-    requiresInstnace: false,
+    requiresInstance: false,
     conversion: (msg) => degsToRad
   },
   '/Speed': {
     path: 'navigation.speedOverGround',
-    requiresInstnace: false
+    requiresInstance: false
   },
   '/Position/Latitude': {
     path: 'navigation.position',
-    requiresInstnace: false,
+    requiresInstance: false,
     conversion: (msg) => {
       if ( lastLon ) {
         lastLat = msg.value
@@ -191,7 +191,7 @@ const venusToSignalKMapping = {
   },
   '/Position/longitude': {
     path: 'navigation.position',
-    requiresInstnace: false,
+    requiresInstance: false,
     conversion: (msg) => {
       if ( lastLat ) {
         lastLon = msg.value
@@ -266,10 +266,10 @@ module.exports = function(app, options, handleMessage) {
       mappings.forEach(mapping => {
         let theValue = m.value
 
-        if ( (isUndefined(mapping.requiresInstnace) ||
-              mapping.requiresInstnace)
+        if ( (isUndefined(mapping.requiresInstance) ||
+              mapping.requiresInstance)
              && !makePath(m) ) {
-          debug(`mapping: skippinng: ${m.senderName} ${mapping.requiresInstnace}`)
+          debug(`mapping: skipping: ${m.senderName} ${mapping.requiresInstance}`)
           return
         }
 
