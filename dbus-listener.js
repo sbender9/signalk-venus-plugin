@@ -1,8 +1,9 @@
 const dbus = require('dbus-native')
 const debug = require('debug')('signalk-venus-plugin:dbus')
 const _ = require('lodash')
+const POLL_INTERVAL = 20 * 1000
 
-module.exports = function (messageCallback, address) {
+module.exports = function (messageCallback, address, onStop) {
   var bus
   if (address) {
     bus = dbus.createClient({
@@ -17,8 +18,10 @@ module.exports = function (messageCallback, address) {
     throw new Error('Could not connect to the D-Bus')
   }
 
-  // name owner (:0132 for example) is the key. In signals this is the sender
-  // service name (com.victronenergy.battery.ttyO1) is the value
+  // Dict that lists the services on D-Bus that we track.
+  // name owner (:0132 for example) is the key. Properties:
+  // .name            for example: com.victronenergy.battery.ttyO1
+  // .deviceInstace   for example: 0
   var services = {}
 
   // get info on all existing D-Bus services at startup
@@ -31,6 +34,15 @@ module.exports = function (messageCallback, address) {
       }
     })
   })
+
+  var pollingTimer = setInterval(pollDbus, POLL_INTERVAL)
+  onStop.push(function f() {clearInterval(pollingTimer)})
+
+  function pollDbus() {
+    _.values(services).forEach(service => {
+      requestRoot(service)
+    })
+  }
 
   function initService(owner, name) {
     var service = { name: name }
@@ -56,17 +68,21 @@ module.exports = function (messageCallback, address) {
       }
     })
 
-    debug(`getValue / ${name}`)
+    requestRoot(service)
+  }
+
+  function requestRoot(service) {
+    // debug(`getValue / ${service.name}`)
     bus.invoke({
       path: '/',
-      destination: name,
+      destination: service.name,
       interface: 'com.victronenergy.BusItem',
       member: "GetValue"
     }, function(err, res) {
       if ( err ) {
         // Some services don't support requesting the root path. They are not
         // interesting to signalk, see above in the comments on /DeviceInstance
-        debug(`warning: error during GetValue on / for ${name} ${err}`)
+        debug(`warning: error during GetValue on / for ${service.name} ${err}`)
       } else {
         var data = {};
         res[1][0].forEach(kp => {

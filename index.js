@@ -61,7 +61,7 @@ module.exports = function (app) {
         toDelta(venusMessages).forEach(delta => {
           app.handleMessage(PLUGIN_ID, delta)
         })
-      }, options.installType == 'remote' ? options.dbusAddress : null)
+      }, options.installType == 'remote' ? options.dbusAddress : null, onStop)
 
       dbusSetValue = dbus.setValue
       app.on('venusSetValue', setValueCallback)
