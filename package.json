@@ -11,11 +11,14 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-things": "0.2",
+    "github-changes": "^1.0.4",
     "mocha": "^4.0.1",
     "@signalk/signalk-schema": "0.0.1-12"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "changelog": "github-changes -o signalk -r signalk-server-node -a --only-pulls --use-commit-body --data=pulls  --tag-name=v$npm_package_version",
+    "release": "git tag -d v$npm_package_version ; npm run changelog && git add CHANGELOG.md && git commit -m 'chore: update changelog' && git tag v$npm_package_version && git push --tags && git push"
   },
   "keywords": [
     "signalk-node-server-plugin"
