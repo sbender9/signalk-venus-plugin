@@ -58,24 +58,22 @@ module.exports = function (app) {
   plugin.start = function (options) {
     var { toDelta } = venusToDeltas(app, options, handleMessage)
 
-    try {
-      var dbus = createDbusListener(
-        venusMessages => {
-          toDelta(venusMessages).forEach(delta => {
-            app.handleMessage(PLUGIN_ID, delta)
-          })
-        },
-        options.installType == 'remote' ? options.dbusAddress : null,
-        onStop
-      )
-
-      dbusSetValue = dbus.setValue
-      app.on('venusSetValue', setValueCallback)
-
-    } catch (error) {
-      console.error(error.stack)
-      console.error(`error creating dbus listener: ${error}`)
-    }
+    createDbusListener(
+      venusMessages => {
+        toDelta(venusMessages).forEach(delta => {
+          app.handleMessage(PLUGIN_ID, delta)
+        })
+      },
+      options.installType == 'remote' ? options.dbusAddress : null,
+      onStop
+    )
+      .then(dbus => {
+        dbusSetValue = dbus.setValue
+        app.on('venusSetValue', setValueCallback)
+      })
+      .catch(error => {
+        console.error(`error creating dbus listener: ${error}`)
+      })
   }
 
   /*
