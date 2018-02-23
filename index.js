@@ -11,8 +11,9 @@ const gpsDestination = 'com.victronenergy.gps'
 
 module.exports = function (app) {
   const plugin = {}
-  var onStop = []
-  var dbusSetValue
+  let onStop = []
+  let dbusSetValue
+  let pluginStarted = false
 
   plugin.id = PLUGIN_ID
   plugin.name = PLUGIN_NAME
@@ -60,9 +61,17 @@ module.exports = function (app) {
   */
   plugin.start = function (options) {
     var { toDelta } = venusToDeltas(app, options, handleMessage)
+    pluginStarted = true
+    plugin.onError = () => {}
+    this.connect(options, toDelta)
+  }
 
+  plugin.connect = function(options, toDelta) {
     promiseRetry(
       (retry, number) => {
+        if (!pluginStarted) {
+          return null
+        }
         debug(`Dbus connection attempt ${number}`)
         return createDbusListener(
           venusMessages => {
@@ -71,7 +80,7 @@ module.exports = function (app) {
             })
           },
           options.installType == 'remote' ? options.dbusAddress : null,
-          onStop
+          plugin
         ).catch(retry)
       },
       {
@@ -80,8 +89,21 @@ module.exports = function (app) {
       }
     )
       .then(dbus => {
-        dbusSetValue = dbus.setValue
-        app.on('venusSetValue', setValueCallback)
+        if (dbus) {
+          plugin.onError = () => {
+            app.removeListener('venusSetValue', setValueCallback)
+            dbus.onStop()
+            onStop = []
+            plugin.onError = () => {}
+            plugin.connect(options, toDelta)
+          }
+          dbusSetValue = dbus.setValue
+          onStop.push(dbus.onStop)
+          app.on('venusSetValue', setValueCallback)
+          onStop.push(() =>
+            app.removeListener('venusSetValue', setValueCallback)
+          )
+        }
       })
       .catch(error => {
         console.error(`error creating dbus listener: ${error}`)
@@ -118,10 +140,10 @@ module.exports = function (app) {
     Called when the plugin is disabled on a running server with the plugin enabled.
   */
   plugin.stop = function () {
+    debug('stop')
+    pluginStarted = false
     onStop.forEach(f => f())
     onStop = []
-
-    app.removeListener('venusSetValue', setValueCallback)
   }
 
   return plugin

@@ -3,7 +3,7 @@ const debug = require('debug')('signalk-venus-plugin:dbus')
 const _ = require('lodash')
 const POLL_INTERVAL = 20 * 1000
 
-module.exports = function (messageCallback, address, onStop) {
+module.exports = function (messageCallback, address, plugin) {
   return new Promise((resolve, reject) => {
     debug(`Connecting ${address}`)
     var bus
@@ -37,11 +37,6 @@ module.exports = function (messageCallback, address, onStop) {
           })
         }
       })
-    })
-
-    var pollingTimer = setInterval(pollDbus, POLL_INTERVAL)
-    onStop.push(function f () {
-      clearInterval(pollingTimer)
     })
 
     function pollDbus () {
@@ -221,8 +216,12 @@ module.exports = function (messageCallback, address, onStop) {
     }
 
     bus.connection.on('connect', () => {
+      const pollingTimer = setInterval(pollDbus, POLL_INTERVAL)
       resolve({
-        setValue: setValue
+        setValue,
+        onStop: () => {
+          clearInterval(pollingTimer)
+        }
       })
     })
 
@@ -232,8 +231,9 @@ module.exports = function (messageCallback, address, onStop) {
     bus.connection.on('message', signal_receive)
 
     bus.connection.on('error', error => {
-      reject(error)
       console.error(`ERROR: signalk-venus-plugin: ${error.message}`)
+      reject(error)
+      plugin.onError()
     })
 
     bus.connection.on('end', () => {
