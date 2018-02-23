@@ -72,30 +72,6 @@ module.exports = function (app) {
       dbusSetValue = dbus.setValue
       app.on('venusSetValue', setValueCallback)
 
-      /*
-      if ( options.sendPosistion ) {
-        var subscription = {
-          context: 'vessels.self',
-          subscribe: [
-            {
-              path: 'navigation.position',
-            },
-            {
-              path: 'navigation.courseOverGroundTrue',
-            },
-            {
-              path: 'navigation.speedOverGround'
-            }
-          ]
-        }
-        app.subscriptionmanager.subscribe(subscription,
-                                          onStop,
-                                          (err) => {
-                                            console.error("error: " + err)
-                                          },
-                                          handleDelta);
-      }
-      */
     } catch (error) {
       console.error(error.stack)
       console.error(`error creating dbus listener: ${error}`)
