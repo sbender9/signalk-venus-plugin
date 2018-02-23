@@ -11,7 +11,9 @@ module.exports = function (messageCallback, address, onStop) {
       authMethods: ['ANONYMOUS']
     })
   } else {
-    bus = process.env.DBUS_SESSION_BUS_ADDRESS ? dbus.sessionBus() : dbus.systemBus()
+    bus = process.env.DBUS_SESSION_BUS_ADDRESS
+      ? dbus.sessionBus()
+      : dbus.systemBus()
   }
 
   if (!bus) {
@@ -27,89 +29,99 @@ module.exports = function (messageCallback, address, onStop) {
   // get info on all existing D-Bus services at startup
   bus.listNames((props, args) => {
     args.forEach(name => {
-      if ( name.startsWith('com.victronenergy') ) {
+      if (name.startsWith('com.victronenergy')) {
         bus.getNameOwner(name, (props, args) => {
-        initService(args, name)
+          initService(args, name)
         })
       }
     })
   })
 
   var pollingTimer = setInterval(pollDbus, POLL_INTERVAL)
-  onStop.push(function f() {clearInterval(pollingTimer)})
+  onStop.push(function f () {
+    clearInterval(pollingTimer)
+  })
 
-  function pollDbus() {
+  function pollDbus () {
     _.values(services).forEach(service => {
       requestRoot(service)
     })
   }
 
-  function initService(owner, name) {
+  function initService (owner, name) {
     var service = { name: name }
     services[owner] = service
 
     debug(`${name} is sender ${owner}`)
 
-    bus.invoke({
-      path: '/DeviceInstance',
-      destination: name,
-      interface: 'com.victronenergy.BusItem',
-      member: "GetValue"
-    }, function(err, res) {
-      if ( err ) {
-        // There are several dbus services that don't have the /DeviceInstance
-        // path. They are services that are not interesting for signalk, like
-        // a process to manage settings on the dbus, the logger to VRM Portal
-        // and others. All services that send out data for connected devices do
-        // have the /DeviceInstance path.
-        debug(`warning: error getting device instance for ${name}`)
-      } else {
-        services[owner].deviceInstance = res[1][0]
+    bus.invoke(
+      {
+        path: '/DeviceInstance',
+        destination: name,
+        interface: 'com.victronenergy.BusItem',
+        member: 'GetValue'
+      },
+      function (err, res) {
+        if (err) {
+          // There are several dbus services that don't have the /DeviceInstance
+          // path. They are services that are not interesting for signalk, like
+          // a process to manage settings on the dbus, the logger to VRM Portal
+          // and others. All services that send out data for connected devices do
+          // have the /DeviceInstance path.
+          debug(`warning: error getting device instance for ${name}`)
+        } else {
+          services[owner].deviceInstance = res[1][0]
+        }
       }
-    })
+    )
 
     requestRoot(service)
   }
 
-  function requestRoot(service) {
+  function requestRoot (service) {
     // debug(`getValue / ${service.name}`)
-    bus.invoke({
-      path: '/',
-      destination: service.name,
-      interface: 'com.victronenergy.BusItem',
-      member: "GetValue"
-    }, function(err, res) {
-      if ( err ) {
-        // Some services don't support requesting the root path. They are not
-        // interesting to signalk, see above in the comments on /DeviceInstance
-        debug(`warning: error during GetValue on / for ${service.name} ${err}`)
-      } else {
-        var data = {};
-        res[1][0].forEach(kp => {
-          data[kp[0]] = kp[1][1][0];
-        })
-
-        service.deviceInstance = data.DeviceInstance;
-
-        if ( !_.isUndefined(data.FluidType) ) {
-          service.fluidType = data.FluidType;
-        }
-
-        //debug(`${service.name} ${JSON.stringify(data)}`)
-
-        var messages = []
-        _.keys(data).forEach(path => {
-          messages.push({
-            path: '/' + path,
-            senderName: service.name,
-            value: data[path],
-            instanceName: service.deviceInstance,
-            fluidType: service.fluidType
+    bus.invoke(
+      {
+        path: '/',
+        destination: service.name,
+        interface: 'com.victronenergy.BusItem',
+        member: 'GetValue'
+      },
+      function (err, res) {
+        if (err) {
+          // Some services don't support requesting the root path. They are not
+          // interesting to signalk, see above in the comments on /DeviceInstance
+          debug(
+            `warning: error during GetValue on / for ${service.name} ${err}`
+          )
+        } else {
+          var data = {}
+          res[1][0].forEach(kp => {
+            data[kp[0]] = kp[1][1][0]
           })
-        })
-        messageCallback(messages)
+
+          service.deviceInstance = data.DeviceInstance
+
+          if (!_.isUndefined(data.FluidType)) {
+            service.fluidType = data.FluidType
+          }
+
+          // debug(`${service.name} ${JSON.stringify(data)}`)
+
+          var messages = []
+          _.keys(data).forEach(path => {
+            messages.push({
+              path: '/' + path,
+              senderName: service.name,
+              value: data[path],
+              instanceName: service.deviceInstance,
+              fluidType: service.fluidType
+            })
+          })
+          messageCallback(messages)
+        }
       }
-    })
+    )
   }
 
   function signal_receive (m) {
@@ -151,21 +163,21 @@ module.exports = function (messageCallback, address, onStop) {
     //   body: [ [ [Object], [Object] ] ]}
 
     m.body[0].forEach(entry => {
-      if ( entry[0] == 'Text' ) {
+      if (entry[0] == 'Text') {
         m.text = entry[1][1][0]
-      } else if ( entry[0] == 'Value' ) {
+      } else if (entry[0] == 'Value') {
         m.value = entry[1][1][0]
-      } else if ( entry[0] == 'Valid' ) {
-        //Ignoring Valid because it is deprecated
+      } else if (entry[0] == 'Valid') {
+        // Ignoring Valid because it is deprecated
       }
     })
 
     var service = services[m.sender]
 
-    if ( !service || !service.name ) {
+    if (!service || !service.name) {
       // See comment above explaining why some services don't have the
       // /DeviceInstance path
-      //debug(`warning: unknown service; ${m.sender}`)
+      // debug(`warning: unknown service; ${m.sender}`)
       return
     }
 
@@ -178,38 +190,42 @@ module.exports = function (messageCallback, address, onStop) {
       m.instanceName = service.deviceInstance
     }
 
-    //debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${m.value}`);
-    //debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${JSON.stringify(m.body)}`);
+    // debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${m.value}`);
+    // debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${JSON.stringify(m.body)}`);
 
     messageCallback([m])
   }
 
-  function setValue(destination, path, value) {
+  function setValue (destination, path, value) {
     debug(`setValue: ${destination} ${path} = ${value}`)
-    bus.invoke({
-      path: path,
-      destination: destination,
-      interface: 'com.victronenergy.BusItem',
-      member: "SetValue",
-      body: [ // top level struct is js array
-        ['n', value], // variant, type is number, value = 1
-      ],
-      signature: 'v'
-    }, function(err, res) {
-      if ( err ) {
-        console.error(err)
+    bus.invoke(
+      {
+        path: path,
+        destination: destination,
+        interface: 'com.victronenergy.BusItem',
+        member: 'SetValue',
+        body: [
+          // top level struct is js array
+          ['n', value] // variant, type is number, value = 1
+        ],
+        signature: 'v'
+      },
+      function (err, res) {
+        if (err) {
+          console.error(err)
+        }
       }
-    })
+    )
   }
 
   bus.connection.on('message', signal_receive)
 
-  bus.connection.on('error', (error) => {
+  bus.connection.on('error', error => {
     console.error(`ERROR: signalk-venus-plugin: ${error.message}`)
   })
 
   bus.connection.on('end', () => {
-    console.error(`ERROR: lost connection to D-Bus`);
+    console.error(`ERROR: lost connection to D-Bus`)
     // here we could (should?) also clear the polling timer. But decided not to do that;
     // to be looked at when properly fixing the dbus-connection lost issue.
   })
