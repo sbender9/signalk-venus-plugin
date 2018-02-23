@@ -1,6 +1,9 @@
 const PLUGIN_ID = 'venus'
 const PLUGIN_NAME = 'Victron Venus Plugin'
 
+const debug = require('debug')('signalk-venus-plugin')
+const promiseRetry = require('promise-retry')
+
 const createDbusListener = require('./dbus-listener')
 const venusToDeltas = require('./venusToDeltas')
 
@@ -58,14 +61,23 @@ module.exports = function (app) {
   plugin.start = function (options) {
     var { toDelta } = venusToDeltas(app, options, handleMessage)
 
-    createDbusListener(
-      venusMessages => {
-        toDelta(venusMessages).forEach(delta => {
-          app.handleMessage(PLUGIN_ID, delta)
-        })
+    promiseRetry(
+      (retry, number) => {
+        debug(`Dbus connection attempt ${number}`)
+        return createDbusListener(
+          venusMessages => {
+            toDelta(venusMessages).forEach(delta => {
+              app.handleMessage(PLUGIN_ID, delta)
+            })
+          },
+          options.installType == 'remote' ? options.dbusAddress : null,
+          onStop
+        ).catch(retry)
       },
-      options.installType == 'remote' ? options.dbusAddress : null,
-      onStop
+      {
+        maxTimeout: 30 * 1000,
+        forever: true
+      }
     )
       .then(dbus => {
         dbusSetValue = dbus.setValue
