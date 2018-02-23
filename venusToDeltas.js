@@ -159,11 +159,11 @@ const venusToSignalKMapping = {
     path: (m) => { return `electrical.batteries.${m.instanceName}starter.current` }
   },
   '/Relay/0/State': {
-    path: 'electrical.venus.relay.0',
+    path: 'electrical.controls.venus-0.state',
     requiresInstance: false
   },
   '/Relay/1/State': {
-    path: 'electrical.venus.relay.1',
+    path: 'electrical.controls.venus-1.state',
     requiresInstance: false
   },
   '/Dc/System/Power': {

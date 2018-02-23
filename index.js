@@ -53,7 +53,8 @@ module.exports = function (app) {
 
   function actionHandler(context, path, value, cb) {
     var paths = path.split('.')
-    var relay = path[path.length-1]
+    var last = paths[paths.length-2]
+    var relay = last.charAt(last.length-1)
 
     debug(`setting relay ${relay} to ${value}`)
     
@@ -73,7 +74,7 @@ module.exports = function (app) {
     if ( app.registerActionHandler ) {
       [0, 1].forEach(relay => {
         app.registerActionHandler('vessels.self',
-                                  `electrical.venus.relay.${relay}`,
+                                  `electrical.controls.venus-${relay}.state`,
                                   actionHandler)
       })
     }
