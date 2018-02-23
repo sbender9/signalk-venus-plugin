@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.2.0 (2018/02/23 04:06 +00:00)
+- [#8](https://github.com/sbender9/signalk-venus-plugin/pull/8) add polling of dbus (@mpvader)
+
 ### v1.1.3 (2018/02/19 03:36 +00:00)
 - [#5](https://github.com/sbender9/signalk-venus-plugin/pull/5) fix timer reset when lost dbus, smaller refactorings and fixes (@tkurki)
 - [#3](https://github.com/sbender9/signalk-venus-plugin/pull/3) add ipk files & instructions for installing (@mpvader)
