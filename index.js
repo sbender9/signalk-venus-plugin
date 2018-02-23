@@ -1,3 +1,5 @@
+const debug = require('debug')('signalk-venus-plugin')
+
 const PLUGIN_ID = 'venus'
 const PLUGIN_NAME = 'Victron Venus Plugin'
 
@@ -49,12 +51,32 @@ module.exports = function (app) {
     dbusSetValue(msg.destination, msg.path, msg.value)
   }
 
+  function actionHandler(context, path, value, cb) {
+    var paths = path.split('.')
+    var relay = path[path.length-1]
+
+    debug(`setting relay ${relay} to ${value}`)
+    
+    dbusSetValue('com.victronenergy.system',
+                 `/Relay/${relay}/State`,
+                 value)
+    return 'PENDING'
+  }
+
   /*
     Called when the plugin is started (server is started with plugin enabled
     or the plugin is enabled from ui on a running server).
   */
   plugin.start = function (options) {
     var {toDelta} = venusToDeltas(app, options, handleMessage);
+
+    if ( app.registerActionHandler ) {
+      [0, 1].forEach(relay => {
+        app.registerActionHandler('vessels.self',
+                                  `electrical.venus.relay.${relay}`,
+                                  actionHandler)
+      })
+    }
 
     try {
       var dbus = createDbusListener(venusMessages => {
