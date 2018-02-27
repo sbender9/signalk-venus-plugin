@@ -51,17 +51,18 @@ module.exports = function (app) {
     dbusSetValue(msg.destination, msg.path, msg.value)
   }
 
-  function actionHandler(context, path, value, cb) {
+  function actionHandler(actionId, context, path, value, cb) {
     var paths = path.split('.')
     var last = paths[paths.length-2]
     var relay = last.charAt(last.length-1)
 
     debug(`setting relay ${relay} to ${value}`)
-    
+
     dbusSetValue('com.victronenergy.system',
                  `/Relay/${relay}/State`,
                  value)
-    return 'PENDING'
+    
+    return { state: 'COMPLETED', result: 'SUCCESS' }
   }
 
   /*
