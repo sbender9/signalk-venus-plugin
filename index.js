@@ -89,7 +89,7 @@ module.exports = function (app) {
       }
     )
       .then(dbus => {
-        if (dbus) {
+        if (dbus && pluginStarted) {
           plugin.onError = () => {
             app.removeListener('venusSetValue', setValueCallback)
             dbus.onStop()
