@@ -1,6 +1,9 @@
 const PLUGIN_ID = 'venus'
 const PLUGIN_NAME = 'Victron Venus Plugin'
 
+const debug = require('debug')('signalk-venus-plugin')
+const promiseRetry = require('promise-retry')
+
 const createDbusListener = require('./dbus-listener')
 const venusToDeltas = require('./venusToDeltas')
 
@@ -8,44 +11,47 @@ const gpsDestination = 'com.victronenergy.gps'
 
 module.exports = function (app) {
   const plugin = {}
-  var onStop = []
-  var dbusSetValue
+  let onStop = []
+  let dbusSetValue
+  let pluginStarted = false
 
   plugin.id = PLUGIN_ID
   plugin.name = PLUGIN_NAME
-  plugin.description = 'Plugin taking Battery, and other, from the D-Bus in Venus'
+  plugin.description =
+    'Plugin taking Battery, and other, from the D-Bus in Venus'
 
   plugin.schema = {
     title: PLUGIN_NAME,
     type: 'object',
     properties: {
-      installType : {
+      installType: {
         type: 'string',
         title: 'How to connect to Venus D-Bus',
-        enum: [ 'local', 'remote' ],
+        enum: ['local', 'remote'],
         enumNames: [
           'Connect to localhost (signalk-server is running on a Venus device)',
-          'Connect to remote Venus installation'],
+          'Connect to remote Venus installation'
+        ],
         default: 'local'
       },
       dbusAddress: {
         type: 'string',
-        title: 'Address for remote Venus device (D-Bus address notation)' ,
+        title: 'Address for remote Venus device (D-Bus address notation)',
         default: 'tcp:host=192.168.1.57,port=78'
-      }/*,
+      } /*,
       sendPosistion: {
         type: 'boolean',
         title: 'Send Signal K position, course and speed to venus',
         default: false
-      }*/
+      } */
     }
   }
 
-  function handleMessage(delta) {
-    app.handleMessage(PLUGIN_ID, delta);
+  function handleMessage (delta) {
+    app.handleMessage(PLUGIN_ID, delta)
   }
 
-  function setValueCallback(msg) {
+  function setValueCallback (msg) {
     dbusSetValue(msg.destination, msg.path, msg.value)
   }
 
@@ -54,46 +60,54 @@ module.exports = function (app) {
     or the plugin is enabled from ui on a running server).
   */
   plugin.start = function (options) {
-    var {toDelta} = venusToDeltas(app, options, handleMessage);
+    var { toDelta } = venusToDeltas(app, options, handleMessage)
+    pluginStarted = true
+    plugin.onError = () => {}
+    this.connect(options, toDelta)
+  }
 
-    try {
-      var dbus = createDbusListener(venusMessages => {
-        toDelta(venusMessages).forEach(delta => {
-          app.handleMessage(PLUGIN_ID, delta)
-        })
-      }, options.installType == 'remote' ? options.dbusAddress : null, onStop)
-
-      dbusSetValue = dbus.setValue
-      app.on('venusSetValue', setValueCallback)
-
-      /*
-      if ( options.sendPosistion ) {
-        var subscription = {
-          context: 'vessels.self',
-          subscribe: [
-            {
-              path: 'navigation.position',
-            },
-            {
-              path: 'navigation.courseOverGroundTrue',
-            },
-            {
-              path: 'navigation.speedOverGround'
-            }
-          ]
+  plugin.connect = function(options, toDelta) {
+    promiseRetry(
+      (retry, number) => {
+        if (!pluginStarted) {
+          return null
         }
-        app.subscriptionmanager.subscribe(subscription,
-                                          onStop,
-                                          (err) => {
-                                            console.error("error: " + err)
-                                          },
-                                          handleDelta);
+        debug(`Dbus connection attempt ${number}`)
+        return createDbusListener(
+          venusMessages => {
+            toDelta(venusMessages).forEach(delta => {
+              app.handleMessage(PLUGIN_ID, delta)
+            })
+          },
+          options.installType == 'remote' ? options.dbusAddress : null,
+          plugin
+        ).catch(retry)
+      },
+      {
+        maxTimeout: 30 * 1000,
+        forever: true
       }
-      */
-    } catch ( error ) {
-      console.error(error.stack)
-      console.error(`error creating dbus listener: ${error}`)
-    }
+    )
+      .then(dbus => {
+        if (dbus && pluginStarted) {
+          plugin.onError = () => {
+            app.removeListener('venusSetValue', setValueCallback)
+            dbus.onStop()
+            onStop = []
+            plugin.onError = () => {}
+            plugin.connect(options, toDelta)
+          }
+          dbusSetValue = dbus.setValue
+          onStop.push(dbus.onStop)
+          app.on('venusSetValue', setValueCallback)
+          onStop.push(() =>
+            app.removeListener('venusSetValue', setValueCallback)
+          )
+        }
+      })
+      .catch(error => {
+        console.error(`error creating dbus listener: ${error}`)
+      })
   }
 
   /*
@@ -109,7 +123,7 @@ module.exports = function (app) {
         update.values.forEach((valuePath) => {
           if ( valuePath.path === 'navigation.speedOverGround' ) {
             dbusSetValue(gpsDestination, '/Speed', Math.round(valuePath.value * 100))
-            
+
           } else if ( valuePath.path === 'navigation.courseOverGroundTrue' ) {
             dbusSetValue(gpsDestination, '/Course', Math.round(radsToDeg(valuePath.value)))
           } else if ( valuePath.path === 'navigation.position' ) {
@@ -126,16 +140,15 @@ module.exports = function (app) {
     Called when the plugin is disabled on a running server with the plugin enabled.
   */
   plugin.stop = function () {
-    onStop.forEach(f => f());
+    debug('stop')
+    pluginStarted = false
+    onStop.forEach(f => f())
     onStop = []
-
-    app.removeListener('venusSetValue', setValueCallback)
   }
 
   return plugin
 }
 
-
-function radsToDeg(radians) {
+function radsToDeg (radians) {
   return radians * 180 / Math.PI
 }

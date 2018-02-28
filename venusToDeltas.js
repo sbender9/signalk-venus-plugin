@@ -1,162 +1,227 @@
-const {isArray, isFunction, isUndefined, values, forIn} = require('lodash')
-const debug = require("debug")("signalk-venus-plugin:venusToDeltas")
+const { isArray, isFunction, isUndefined, values, forIn } = require('lodash')
+const debug = require('debug')('signalk-venus-plugin:venusToDeltas')
 
 var lastLat, lastLon
 
 const venusToSignalKMapping = {
   '/Dc/0/Voltage': {
-    path: (m) => { return makePath(m, `${m.instanceName}.voltage`) }
+    path: m => {
+      return makePath(m, `${m.instanceName}.voltage`)
+    }
   },
   '/Dc/1/Voltage': {
-    path: (m) => { return makePath(m, `${m.instanceName}.voltage`) }
+    path: m => {
+      return makePath(m, `${m.instanceName}.voltage`)
+    }
   },
-  "/Dc/0/Current": {
-    path: (m) => { return makePath(m, `${m.instanceName}.current`) }
+  '/Dc/0/Current': {
+    path: m => {
+      return makePath(m, `${m.instanceName}.current`)
+    }
   },
-  "/Dc/0/Power": {
-    path: (m) => { return makePath(m, `${m.instanceName}.power`) }
+  '/Dc/0/Power': {
+    path: m => {
+      return makePath(m, `${m.instanceName}.power`)
+    }
   },
-  "/Dc/0/Temperature": {
-    path: (m) => { return makePath(m, `${m.instanceName}.temperature`) },
+  '/Dc/0/Temperature': {
+    path: m => {
+      return makePath(m, `${m.instanceName}.temperature`)
+    },
     conversion: celsiusToKelvin
   },
   '/Soc': {
-    path: (m) => { return makePath(m, `${m.instanceName}.capacity.stateOfCharge`) },
+    path: m => {
+      return makePath(m, `${m.instanceName}.capacity.stateOfCharge`)
+    },
     conversion: percentToRatio
   },
   '/TimeToGo': {
-    path: (m) => `electrical.batteries.${m.instanceName}.capacity.timeRemaining`
+    path: m => `electrical.batteries.${m.instanceName}.capacity.timeRemaining`
   },
   '/History/LastDischarge': {
-    path: (m) => `electrical.batteries.${m.instanceName}.capacity.dischargeSinceFull`,
+    path: m =>
+      `electrical.batteries.${m.instanceName}.capacity.dischargeSinceFull`,
     conversion: ahToCoulomb
   },
   '/History/TotalAhDrawn': {
-    path: (m) => `electrical.batteries.${m.instanceName}.lifetimeDischarge`,
+    path: m => `electrical.batteries.${m.instanceName}.lifetimeDischarge`,
     conversion: ahToCoulomb
   },
   '/Pv/I': {
-    path: (m) => `electrical.solar.${m.instanceName}.panelCurrent`
+    path: m => `electrical.solar.${m.instanceName}.panelCurrent`
   },
   '/Pv/V': {
-    path: (m) => `electrical.solar.${m.instanceName}.panelVoltage`
+    path: m => `electrical.solar.${m.instanceName}.panelVoltage`
   },
   '/Yield/Power': {
-    path: (m) => `electrical.solar.${m.instanceName}.panelPower`
+    path: m => `electrical.solar.${m.instanceName}.panelPower`
   },
   '/History/Daily/0/Yield': {
-    path: (m) => `electrical.solar.${m.instanceName}.yieldToday`
+    path: m => `electrical.solar.${m.instanceName}.yieldToday`
   },
   '/History/Daily/1/Yield': {
-    path: (m) => `electrical.solar.${m.instanceName}.yieldYesterday`
+    path: m => `electrical.solar.${m.instanceName}.yieldYesterday`
   },
-  '/State':  [
+  '/State': [
     {
-      path: (m) => {
+      path: m => {
         return makePath(m, `${m.instanceName}.${getStatePropName(m)}`)
       },
       conversion: convertState
-    }, {
-      path: (m) => {
+    },
+    {
+      path: m => {
         return makePath(m, `${m.instanceName}.${getStatePropName(m)}Number`)
-      },
+      }
     },
 
-    //this is so that we put out a inverter.inverterMode value for vebus types
+    // this is so that we put out a inverter.inverterMode value for vebus types
     {
-      path: (m) => {
+      path: m => {
         return makePath(m, `${m.instanceName}.inverterMode`, true)
       },
-      conversion: (msg) => { return isVEBus(msg) ? convertState(msg) : null }
-    }, {
-      path: (m) => {
+      conversion: msg => {
+        return isVEBus(msg) ? convertState(msg) : null
+      }
+    },
+    {
+      path: m => {
         return makePath(m, `${m.instanceName}.inverterModeNumber`, true)
       },
-      conversion: (msg) => { return isVEBus(msg) ? msg.value : null }
+      conversion: msg => {
+        return isVEBus(msg) ? msg.value : null
+      }
     }
-
   ],
   '/Mode': [
     {
-      path: (m) => { return makePath(m, `${m.instanceName}.mode`) },
+      path: m => {
+        return makePath(m, `${m.instanceName}.mode`)
+      },
       conversion: convertMode
-    }, {
-      path: (m) => { return makePath(m, `${m.instanceName}.modeNumber`) },
+    },
+    {
+      path: m => {
+        return makePath(m, `${m.instanceName}.modeNumber`)
+      }
     }
   ],
   '/ErrorCode': {
-    path: (m) => {
+    path: m => {
       return 'notifications.' + makePath(m, `${m.instanceName}.error`)
     },
     conversion: convertErrorToNotification
   },
   '/Capacity': {
-    path: (m) => {
-      return 'tanks.' + getFluidType(m.fluidType) + `.${m.instanceName}.capacity`
-    },
+    path: m => {
+      return (
+        'tanks.' + getFluidType(m.fluidType) + `.${m.instanceName}.capacity`
+      )
+    }
   },
   '/Level': {
-    path: (m) => {
-      return 'tanks.' + getFluidType(m.fluidType) + `.${m.instanceName}.currentLevel`
+    path: m => {
+      return (
+        'tanks.' + getFluidType(m.fluidType) + `.${m.instanceName}.currentLevel`
+      )
     },
     conversion: percentToRatio
   },
   '/Ac/ActiveIn/L1/I': {
-    path: (m) => { return makePath(m, `${m.instanceName}.acin.current`, true) }
+    path: m => {
+      return makePath(m, `${m.instanceName}.acin.current`, true)
+    }
   },
   '/Ac/ActiveIn/L1/P': {
-    path: (m) => { return makePath(m, `${m.instanceName}.acin.power`, true) }
+    path: m => {
+      return makePath(m, `${m.instanceName}.acin.power`, true)
+    }
   },
   '/Ac/ActiveIn/L1/V': {
-    path: (m) => { return makePath(m, `${m.instanceName}.acin.voltage`, true) }
+    path: m => {
+      return makePath(m, `${m.instanceName}.acin.voltage`, true)
+    }
   },
   '/Ac/ActiveIn/L2/I': {
-    path: (m) => { return makePath(m, `${m.instanceName}.acin2.current`, true) }
+    path: m => {
+      return makePath(m, `${m.instanceName}.acin2.current`, true)
+    }
   },
   '/Ac/ActiveIn/L2/P': {
-    path: (m) => { return makePath(m, `${m.instanceName}.acin2.power`, true) }
+    path: m => {
+      return makePath(m, `${m.instanceName}.acin2.power`, true)
+    }
   },
   '/Ac/ActiveIn/L2/V': {
-    path: (m) => { return makePath(m, `${m.instanceName}.acin2.voltage`, true) }
+    path: m => {
+      return makePath(m, `${m.instanceName}.acin2.voltage`, true)
+    }
   },
   '/Ac/ActiveIn/L3/I': {
-    path: (m) => { return makePath(m, `${m.instanceName}.acin3.current`, true) }
-    },
+    path: m => {
+      return makePath(m, `${m.instanceName}.acin3.current`, true)
+    }
+  },
   '/Ac/ActiveIn/L3/P': {
-    path: (m) => { return makePath(m, `${m.instanceName}.acin3.power`, true) }
+    path: m => {
+      return makePath(m, `${m.instanceName}.acin3.power`, true)
+    }
   },
   '/Ac/ActiveIn/L3/V': {
-    path: (m) => { return makePath(m, `${m.instanceName}.acin3.voltage`, true) }
+    path: m => {
+      return makePath(m, `${m.instanceName}.acin3.voltage`, true)
+    }
   },
   '/Ac/Out/L1/I': {
-    path: (m) => { return makePath(m, `${m.instanceName}.acout.current`, true) }
+    path: m => {
+      return makePath(m, `${m.instanceName}.acout.current`, true)
+    }
   },
   '/Ac/Out/L1/P': {
-    path: (m) => { return makePath(m, `${m.instanceName}.acout.power`, true) }
+    path: m => {
+      return makePath(m, `${m.instanceName}.acout.power`, true)
+    }
   },
   '/Ac/Out/L1/V': {
-    path: (m) => { return makePath(m, `${m.instanceName}.acout.voltage`, true) }
+    path: m => {
+      return makePath(m, `${m.instanceName}.acout.voltage`, true)
+    }
   },
   '/Ac/Out/L2/I': {
-    path: (m) => { return makePath(m, `${m.instanceName}.acout2.current`, true) }
+    path: m => {
+      return makePath(m, `${m.instanceName}.acout2.current`, true)
+    }
   },
   '/Ac/Out/L2/P': {
-    path: (m) => { return makePath(m, `${m.instanceName}.acout2.power`, true) }
+    path: m => {
+      return makePath(m, `${m.instanceName}.acout2.power`, true)
+    }
   },
   '/Ac/Out/L2/V': {
-    path: (m) => { return makePath(m, `${m.instanceName}.acout2.voltage`, true) }
+    path: m => {
+      return makePath(m, `${m.instanceName}.acout2.voltage`, true)
+    }
   },
   '/Ac/Out/L3/I': {
-    path: (m) => { return makePath(m, `${m.instanceName}.acout3.current`, true) }
+    path: m => {
+      return makePath(m, `${m.instanceName}.acout3.current`, true)
+    }
   },
   '/Ac/Out/L3/P': {
-    path: (m) => { return makePath(m, `${m.instanceName}.acout3.power`, true) }
+    path: m => {
+      return makePath(m, `${m.instanceName}.acout3.power`, true)
+    }
   },
   '/Ac/Out/L3/V': {
-    path: (m) => { return makePath(m, `${m.instanceName}.acout3.voltage`, true) }
+    path: m => {
+      return makePath(m, `${m.instanceName}.acout3.voltage`, true)
+    }
   },
   '/ExtraBatteryCurrent': {
-    path: (m) => { return `electrical.batteries.${m.instanceName}starter.current` }
+    path: m => {
+      return `electrical.batteries.${m.instanceName}starter.current`
+    }
   },
   '/Relay/0/State': {
     path: 'electrical.venus.relay.0',
@@ -173,7 +238,7 @@ const venusToSignalKMapping = {
   '/Course': {
     path: 'navigation.courseOverGroundTrue',
     requiresInstance: false,
-    conversion: (msg) => degsToRad
+    conversion: msg => degsToRad
   },
   '/Speed': {
     path: 'navigation.speedOverGround',
@@ -182,8 +247,8 @@ const venusToSignalKMapping = {
   '/Position/Latitude': {
     path: 'navigation.position',
     requiresInstance: false,
-    conversion: (msg) => {
-      if ( lastLon ) {
+    conversion: msg => {
+      if (lastLon) {
         lastLat = msg.value
         return { latitude: msg.value, longitude: lastLon }
       }
@@ -192,8 +257,8 @@ const venusToSignalKMapping = {
   '/Position/longitude': {
     path: 'navigation.position',
     requiresInstance: false,
-    conversion: (msg) => {
-      if ( lastLat ) {
+    conversion: msg => {
+      if (lastLat) {
         lastLon = msg.value
         return { latitude: lastLat, longitude: msg.value }
       }
@@ -201,25 +266,25 @@ const venusToSignalKMapping = {
   }
 }
 
-//make all mappings arrays
+// make all mappings arrays
 forIn(venusToSignalKMapping, (value, key) => {
   if (!isArray(value)) {
     venusToSignalKMapping[key] = [value]
   }
 })
 
-module.exports = function(app, options, handleMessage) {
-  function toDelta(messages) {
+module.exports = function (app, options, handleMessage) {
+  function toDelta (messages) {
     var deltas = []
 
     messages.forEach(m => {
       debug(`${m.path}:${m.value}`)
-      if ( m.path.startsWith('/Alarms') ) {
-        deltas.push(getAlarmDelta(m));
+      if (m.path.startsWith('/Alarms')) {
+        deltas.push(getAlarmDelta(m))
         return
       }
 
-      if ( !m.senderName ) {
+      if (!m.senderName) {
         return
       }
 
@@ -228,66 +293,68 @@ module.exports = function(app, options, handleMessage) {
       mappings.forEach(mapping => {
         let theValue = m.value
 
-        if ( (isUndefined(mapping.requiresInstance) ||
-              mapping.requiresInstance)
-             && !makePath(m) ) {
-          debug(`mapping: skipping: ${m.senderName} ${mapping.requiresInstance}`)
+        if (
+          (isUndefined(mapping.requiresInstance) || mapping.requiresInstance) &&
+          !makePath(m)
+        ) {
+          debug(
+            `mapping: skipping: ${m.senderName} ${mapping.requiresInstance}`
+          )
           return
         }
 
-        if ( mapping.conversion ) {
+        if (mapping.conversion) {
           theValue = mapping.conversion(m)
         }
 
-        if ( isUndefined(theValue) || theValue == null ) {
+        if (isUndefined(theValue) || theValue == null) {
           debug('mapping: no value')
           return
         }
 
-        if ( isArray(theValue) ) {//seem to get this for some unknown values
+        if (isArray(theValue)) {
+          // seem to get this for some unknown values
           debug('mapping: value is array')
           return
         }
 
-        var thePath = isFunction(mapping.path) ?
-          mapping.path(m) :
-          mapping.path;
+        var thePath = isFunction(mapping.path) ? mapping.path(m) : mapping.path
 
-        var delta = makeDelta(m, thePath, theValue);
-        deltas.push(delta);
-      });
-    });
+        var delta = makeDelta(m, thePath, theValue)
+        deltas.push(delta)
+      })
+    })
 
     debug(`produced ${deltas.length} deltas`)
-    return deltas;
+    return deltas
   }
 
-  return {toDelta: toDelta }
+  return { toDelta: toDelta }
 }
 
-function percentToRatio(msg) {
+function percentToRatio (msg) {
   return msg.value / 100.0
 }
 
-function makePath(msg, path, vebusIsInverterValue) {
-  var type;
+function makePath (msg, path, vebusIsInverterValue) {
+  var type
 
-  if ( msg.senderName.startsWith('com.victronenergy.battery') ) {
+  if (msg.senderName.startsWith('com.victronenergy.battery')) {
     type = 'batteries'
-  } else if ( msg.senderName.startsWith('com.victronenergy.solarcharger') ) {
+  } else if (msg.senderName.startsWith('com.victronenergy.solarcharger')) {
     type = 'solar'
-  } else if ( msg.senderName.startsWith('com.victronenergy.charger') ) {
+  } else if (msg.senderName.startsWith('com.victronenergy.charger')) {
     type = 'chargers'
-  } else if ( msg.senderName.startsWith('com.victronenergy.inverter') ) {
+  } else if (msg.senderName.startsWith('com.victronenergy.inverter')) {
     type = 'inverters'
-  } else if ( msg.senderName.startsWith('com.victronenergy.vebus') ) {
+  } else if (msg.senderName.startsWith('com.victronenergy.vebus')) {
     type = isUndefined(vebusIsInverterValue) ? 'chargers' : 'inverters'
-  } else if ( msg.senderName.startsWith('com.victronenergy.tank') ) {
+  } else if (msg.senderName.startsWith('com.victronenergy.tank')) {
     type = 'tanks'
   } else {
     return null
   }
-  return 'electrical.' + type + '.' + (path || '');
+  return 'electrical.' + type + '.' + (path || '')
 }
 
 const stateMaps = {
@@ -298,7 +365,7 @@ const stateMaps = {
     4: 'acceptance',
     5: 'float',
     6: 'other',
-    7: 'equalize',
+    7: 'equalize'
   },
 
   'com.victronenergy.vebus': {
@@ -341,24 +408,22 @@ const stateMaps = {
   }
 }
 
-function senderNamePrefix(senderName) {
+function senderNamePrefix (senderName) {
   return senderName.substring(0, senderName.lastIndexOf('.'))
 }
 
-function isVEBus(msg) {
-  return senderNamePrefix(msg.senderName) === 'com.victronenergy.vebus';
+function isVEBus (msg) {
+  return senderNamePrefix(msg.senderName) === 'com.victronenergy.vebus'
 }
 
-function convertState(msg, forInverter) {
+function convertState (msg, forInverter) {
   var map = stateMaps[senderNamePrefix(msg.senderName)]
   return map[Number(msg.value)] || 'unknown'
 }
 
-function convertStateForVEBusInverter(msg) {
+function convertStateForVEBusInverter (msg) {
   return convertState(msg, true)
 }
-
-
 
 const modeMaps = {
   'com.victronenergy.vebus': {
@@ -391,13 +456,13 @@ const statePropName = {
   'com.victronenergy.inverter': 'inverterMode'
 }
 
-function getStatePropName(msg) {
-  return statePropName[senderNamePrefix(msg.senderName)];
+function getStatePropName (msg) {
+  return statePropName[senderNamePrefix(msg.senderName)]
 }
 
-function convertMode(msg) {
-  var modeMap = modeMaps[senderNamePrefix(msg.senderName)];
-  return modeMap && modeMap[Number(msg.value)] || 'unknown'
+function convertMode (msg) {
+  var modeMap = modeMaps[senderNamePrefix(msg.senderName)]
+  return (modeMap && modeMap[Number(msg.value)]) || 'unknown'
 }
 
 const solarErrorCodeMap = {
@@ -420,81 +485,78 @@ const solarErrorCodeMap = {
   34: 'Input current too high'
 }
 
-
-function convertErrorToNotification(m) {
-  var value;
-  if ( m.value == 0 ) {
+function convertErrorToNotification (m) {
+  var value
+  if (m.value == 0) {
     value = { state: 'normal', message: 'No Error' }
   } else {
-    var msg;
-    if ( m.senderName.startsWith('com.victronenergy.solarcharger') ) {
-      msg = solarErrorCodeMap[m.value];
+    var msg
+    if (m.senderName.startsWith('com.victronenergy.solarcharger')) {
+      msg = solarErrorCodeMap[m.value]
     }
 
-    if ( !msg ) {
+    if (!msg) {
       msg = `Unknown Error ${m.value}: ${m.text}`
     }
 
     value = {
       state: 'alarm',
       message: msg,
-      method: [ "visual", "sound" ]
+      method: ['visual', 'sound']
     }
   }
 
-  return value;
+  return value
 }
 
-function convertAlarmToNotification(m) {
-  var value;
-  if ( m.value == null || m.value == 0 ) {
+function convertAlarmToNotification (m) {
+  var value
+  if (m.value == null || m.value == 0) {
     value = { state: 'normal', message: 'No Alarm' }
   } else {
-
     var message
-    if ( _.isString(m.value) ) {
+    if (_.isString(m.value)) {
       message = m.value
     } else {
       message = m.path.split('/')[2]
     }
-    
+
     value = {
       state: m.value == 1 ? 'warning' : 'alarm',
       message: message,
-      method: [ "visual", "sound" ]
+      method: ['visual', 'sound']
     }
   }
 
-  return value;
+  return value
 }
 
-function ahToCoulomb(m) {
-  return Number(m.value) * 3600;
+function ahToCoulomb (m) {
+  return Number(m.value) * 3600
 }
 
-function celsiusToKelvin(m) {
+function celsiusToKelvin (m) {
   return Number(m.value) + 273.15
 }
 
-function degsToRad(m) {
-  return Number(m.value) * (Math.PI/180.0);
+function degsToRad (m) {
+  return Number(m.value) * (Math.PI / 180.0)
 }
-
 
 const fluidTypeMapping = {
-  0: "fuel",
-  1: "water",
-  2: "greywater",
-  3: "liveWell",
-  4: "lubrication",
-  5: "blackwater"
+  0: 'fuel',
+  1: 'water',
+  2: 'greywater',
+  3: 'liveWell',
+  4: 'lubrication',
+  5: 'blackwater'
 }
 
-function getFluidType(typeId) {
-  return fluidTypeMapping[typeId] || 'unknown';
+function getFluidType (typeId) {
+  return fluidTypeMapping[typeId] || 'unknown'
 }
 
-function makeDelta(m, path, value) {
+function makeDelta (m, path, value) {
   return {
     updates: [
       {
@@ -516,12 +578,12 @@ function makeDelta(m, path, value) {
   }
 }
 
-function getAlarmDelta(msg) {
+function getAlarmDelta (msg) {
   var name = msg.path.substring(1).replace(/\//g, '.') // alarms.LowVoltage
-  name = name.substring(name.indexOf('.')+1); //LowVoltate
-  name = name.charAt(0).toLowerCase() + name.substring(1) //lowVoltate
-  
+  name = name.substring(name.indexOf('.') + 1) // LowVoltate
+  name = name.charAt(0).toLowerCase() + name.substring(1) // lowVoltate
+
   var path = 'notifications.' + makePath(msg, `${msg.instanceName}.${name}`)
-  var value = convertAlarmToNotification(msg);
+  var value = convertAlarmToNotification(msg)
   return makeDelta(msg, path, value)
 }
