@@ -61,8 +61,17 @@ module.exports = function (app) {
     dbusSetValue('com.victronenergy.system',
                  `/Relay/${relay}/State`,
                  value)
+
+    setTimeout(() => {
+      var val = app.getSelfPath(path)
+      if ( val && val.value == value ) {
+        cb(actionId, 'SUCCESS')
+      } else {
+        cb(actionId, 'FAILURE', 'Did not receive change confirmation')
+      }
+    }, 1000)
     
-    return { state: 'COMPLETED', result: 'SUCCESS' }
+    return { state: 'PENDING' }
   }
 
   /*
@@ -74,9 +83,9 @@ module.exports = function (app) {
 
     if ( app.registerActionHandler ) {
       [0, 1].forEach(relay => {
-        app.registerActionHandler('vessels.self',
-                                  `electrical.controls.venus-${relay}.state`,
-                                  actionHandler)
+        onStop.push(app.registerActionHandler('vessels.self',
+                                              `electrical.controls.venus-${relay}.state`,
+                                              actionHandler))
       })
     }
 
