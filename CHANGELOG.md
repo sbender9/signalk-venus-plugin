@@ -1,6 +1,10 @@
 ## Change Log
 
-### v1.3.0 (2018/02/28 01:36 +00:00)
+### v1.4.0 (2018/03/14 00:35 +00:00)
+- [#12](https://github.com/sbender9/signalk-venus-plugin/pull/12) chore: change relays paths to closer match current spec RFC (@sbender9)
+- [#11](https://github.com/sbender9/signalk-venus-plugin/pull/11) feature: add support to switch relays using PUT (@sbender9)
+
+### v1.3.0 (2018/02/28 01:39 +00:00)
 - [#10](https://github.com/sbender9/signalk-venus-plugin/pull/10) Add reconnecting to remote dbus (@tkurki)
 
 ### v1.2.0 (2018/02/23 04:06 +00:00)
