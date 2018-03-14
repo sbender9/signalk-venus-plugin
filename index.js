@@ -55,6 +55,31 @@ module.exports = function (app) {
     dbusSetValue(msg.destination, msg.path, msg.value)
   }
 
+  function actionHandler(actionId, context, path, value, cb) {
+    var paths = path.split('.')
+    //var last = paths[paths.length-2]
+    //var relay = last.charAt(last.length-1)
+    var last = paths[paths.length-1]
+    var relay = last
+
+    debug(`setting relay ${relay} to ${value}`)
+
+    dbusSetValue('com.victronenergy.system',
+                 `/Relay/${relay}/State`,
+                 value)
+
+    setTimeout(() => {
+      var val = app.getSelfPath(path)
+      if ( val && val.value == value ) {
+        cb(actionId, 'SUCCESS')
+      } else {
+        cb(actionId, 'FAILURE', 'Did not receive change confirmation')
+      }
+    }, 1000)
+    
+    return { state: 'PENDING' }
+  }
+
   /*
     Called when the plugin is started (server is started with plugin enabled
     or the plugin is enabled from ui on a running server).
@@ -64,6 +89,15 @@ module.exports = function (app) {
     pluginStarted = true
     plugin.onError = () => {}
     this.connect(options, toDelta)
+
+    if ( app.registerActionHandler ) {
+      [0, 1].forEach(relay => {
+        onStop.push(app.registerActionHandler('vessels.self',
+                                              `electrical.venus.relay.${relay}`,
+                                              plugin.id,
+                                              actionHandler))
+      })
+    }
   }
 
   plugin.connect = function(options, toDelta) {
