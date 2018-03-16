@@ -55,11 +55,7 @@ module.exports = function (app) {
     dbusSetValue(msg.destination, msg.path, msg.value)
   }
 
-  function actionHandler(actionId, context, path, value, cb) {
-    var paths = path.split('.')
-    var last = paths[paths.length-2]
-    var relay = last.charAt(last.length-1)
-
+  function actionHandler(context, path, value, relay, cb) {
     debug(`setting relay ${relay} to ${value}`)
 
     dbusSetValue('com.victronenergy.system',
@@ -69,9 +65,12 @@ module.exports = function (app) {
     setTimeout(() => {
       var val = app.getSelfPath(path)
       if ( val && val.value == value ) {
-        cb(actionId, 'SUCCESS')
+        cb({ state: 'SUCCESS' })
       } else {
-        cb(actionId, 'FAILURE', 'Did not receive change confirmation')
+        cb({
+          state: 'FAILURE',
+          message: 'Did not receive change confirmation'
+        })
       }
     }, 1000)
     
@@ -92,7 +91,7 @@ module.exports = function (app) {
       [0, 1].forEach(relay => {
         onStop.push(app.registerActionHandler('vessels.self',
                                               `electrical.switches.venus-${relay}.state`,
-                                              plugin.id,
+                                              relay,
                                               actionHandler))
       })
     }
