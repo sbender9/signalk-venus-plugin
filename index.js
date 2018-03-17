@@ -77,6 +77,12 @@ module.exports = function (app) {
     return { state: 'PENDING' }
   }
 
+  function getActionHandler(relay) {
+    return (context, path, value, cb) => {
+      return actionHandler(context, path, value, relay, cb)
+    }
+  }
+
   /*
     Called when the plugin is started (server is started with plugin enabled
     or the plugin is enabled from ui on a running server).
@@ -89,10 +95,9 @@ module.exports = function (app) {
 
     if ( app.registerActionHandler ) {
       [0, 1].forEach(relay => {
-        onStop.push(app.registerActionHandler('vessels.self',
-                                              `electrical.switches.venus-${relay}.state`,
-                                              relay,
-                                              actionHandler))
+        app.registerActionHandler('vessels.self',
+                                  `electrical.switches.venus-${relay}.state`,
+                                  getActionHandler(relay))
       })
     }
   }
