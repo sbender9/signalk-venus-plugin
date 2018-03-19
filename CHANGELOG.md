@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.5.0 (2018/03/19 18:47 +00:00)
+- [#13](https://github.com/sbender9/signalk-venus-plugin/pull/13) change: updated to latest server PUT api's (@sbender9)
+
 ### v1.4.0 (2018/03/14 00:35 +00:00)
 - [#12](https://github.com/sbender9/signalk-venus-plugin/pull/12) chore: change relays paths to closer match current spec RFC (@sbender9)
 - [#11](https://github.com/sbender9/signalk-venus-plugin/pull/11) feature: add support to switch relays using PUT (@sbender9)
