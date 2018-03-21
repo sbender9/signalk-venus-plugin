@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.5.2 (2018/03/21 22:32 +00:00)
+- [#14](https://github.com/sbender9/signalk-venus-plugin/pull/14) fix: crash when an alarm is on (@sbender9)
+
 ### v1.5.0 (2018/03/19 18:47 +00:00)
 - [#13](https://github.com/sbender9/signalk-venus-plugin/pull/13) change: updated to latest server PUT api's (@sbender9)
 
