@@ -1,5 +1,6 @@
 const { isArray, isFunction, isUndefined, values, forIn } = require('lodash')
 const debug = require('debug')('signalk-venus-plugin:venusToDeltas')
+const _ = require('lodash')
 
 var lastLat, lastLon
 
