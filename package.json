@@ -1,6 +1,6 @@
 {
   "name": "signalk-venus-plugin",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "Victron Venus-SignalK Integration",
   "main": "index.js",
   "dependencies": {
@@ -38,7 +38,7 @@
   ],
   "author": {
     "name": "Scott Bender",
-      "email": "scott@scottbender.net"
+    "email": "scott@scottbender.net"
   },
   "license": "MIT",
   "bugs": {
