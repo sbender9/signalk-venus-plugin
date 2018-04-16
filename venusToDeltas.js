@@ -12,7 +12,7 @@ const venusToSignalKMapping = {
   },
   '/Dc/1/Voltage': {
     path: m => {
-      return makePath(m, `${m.instanceName}.voltage`)
+      return makePath(m, `${m.instanceName}-second.voltage`)
     }
   },
   '/Dc/0/Current': {
