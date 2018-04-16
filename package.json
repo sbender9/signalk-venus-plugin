@@ -36,6 +36,10 @@
       "name": "Teppo Kurki"
     }
   ],
+  "author": {
+    "name": "Scott Bender",
+      "email": "scott@scottbender.net"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/sbender9/signalk-venus-plugin/issues"
