@@ -1,6 +1,9 @@
 ## Change Log
 
-### v1.5.3 (2018/04/16 14:24 +00:00)
+### v1.6.0 (2018/04/18 13:54 +00:00)
+- [#16](https://github.com/sbender9/signalk-venus-plugin/pull/16) feature: added /ConsumedAmphours as electrical.batteries.{instance}.capacity.consumedCharge (@sbender9)
+
+### v1.5.3 (2018/04/16 14:25 +00:00)
 - [#15](https://github.com/sbender9/signalk-venus-plugin/pull/15)  fix: store /Dc/1/Voltage under batteries.{instance}-second.voltage (@sbender9)
 
 ### v1.5.2 (2018/03/21 22:32 +00:00)
