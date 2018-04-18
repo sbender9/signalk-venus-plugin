@@ -40,6 +40,10 @@ const venusToSignalKMapping = {
   '/TimeToGo': {
     path: m => `electrical.batteries.${m.instanceName}.capacity.timeRemaining`
   },
+  '/ConsumedAmphours': {
+    path: m => `electrical.batteries.${m.instanceName}.capacity.consumedCharge`,
+    conversion: ahToCoulomb
+  },
   '/History/LastDischarge': {
     path: m =>
       `electrical.batteries.${m.instanceName}.capacity.dischargeSinceFull`,
