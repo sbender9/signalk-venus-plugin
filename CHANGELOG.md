@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.6.1 (2018/05/25 01:53 +00:00)
+- [#17](https://github.com/sbender9/signalk-venus-plugin/pull/17) fix: tank type names were not correct per the spec (@sbender9)
+
 ### v1.6.0 (2018/04/18 13:54 +00:00)
 - [#16](https://github.com/sbender9/signalk-venus-plugin/pull/16) feature: added /ConsumedAmphours as electrical.batteries.{instance}.capacity.consumedCharge (@sbender9)
 
