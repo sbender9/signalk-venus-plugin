@@ -3,6 +3,7 @@ const PLUGIN_NAME = 'Victron Venus Plugin'
 
 const debug = require('debug')('signalk-venus-plugin')
 const promiseRetry = require('promise-retry')
+const _ = require('lodash')
 
 const createDbusListener = require('./dbus-listener')
 const venusToDeltas = require('./venusToDeltas')
@@ -38,7 +39,13 @@ module.exports = function (app) {
         type: 'string',
         title: 'Address for remote Venus device (D-Bus address notation)',
         default: 'tcp:host=192.168.1.57,port=78'
-      } /*,
+      },
+      pollInterval: {
+        type: 'number',
+        title: 'Interval (in seconds) to poll venus for current values',
+        default: 20
+      }
+      /*,
       sendPosistion: {
         type: 'boolean',
         title: 'Send Signal K position, course and speed to venus',
@@ -116,7 +123,8 @@ module.exports = function (app) {
             })
           },
           options.installType == 'remote' ? options.dbusAddress : null,
-          plugin
+          plugin,
+          _.isUndefined(options.pollInterval) ? 20 : options.pollInterval
         ).catch(retry)
       },
       {
