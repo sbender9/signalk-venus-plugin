@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.7.0 (2018/05/29 21:22 +00:00)
+- [#18](https://github.com/sbender9/signalk-venus-plugin/pull/18) feature: allow the poll interval to be configured (@sbender9)
+
 ### v1.6.1 (2018/05/25 01:53 +00:00)
 - [#17](https://github.com/sbender9/signalk-venus-plugin/pull/17) fix: tank type names were not correct per the spec (@sbender9)
 
