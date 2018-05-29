@@ -1,9 +1,8 @@
 const dbus = require('dbus-native')
 const debug = require('debug')('signalk-venus-plugin:dbus')
 const _ = require('lodash')
-const POLL_INTERVAL = 20 * 1000
 
-module.exports = function (messageCallback, address, plugin) {
+module.exports = function (messageCallback, address, plugin, pollInterval) {
   return new Promise((resolve, reject) => {
     debug(`Connecting ${address}`)
     var bus
@@ -216,13 +215,15 @@ module.exports = function (messageCallback, address, plugin) {
     }
 
     bus.connection.on('connect', () => {
-      const pollingTimer = setInterval(pollDbus, POLL_INTERVAL)
-      resolve({
-        setValue,
-        onStop: () => {
-          clearInterval(pollingTimer)
-        }
-      })
+      if ( pollInterval > 0 ) {
+        const pollingTimer = setInterval(pollDbus, pollInterval*1000)
+        resolve({
+          setValue,
+          onStop: () => {
+            clearInterval(pollingTimer)
+          }
+        })
+      }
     })
 
     // if resolved within timeout reject has no effect
