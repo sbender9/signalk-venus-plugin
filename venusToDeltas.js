@@ -318,9 +318,8 @@ module.exports = function (app, options, handleMessage) {
         }
 
         if (isArray(theValue)) {
-          // seem to get this for some unknown values
-          debug('mapping: value is array')
-          return
+          // seem to get this for unknown values
+          theValue = null
         }
 
         var thePath = isFunction(mapping.path) ? mapping.path(m) : mapping.path
