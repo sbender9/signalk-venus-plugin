@@ -1,5 +1,9 @@
 ## Change Log
 
+### v1.8.0 (2018/07/01 20:09 +00:00)
+- [#19](https://github.com/sbender9/signalk-venus-plugin/pull/19) fix: send out null deltas for unknown values (@sbender9)
+- [#20](https://github.com/sbender9/signalk-venus-plugin/pull/20)  feature: add ESS mode for solar chargers (@sbender9)
+
 ### v1.7.0 (2018/05/29 21:22 +00:00)
 - [#18](https://github.com/sbender9/signalk-venus-plugin/pull/18) feature: allow the poll interval to be configured (@sbender9)
 
