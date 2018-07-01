@@ -370,7 +370,8 @@ const stateMaps = {
     4: 'acceptance',
     5: 'float',
     6: 'other',
-    7: 'equalize'
+    7: 'equalize',
+    252: 'ESS'
   },
 
   'com.victronenergy.vebus': {
