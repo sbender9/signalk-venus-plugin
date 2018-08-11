@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.9.0 (2018/08/11 16:45 +00:00)
+- [#21](https://github.com/sbender9/signalk-venus-plugin/pull/21) feature: allow the signalk path name for the relays to be configured (@sbender9)
+
 ### v1.8.0 (2018/07/01 20:09 +00:00)
 - [#19](https://github.com/sbender9/signalk-venus-plugin/pull/19) fix: send out null deltas for unknown values (@sbender9)
 - [#20](https://github.com/sbender9/signalk-venus-plugin/pull/20)  feature: add ESS mode for solar chargers (@sbender9)
