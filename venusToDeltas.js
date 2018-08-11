@@ -4,281 +4,281 @@ const _ = require('lodash')
 
 var lastLat, lastLon
 
-const venusToSignalKMapping = {
-  '/Dc/0/Voltage': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.voltage`)
-    }
-  },
-  '/Dc/1/Voltage': {
-    path: m => {
-      return makePath(m, `${m.instanceName}-second.voltage`)
-    }
-  },
-  '/Dc/0/Current': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.current`)
-    }
-  },
-  '/Dc/0/Power': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.power`)
-    }
-  },
-  '/Dc/0/Temperature': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.temperature`)
-    },
-    conversion: celsiusToKelvin
-  },
-  '/Soc': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.capacity.stateOfCharge`)
-    },
-    conversion: percentToRatio
-  },
-  '/TimeToGo': {
-    path: m => `electrical.batteries.${m.instanceName}.capacity.timeRemaining`
-  },
-  '/ConsumedAmphours': {
-    path: m => `electrical.batteries.${m.instanceName}.capacity.consumedCharge`,
-    conversion: ahToCoulomb
-  },
-  '/History/LastDischarge': {
-    path: m =>
-      `electrical.batteries.${m.instanceName}.capacity.dischargeSinceFull`,
-    conversion: ahToCoulomb
-  },
-  '/History/TotalAhDrawn': {
-    path: m => `electrical.batteries.${m.instanceName}.lifetimeDischarge`,
-    conversion: ahToCoulomb
-  },
-  '/Pv/I': {
-    path: m => `electrical.solar.${m.instanceName}.panelCurrent`
-  },
-  '/Pv/V': {
-    path: m => `electrical.solar.${m.instanceName}.panelVoltage`
-  },
-  '/Yield/Power': {
-    path: m => `electrical.solar.${m.instanceName}.panelPower`
-  },
-  '/History/Daily/0/Yield': {
-    path: m => `electrical.solar.${m.instanceName}.yieldToday`
-  },
-  '/History/Daily/1/Yield': {
-    path: m => `electrical.solar.${m.instanceName}.yieldYesterday`
-  },
-  '/State': [
-    {
-      path: m => {
-        return makePath(m, `${m.instanceName}.${getStatePropName(m)}`)
-      },
-      conversion: convertState
-    },
-    {
-      path: m => {
-        return makePath(m, `${m.instanceName}.${getStatePropName(m)}Number`)
-      }
-    },
-
-    // this is so that we put out a inverter.inverterMode value for vebus types
-    {
-      path: m => {
-        return makePath(m, `${m.instanceName}.inverterMode`, true)
-      },
-      conversion: msg => {
-        return isVEBus(msg) ? convertState(msg) : null
-      }
-    },
-    {
-      path: m => {
-        return makePath(m, `${m.instanceName}.inverterModeNumber`, true)
-      },
-      conversion: msg => {
-        return isVEBus(msg) ? msg.value : null
-      }
-    }
-  ],
-  '/Mode': [
-    {
-      path: m => {
-        return makePath(m, `${m.instanceName}.mode`)
-      },
-      conversion: convertMode
-    },
-    {
-      path: m => {
-        return makePath(m, `${m.instanceName}.modeNumber`)
-      }
-    }
-  ],
-  '/ErrorCode': {
-    path: m => {
-      return 'notifications.' + makePath(m, `${m.instanceName}.error`)
-    },
-    conversion: convertErrorToNotification
-  },
-  '/Capacity': {
-    path: m => {
-      return (
-        'tanks.' + getFluidType(m.fluidType) + `.${m.instanceName}.capacity`
-      )
-    }
-  },
-  '/Level': {
-    path: m => {
-      return (
-        'tanks.' + getFluidType(m.fluidType) + `.${m.instanceName}.currentLevel`
-      )
-    },
-    conversion: percentToRatio
-  },
-  '/Ac/ActiveIn/L1/I': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.acin.current`, true)
-    }
-  },
-  '/Ac/ActiveIn/L1/P': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.acin.power`, true)
-    }
-  },
-  '/Ac/ActiveIn/L1/V': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.acin.voltage`, true)
-    }
-  },
-  '/Ac/ActiveIn/L2/I': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.acin2.current`, true)
-    }
-  },
-  '/Ac/ActiveIn/L2/P': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.acin2.power`, true)
-    }
-  },
-  '/Ac/ActiveIn/L2/V': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.acin2.voltage`, true)
-    }
-  },
-  '/Ac/ActiveIn/L3/I': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.acin3.current`, true)
-    }
-  },
-  '/Ac/ActiveIn/L3/P': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.acin3.power`, true)
-    }
-  },
-  '/Ac/ActiveIn/L3/V': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.acin3.voltage`, true)
-    }
-  },
-  '/Ac/Out/L1/I': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.acout.current`, true)
-    }
-  },
-  '/Ac/Out/L1/P': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.acout.power`, true)
-    }
-  },
-  '/Ac/Out/L1/V': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.acout.voltage`, true)
-    }
-  },
-  '/Ac/Out/L2/I': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.acout2.current`, true)
-    }
-  },
-  '/Ac/Out/L2/P': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.acout2.power`, true)
-    }
-  },
-  '/Ac/Out/L2/V': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.acout2.voltage`, true)
-    }
-  },
-  '/Ac/Out/L3/I': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.acout3.current`, true)
-    }
-  },
-  '/Ac/Out/L3/P': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.acout3.power`, true)
-    }
-  },
-  '/Ac/Out/L3/V': {
-    path: m => {
-      return makePath(m, `${m.instanceName}.acout3.voltage`, true)
-    }
-  },
-  '/ExtraBatteryCurrent': {
-    path: m => {
-      return `electrical.batteries.${m.instanceName}starter.current`
-    }
-  },
-  '/Relay/0/State': {
-    path: 'electrical.switches.venus-0.state',
-    requiresInstance: false
-  },
-  '/Relay/1/State': {
-    path: 'electrical.switches.venus-1.state',
-    requiresInstance: false
-  },
-  '/Dc/System/Power': {
-    path: 'electrical.venus.dcPower',
-    requiresInstance: false
-  },
-  '/Course': {
-    path: 'navigation.courseOverGroundTrue',
-    requiresInstance: false,
-    conversion: msg => degsToRad
-  },
-  '/Speed': {
-    path: 'navigation.speedOverGround',
-    requiresInstance: false
-  },
-  '/Position/Latitude': {
-    path: 'navigation.position',
-    requiresInstance: false,
-    conversion: msg => {
-      if (lastLon) {
-        lastLat = msg.value
-        return { latitude: msg.value, longitude: lastLon }
-      }
-    }
-  },
-  '/Position/longitude': {
-    path: 'navigation.position',
-    requiresInstance: false,
-    conversion: msg => {
-      if (lastLat) {
-        lastLon = msg.value
-        return { latitude: lastLat, longitude: msg.value }
-      }
-    }
-  }
-}
-
-// make all mappings arrays
-forIn(venusToSignalKMapping, (value, key) => {
-  if (!isArray(value)) {
-    venusToSignalKMapping[key] = [value]
-  }
-})
-
 module.exports = function (app, options, handleMessage) {
+  const venusToSignalKMapping = {
+    '/Dc/0/Voltage': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.voltage`)
+      }
+    },
+    '/Dc/1/Voltage': {
+      path: m => {
+        return makePath(m, `${m.instanceName}-second.voltage`)
+      }
+    },
+    '/Dc/0/Current': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.current`)
+      }
+    },
+    '/Dc/0/Power': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.power`)
+      }
+    },
+    '/Dc/0/Temperature': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.temperature`)
+      },
+      conversion: celsiusToKelvin
+    },
+    '/Soc': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.capacity.stateOfCharge`)
+      },
+      conversion: percentToRatio
+    },
+    '/TimeToGo': {
+      path: m => `electrical.batteries.${m.instanceName}.capacity.timeRemaining`
+    },
+    '/ConsumedAmphours': {
+      path: m => `electrical.batteries.${m.instanceName}.capacity.consumedCharge`,
+      conversion: ahToCoulomb
+    },
+    '/History/LastDischarge': {
+      path: m =>
+        `electrical.batteries.${m.instanceName}.capacity.dischargeSinceFull`,
+      conversion: ahToCoulomb
+    },
+    '/History/TotalAhDrawn': {
+      path: m => `electrical.batteries.${m.instanceName}.lifetimeDischarge`,
+      conversion: ahToCoulomb
+    },
+    '/Pv/I': {
+      path: m => `electrical.solar.${m.instanceName}.panelCurrent`
+    },
+    '/Pv/V': {
+      path: m => `electrical.solar.${m.instanceName}.panelVoltage`
+    },
+    '/Yield/Power': {
+      path: m => `electrical.solar.${m.instanceName}.panelPower`
+    },
+    '/History/Daily/0/Yield': {
+      path: m => `electrical.solar.${m.instanceName}.yieldToday`
+    },
+    '/History/Daily/1/Yield': {
+      path: m => `electrical.solar.${m.instanceName}.yieldYesterday`
+    },
+    '/State': [
+      {
+        path: m => {
+          return makePath(m, `${m.instanceName}.${getStatePropName(m)}`)
+        },
+        conversion: convertState
+      },
+      {
+        path: m => {
+          return makePath(m, `${m.instanceName}.${getStatePropName(m)}Number`)
+        }
+      },
+
+      // this is so that we put out a inverter.inverterMode value for vebus types
+      {
+        path: m => {
+          return makePath(m, `${m.instanceName}.inverterMode`, true)
+        },
+        conversion: msg => {
+          return isVEBus(msg) ? convertState(msg) : null
+        }
+      },
+      {
+        path: m => {
+          return makePath(m, `${m.instanceName}.inverterModeNumber`, true)
+        },
+        conversion: msg => {
+          return isVEBus(msg) ? msg.value : null
+        }
+      }
+    ],
+    '/Mode': [
+      {
+        path: m => {
+          return makePath(m, `${m.instanceName}.mode`)
+        },
+        conversion: convertMode
+      },
+      {
+        path: m => {
+          return makePath(m, `${m.instanceName}.modeNumber`)
+        }
+      }
+    ],
+    '/ErrorCode': {
+      path: m => {
+        return 'notifications.' + makePath(m, `${m.instanceName}.error`)
+      },
+      conversion: convertErrorToNotification
+    },
+    '/Capacity': {
+      path: m => {
+        return (
+          'tanks.' + getFluidType(m.fluidType) + `.${m.instanceName}.capacity`
+        )
+      }
+    },
+    '/Level': {
+      path: m => {
+        return (
+          'tanks.' + getFluidType(m.fluidType) + `.${m.instanceName}.currentLevel`
+        )
+      },
+      conversion: percentToRatio
+    },
+    '/Ac/ActiveIn/L1/I': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acin.current`, true)
+      }
+    },
+    '/Ac/ActiveIn/L1/P': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acin.power`, true)
+      }
+    },
+    '/Ac/ActiveIn/L1/V': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acin.voltage`, true)
+      }
+    },
+    '/Ac/ActiveIn/L2/I': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acin2.current`, true)
+      }
+    },
+    '/Ac/ActiveIn/L2/P': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acin2.power`, true)
+      }
+    },
+    '/Ac/ActiveIn/L2/V': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acin2.voltage`, true)
+      }
+    },
+    '/Ac/ActiveIn/L3/I': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acin3.current`, true)
+      }
+    },
+    '/Ac/ActiveIn/L3/P': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acin3.power`, true)
+      }
+    },
+    '/Ac/ActiveIn/L3/V': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acin3.voltage`, true)
+      }
+    },
+    '/Ac/Out/L1/I': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acout.current`, true)
+      }
+    },
+    '/Ac/Out/L1/P': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acout.power`, true)
+      }
+    },
+    '/Ac/Out/L1/V': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acout.voltage`, true)
+      }
+    },
+    '/Ac/Out/L2/I': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acout2.current`, true)
+      }
+    },
+    '/Ac/Out/L2/P': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acout2.power`, true)
+      }
+    },
+    '/Ac/Out/L2/V': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acout2.voltage`, true)
+      }
+    },
+    '/Ac/Out/L3/I': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acout3.current`, true)
+      }
+    },
+    '/Ac/Out/L3/P': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acout3.power`, true)
+      }
+    },
+    '/Ac/Out/L3/V': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acout3.voltage`, true)
+      }
+    },
+    '/ExtraBatteryCurrent': {
+      path: m => {
+        return `electrical.batteries.${m.instanceName}starter.current`
+      }
+    },
+    '/Relay/0/State': {
+      path: (options.relayPath0 || 'electrical.switches.venus-0') + '.state',
+      requiresInstance: false
+    },
+    '/Relay/1/State': {
+      path: (options.relayPath1 || 'electrical.switches.venus-1') + '.state',
+      requiresInstance: false
+    },
+    '/Dc/System/Power': {
+      path: 'electrical.venus.dcPower',
+      requiresInstance: false
+    },
+    '/Course': {
+      path: 'navigation.courseOverGroundTrue',
+      requiresInstance: false,
+      conversion: msg => degsToRad
+    },
+    '/Speed': {
+      path: 'navigation.speedOverGround',
+      requiresInstance: false
+    },
+    '/Position/Latitude': {
+      path: 'navigation.position',
+      requiresInstance: false,
+      conversion: msg => {
+        if (lastLon) {
+          lastLat = msg.value
+          return { latitude: msg.value, longitude: lastLon }
+        }
+      }
+    },
+    '/Position/longitude': {
+      path: 'navigation.position',
+      requiresInstance: false,
+      conversion: msg => {
+        if (lastLat) {
+          lastLon = msg.value
+          return { latitude: lastLat, longitude: msg.value }
+        }
+      }
+    }
+  }
+
+  // make all mappings arrays
+  forIn(venusToSignalKMapping, (value, key) => {
+    if (!isArray(value)) {
+      venusToSignalKMapping[key] = [value]
+    }
+  })
+
   function toDelta (messages) {
     var deltas = []
 
