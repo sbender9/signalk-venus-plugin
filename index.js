@@ -44,6 +44,16 @@ module.exports = function (app) {
         type: 'number',
         title: 'Interval (in seconds) to poll venus for current values',
         default: 20
+      },
+      relayPath0: {
+        type: 'string',
+        title: 'The Signal K path for relay 1',
+        default: 'electrical.switches.venus-0'
+      },
+      relayPath1: {
+        type: 'string',
+        title: 'The Signal K path for relay 2',
+        default: 'electrical.switches.venus-1'
       }
       /*,
       sendPosistion: {
@@ -67,7 +77,7 @@ module.exports = function (app) {
 
     dbusSetValue('com.victronenergy.system',
                  `/Relay/${relay}/State`,
-                 value)
+                 value ? 1 : 0)
 
     setTimeout(() => {
       var val = app.getSelfPath(path)
@@ -102,8 +112,9 @@ module.exports = function (app) {
 
     if ( app.registerActionHandler ) {
       [0, 1].forEach(relay => {
+        let path =  (options['relayPath' + relay] || `electrical.switches.venus-${relay}`) + '.state'
         app.registerActionHandler('vessels.self',
-                                  `electrical.switches.venus-${relay}.state`,
+                                  path,
                                   getActionHandler(relay))
       })
     }
