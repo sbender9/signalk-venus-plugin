@@ -2,9 +2,16 @@ const dbus = require('dbus-native')
 const debug = require('debug')('signalk-venus-plugin:dbus')
 const _ = require('lodash')
 
-module.exports = function (messageCallback, address, plugin, pollInterval) {
+module.exports = function (app, messageCallback, address, plugin, pollInterval) {
   return new Promise((resolve, reject) => {
-    debug(`Connecting ${address}`)
+    const setProviderStatus = app.setProviderStatus
+        ? (msg, type) => {
+          app.setProviderStatus(msg, type)
+        }
+          : () => {}
+    let msg = `Connecting ${address}`
+    setProviderStatus(msg, 'normal')
+    debug(msg)
     var bus
     if (address) {
       bus = dbus.createClient({
@@ -18,7 +25,9 @@ module.exports = function (messageCallback, address, plugin, pollInterval) {
     }
 
     if (!bus) {
-      throw new Error('Could not connect to the D-Bus')
+      let msg = 'Could not connect to the D-Bus'
+      setProviderStatus(msg, 'error')
+      throw new Error(msg)
     }
 
     // Dict that lists the services on D-Bus that we track.
@@ -215,6 +224,7 @@ module.exports = function (messageCallback, address, plugin, pollInterval) {
     }
 
     bus.connection.on('connect', () => {
+      setProviderStatus(`Connected to ${address ? address : 'session bus'}`, 'normal')
       if ( pollInterval > 0 ) {
         const pollingTimer = setInterval(pollDbus, pollInterval*1000)
         resolve({
@@ -232,12 +242,14 @@ module.exports = function (messageCallback, address, plugin, pollInterval) {
     bus.connection.on('message', signal_receive)
 
     bus.connection.on('error', error => {
+      setProviderStatus(error.message, 'error')
       console.error(`ERROR: signalk-venus-plugin: ${error.message}`)
       reject(error)
       plugin.onError()
     })
 
     bus.connection.on('end', () => {
+      setProviderStatus('lost connection to D-Bus', 'error')
       console.error(`ERROR: lost connection to D-Bus`)
       // here we could (should?) also clear the polling timer. But decided not to do that;
       // to be looked at when properly fixing the dbus-connection lost issue.

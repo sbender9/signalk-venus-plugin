@@ -50,11 +50,19 @@ module.exports = function (app) {
         title: 'The Signal K path for relay 1',
         default: 'electrical.switches.venus-0'
       },
+      relayDisplayName0: {
+        type: 'string',
+        title: 'The Display Name for relay 1',
+      },
       relayPath1: {
         type: 'string',
         title: 'The Signal K path for relay 2',
         default: 'electrical.switches.venus-1'
-      }
+      },
+      relayDisplayName1: {
+        type: 'string',
+        title: 'The Display Name for relay 2',
+      },
       /*,
       sendPosistion: {
         type: 'boolean',
@@ -107,6 +115,7 @@ module.exports = function (app) {
   plugin.start = function (options) {
     var { toDelta } = venusToDeltas(app, options, handleMessage)
     pluginStarted = true
+    plugin.options = options
     plugin.onError = () => {}
     this.connect(options, toDelta)
 
@@ -128,6 +137,7 @@ module.exports = function (app) {
         }
         debug(`Dbus connection attempt ${number}`)
         return createDbusListener(
+          app,
           venusMessages => {
             toDelta(venusMessages).forEach(delta => {
               app.handleMessage(PLUGIN_ID, delta)
