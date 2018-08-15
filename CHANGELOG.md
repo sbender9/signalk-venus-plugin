@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.10.0 (2018/08/15 17:57 +00:00)
+- [#22](https://github.com/sbender9/signalk-venus-plugin/pull/22) feature: provide status to the server (@sbender9)
+
 ### v1.9.0 (2018/08/11 16:45 +00:00)
 - [#21](https://github.com/sbender9/signalk-venus-plugin/pull/21) feature: allow the signalk path name for the relays to be configured (@sbender9)
 
