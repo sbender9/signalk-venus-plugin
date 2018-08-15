@@ -2,9 +2,21 @@ const dbus = require('dbus-native')
 const debug = require('debug')('signalk-venus-plugin:dbus')
 const _ = require('lodash')
 
-module.exports = function (messageCallback, address, plugin, pollInterval) {
+module.exports = function (app, messageCallback, address, plugin, pollInterval) {
   return new Promise((resolve, reject) => {
-    debug(`Connecting ${address}`)
+    const setProviderStatus = app.setProviderStatus
+        ? (msg) => {
+          app.setProviderStatus(msg)
+        }
+          : () => {}
+    const setProviderError = app.setProviderError
+        ? (msg) => {
+          app.setProviderError(msg)
+        }
+          : () => {}
+    let msg = `Connecting ${address}`
+    setProviderStatus(msg)
+    debug(msg)
     var bus
     if (address) {
       bus = dbus.createClient({
@@ -18,7 +30,9 @@ module.exports = function (messageCallback, address, plugin, pollInterval) {
     }
 
     if (!bus) {
-      throw new Error('Could not connect to the D-Bus')
+      let msg = 'Could not connect to the D-Bus'
+      setProviderError(msg)
+      throw new Error(msg)
     }
 
     // Dict that lists the services on D-Bus that we track.
@@ -215,6 +229,7 @@ module.exports = function (messageCallback, address, plugin, pollInterval) {
     }
 
     bus.connection.on('connect', () => {
+      setProviderStatus(`Connected to ${address ? address : 'session bus'}`)
       if ( pollInterval > 0 ) {
         const pollingTimer = setInterval(pollDbus, pollInterval*1000)
         resolve({
@@ -232,12 +247,14 @@ module.exports = function (messageCallback, address, plugin, pollInterval) {
     bus.connection.on('message', signal_receive)
 
     bus.connection.on('error', error => {
+      setProviderError(error.message)
       console.error(`ERROR: signalk-venus-plugin: ${error.message}`)
       reject(error)
       plugin.onError()
     })
 
     bus.connection.on('end', () => {
+      setProviderError('lost connection to D-Bus')
       console.error(`ERROR: lost connection to D-Bus`)
       // here we could (should?) also clear the polling timer. But decided not to do that;
       // to be looked at when properly fixing the dbus-connection lost issue.
