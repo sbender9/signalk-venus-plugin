@@ -42,7 +42,7 @@ When using option B, also put in the ipaddress and port.
 
 When using option B, its also necessary to open up the port on the Venus device. It must be
 configured to allow D-Bus connections via tcp, as its by default not binding its D-Bus daemon
-to tcp. To make it do so, add these three lines to `/etc/dbus-1/system.conf` on the Venus device:
+to tcp. To make it do so, add these three lines to `/etc/dbus-1/system.conf` (above the `<policy context="default">` section) on the Venus device:
     
       <listen>tcp:host=0.0.0.0,port=78</listen>
       <auth>ANONYMOUS</auth>
