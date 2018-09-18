@@ -18,8 +18,10 @@ Lynx Shunt VE.Can, as well as various integrated Lithium battery systems.
 - Tank senders: the resistive inputs on the Venus GX, as well as a tank sender connected to Venus
 over N2K
 
-Besides taking data from a Venus device, over TCP, its also possible to run Signal K server on the
-Venus device itself.
+Instead of taking data from a Venus device over TCP, which is what this plugin is for when you install
+it, it is also possible to run Signal K server on the Venus device itself. Possibly reducing one less
+box from the boat. More information here:
+https://github.com/SignalK/signalk-server-node/issues/517
 
 ## Support
 Use the #victron channel on the [Signal K Slack](http://slack-invite.signalk.org/).
