@@ -134,6 +134,17 @@ module.exports = function (app, options, handleMessage) {
       },
       conversion: percentToRatio
     },
+    '/Ac/ActiveIn/Source': [
+      {
+        path: 'electrical.venus.source',
+        conversion: convertSource,
+        requiresInstance: false
+      },
+      {
+        path: 'electrical.venus.sourceNumber',
+        requiresInstance: false
+      }
+    ],
     '/Ac/ActiveIn/L1/I': {
       path: m => {
         return makePath(m, `${m.instanceName}.acin.current`, true)
@@ -468,6 +479,17 @@ function getStatePropName (msg) {
 function convertMode (msg) {
   var modeMap = modeMaps[senderNamePrefix(msg.senderName)]
   return (modeMap && modeMap[Number(msg.value)]) || 'unknown'
+}
+
+const acinSourceMap = {
+  1: 'grid',
+  2: 'genset',
+  3: 'shore',
+  240: 'battery'
+}
+
+function convertSource(msg) {
+  return acinSourceMap[Number(msg.value)] || 'unknown'
 }
 
 const solarErrorCodeMap = {
