@@ -389,7 +389,7 @@ const stateMaps = {
     1: 'low power',
     2: 'fault',
     3: 'bulk',
-    4: 'absortion',
+    4: 'absorption',
     5: 'float',
     6: 'storage',
     7: 'equalize',
