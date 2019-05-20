@@ -377,7 +377,7 @@ const stateMaps = {
     0: 'not charging',
     2: 'other',
     3: 'bulk',
-    4: 'acceptance',
+    4: 'absorption',
     5: 'float',
     6: 'other',
     7: 'equalize',
