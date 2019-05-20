@@ -118,13 +118,28 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
 
             // debug(`${service.name} ${JSON.stringify(data)}`)
 
+            let deviceInstance = service.deviceInstance
+
+            if ( _.isUndefined(deviceInstance) ) {
+              return
+            }
+            
+            if ( plugin.options.instanceMappings ) {
+              const mapping = plugin.options.instanceMappings.find(mapping => {
+                return service.name.startsWith(mapping.type) && mapping.venusId == deviceInstance
+              })
+              if ( !_.isUndefined(mapping) ) {
+                deviceInstance = mapping.signalkId
+              }
+            }
+
             var messages = []
             _.keys(data).forEach(path => {
               messages.push({
                 path: '/' + path,
                 senderName: service.name,
                 value: data[path],
-                instanceName: service.deviceInstance,
+                instanceName: deviceInstance,
                 fluidType: service.fluidType
               })
             })
