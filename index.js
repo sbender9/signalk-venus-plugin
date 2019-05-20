@@ -63,6 +63,37 @@ module.exports = function (app) {
         type: 'string',
         title: 'The Display Name for relay 2',
       },
+      instanceMappings: {
+        title: 'Instance Mappings',
+        description: 'Map venus device instance numbers to Signal K instances',
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            type: {
+              enum: [
+                'com.victronenergy.battery',
+                'com.victronenergy.tank',
+                'com.victronenergy.solarcharger'
+              ],
+              enumNames: [
+                'Battery',
+                'Tank',
+                'Solar Charger'
+              ],
+            },
+            
+            venusId: {
+              title: 'Venus Device Instance',
+              type: 'number'
+            },
+            signalkId: {
+              title: 'Signal K Instance',
+              type: 'string'
+            }
+          }
+        }
+      }
       /*,
       sendPosistion: {
         type: 'boolean',
