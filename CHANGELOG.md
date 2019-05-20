@@ -1,5 +1,13 @@
 ## Change Log
 
+### v1.11.0 (2019/05/20 20:18 +00:00)
+- [#31](https://github.com/sbender9/signalk-venus-plugin/pull/31) fix: absorption misspelled  (@MichelleWhy)
+- [#30](https://github.com/sbender9/signalk-venus-plugin/pull/30) fix: stateMaps for solarcharger to correct charging mode (@MichelleWhy)
+- [#28](https://github.com/sbender9/signalk-venus-plugin/pull/28) feature: add ability to map venus instance numbers to different sk numbers (@sbender9)
+- [#25](https://github.com/sbender9/signalk-venus-plugin/pull/25) chore: add license (@tkurki)
+- [#24](https://github.com/sbender9/signalk-venus-plugin/pull/24) docs: remove outdated INSTALL-ON-VENUS & link to new info (@mpvader)
+- [#23](https://github.com/sbender9/signalk-venus-plugin/pull/23) docs: Insert config above <policy context="default"> (@webmasterkai)
+
 ### v1.10.0 (2018/08/15 17:57 +00:00)
 - [#22](https://github.com/sbender9/signalk-venus-plugin/pull/22) feature: provide status to the server (@sbender9)
 
