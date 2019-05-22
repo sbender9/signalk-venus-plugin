@@ -283,10 +283,45 @@ module.exports = function (app, options, handleMessage) {
     }
   }
 
+  const digitalInputsMappings = {
+    '/Count': {
+      path: m => { return `electrical.venus-input.${m.instanceName}.count` }
+    },
+    '/State': [
+      {
+        path: m => { return `electrical.venus-input.${m.instanceName}.state` },
+        conversion: mapInputState
+      },
+      {
+        path: m => { return `electrical.venus-input.${m.instanceName}.stateNumber` }
+      }
+    ],
+    '/InputState': {
+      path: m => { return `electrical.venus-input.${m.instanceName}.inputState` }
+    },
+    '/ProductName': {
+      path: m => { return `electrical.venus-input.${m.instanceName}.productName` }
+    },
+    '/Connected': {
+      path: m => { return `electrical.venus-input.${m.instanceName}.connected` }
+    },
+    '/Type': {
+      path: m => { return `electrical.venus-input.${m.instanceName}.type` }
+    },
+    '/CustomName': {
+      path: m => { return `electrical.venus-input.${m.instanceName}.customName` }
+    }
+  }
+
   // make all mappings arrays
   forIn(venusToSignalKMapping, (value, key) => {
     if (!isArray(value)) {
       venusToSignalKMapping[key] = [value]
+    }
+  })
+  forIn(digitalInputsMappings, (value, key) => {
+    if (!isArray(value)) {
+      digitalInputsMappings[key] = [value]
     }
   })
 
@@ -304,14 +339,23 @@ module.exports = function (app, options, handleMessage) {
         return
       }
 
-      const mappings = venusToSignalKMapping[m.path] || []
+
+      let mappings
+
+      if ( m.senderName.startsWith('com.victronenergy.digitalinput') ) {
+        mappings = digitalInputsMappings[m.path] ? digitalInputsMappings[m.path] : []
+
+        if ( m.path === '/Alarm' && m.value === 2 ) {
+        }
+      } else {
+        mappings = venusToSignalKMapping[m.path] || []
+      }
 
       mappings.forEach(mapping => {
         let theValue = m.value
 
         if (
-          (isUndefined(mapping.requiresInstance) || mapping.requiresInstance) &&
-          !makePath(m)
+          ((isUndefined(mapping.requiresInstance) || mapping.requiresInstance) && isUndefined(m.instanceName)) || !makePath(m)
         ) {
           debug(
             `mapping: skipping: ${m.senderName} ${mapping.requiresInstance}`
@@ -366,6 +410,8 @@ function makePath (msg, path, vebusIsInverterValue) {
     type = isUndefined(vebusIsInverterValue) ? 'chargers' : 'inverters'
   } else if (msg.senderName.startsWith('com.victronenergy.tank')) {
     type = 'tanks'
+  } else if ( msg.senderName.startsWith('com.victronenergy.digitalinput') ) {
+    type = 'digitalinput'
   } else {
     return null
   }
@@ -581,6 +627,25 @@ const fluidTypeMapping = {
 
 function getFluidType (typeId) {
   return fluidTypeMapping[typeId] || 'unknown'
+}
+
+const inputStateMapping = {
+  0: 'Low',
+  1: 'High',
+  2: 'Off',
+  3: 'On',
+  4: 'No',
+  5: 'Yes',
+  6: 'Open',
+  7: 'Closed',
+  8: 'Alarm',
+  9: 'OK',
+  10: 'Running',
+  11: 'Stopped'
+}
+
+function mapInputState(msg) {
+  return inputStateMapping[msg.value] || 'unknown'
 }
 
 function makeDelta (m, path, value) {
