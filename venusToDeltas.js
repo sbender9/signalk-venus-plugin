@@ -252,6 +252,14 @@ module.exports = function (app, options, handleMessage) {
       path: 'electrical.venus.dcPower',
       requiresInstance: false
     },
+    '/Dc/Pv/Current': {
+      path: 'electrical.venus.totalPanelCurrent',
+      requiresInstance: false
+    },
+    '/Dc/Pv/Power': {
+      path: 'electrical.venus.totalPanelPower',
+      requiresInstance: false
+    },
     '/Course': {
       path: 'navigation.courseOverGroundTrue',
       requiresInstance: false,
@@ -410,6 +418,8 @@ function makePath (msg, path, vebusIsInverterValue) {
     type = isUndefined(vebusIsInverterValue) ? 'chargers' : 'inverters'
   } else if (msg.senderName.startsWith('com.victronenergy.tank')) {
     type = 'tanks'
+  } else if ( msg.senderName.startsWith('com.victronenergy.system') ) {
+    return 'venus'
   } else if ( msg.senderName.startsWith('com.victronenergy.digitalinput') ) {
     type = 'digitalinput'
   } else {
