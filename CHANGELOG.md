@@ -1,5 +1,9 @@
 ## Change Log
 
+### v1.12.0 (2019/05/22 00:48 +00:00)
+- [#33](https://github.com/sbender9/signalk-venus-plugin/pull/33) feature: provide total solar current and power (@sbender9)
+- [#32](https://github.com/sbender9/signalk-venus-plugin/pull/32) feature: show state of digital inputs (@sbender9)
+
 ### v1.11.0 (2019/05/20 20:18 +00:00)
 - [#31](https://github.com/sbender9/signalk-venus-plugin/pull/31) fix: absorption misspelled  (@MichelleWhy)
 - [#30](https://github.com/sbender9/signalk-venus-plugin/pull/30) fix: stateMaps for solarcharger to correct charging mode (@MichelleWhy)
