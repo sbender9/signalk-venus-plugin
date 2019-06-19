@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.12.1 (2019/06/19 05:22 +00:00)
+- [#34](https://github.com/sbender9/signalk-venus-plugin/pull/34) fix: gray/waste water tank not named correctly (@sbender9)
+
 ### v1.12.0 (2019/05/22 00:48 +00:00)
 - [#33](https://github.com/sbender9/signalk-venus-plugin/pull/33) feature: provide total solar current and power (@sbender9)
 - [#32](https://github.com/sbender9/signalk-venus-plugin/pull/32) feature: show state of digital inputs (@sbender9)
