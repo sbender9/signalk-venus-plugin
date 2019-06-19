@@ -629,7 +629,7 @@ function degsToRad (m) {
 const fluidTypeMapping = {
   0: 'fuel',
   1: 'freshWater',
-  2: 'greyWater',
+  2: 'wasteWater',
   3: 'liveWell',
   4: 'lubrication',
   5: 'blackWater'
