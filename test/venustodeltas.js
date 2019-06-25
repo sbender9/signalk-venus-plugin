@@ -5,7 +5,7 @@ const expect = chai.expect
 const signalkSchema = require('@signalk/signalk-schema')
 
 
-var {toDelta} = venusToDeltas(undefined, undefined, () => {});
+var {toDelta} = venusToDeltas(undefined, {}, () => {});
 
 chai.Should()
 chai.use(require('chai-things'))
