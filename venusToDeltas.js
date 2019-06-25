@@ -662,12 +662,7 @@ function makeDelta (m, path, value) {
   return {
     updates: [
       {
-        source: {
-          label: 'venus',
-          sender: m.sender,
-          senderName: m.senderName,
-          venusPath: m.path
-        },
+        $source: `venus.${m.senderName.replace(/\:/g, '')}`,
         values: [
           {
             path: path,
