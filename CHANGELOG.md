@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.13.0 (2019/06/27 12:51 +00:00)
+- [#35](https://github.com/sbender9/signalk-venus-plugin/pull/35) feature: replace source with $source (@tkurki)
+
 ### v1.12.1 (2019/06/19 05:22 +00:00)
 - [#34](https://github.com/sbender9/signalk-venus-plugin/pull/34) fix: gray/waste water tank not named correctly (@sbender9)
 
