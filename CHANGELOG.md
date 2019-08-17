@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.13.1 (2019/08/17 21:30 +00:00)
+- [#36](https://github.com/sbender9/signalk-venus-plugin/pull/36) fix: battery relay state overwriting Venus relay 0 state (@sbender9)
+
 ### v1.13.0 (2019/06/27 12:51 +00:00)
 - [#35](https://github.com/sbender9/signalk-venus-plugin/pull/35) feature: replace source with $source (@tkurki)
 
