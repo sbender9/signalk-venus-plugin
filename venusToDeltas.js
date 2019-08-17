@@ -241,7 +241,16 @@ module.exports = function (app, options, handleMessage) {
       }
     },
     '/Relay/0/State': {
-      path: (options.relayPath0 || 'electrical.switches.venus-0') + '.state',
+      path: m => {
+        if ( senderNamePrefix(m.senderName) === 'com.victronenergy.battery' )
+        {
+          return `electrical.batteries.${m.instanceName}.relay.state`
+        }
+        else
+        {
+          return (options.relayPath0 || 'electrical.switches.venus-0') + '.state'
+        }
+      },
       requiresInstance: false
     },
     '/Relay/1/State': {
