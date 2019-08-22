@@ -15,6 +15,7 @@ module.exports = function (app) {
   let onStop = []
   let dbusSetValue
   let pluginStarted = false
+  let modesRegistered = []
 
   plugin.id = PLUGIN_ID
   plugin.name = PLUGIN_NAME
@@ -143,6 +144,34 @@ module.exports = function (app) {
     }
   }
 
+  function chargerModeActionHandler(context, path, value, dest, cb) {
+    debug(`setting charger mode ${dest} to ${value}`)
+
+    dbusSetValue(dest,
+                 `/Mode`,
+                 value)
+
+    setTimeout(() => {
+      var val = app.getSelfPath(path)
+      if ( val && val.value == value ) {
+        cb({ state: 'SUCCESS' })
+      } else {
+        cb({
+          state: 'FAILURE',
+          message: 'Did not receive change confirmation'
+        })
+      }
+    }, 1000)
+
+    return { state: 'PENDING' }
+  }
+
+  function getChargerModeActionHandler(dest) {
+    return (context, path, value, cb) => {
+      return chargerModeActionHandler(context, path, value, dest, cb)
+    }
+  }
+
   /*
     Called when the plugin is started (server is started with plugin enabled
     or the plugin is enabled from ui on a running server).
@@ -174,6 +203,19 @@ module.exports = function (app) {
         return createDbusListener(
           app,
           venusMessages => {
+
+            venusMessages.forEach(m => {
+              if ( m.senderName.startsWith('com.victronenergy.vebus')
+                   && m.path === '/Mode'
+                   && modesRegistered.indexOf(m.senderName) == -1 ) {
+                const path = `electrical.chargers.${m.instanceName}.modeNumber`
+                app.registerActionHandler('vessels.self',
+                                          path,
+                                          getChargerModeActionHandler(m.senderName))
+                modesRegistered.push(m.senderName)
+              }
+            })
+            
             toDelta(venusMessages).forEach(delta => {
               app.handleMessage(PLUGIN_ID, delta)
             })
@@ -244,6 +286,7 @@ module.exports = function (app) {
     pluginStarted = false
     onStop.forEach(f => f())
     onStop = []
+    modesRegistered = []
   }
 
   return plugin
