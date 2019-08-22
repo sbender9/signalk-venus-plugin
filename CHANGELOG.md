@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.14.0 (2019/08/22 19:47 +00:00)
+- [#37](https://github.com/sbender9/signalk-venus-plugin/pull/37)  feature: support changing the vebus mode (@sbender9)
+
 ### v1.13.1 (2019/08/17 21:30 +00:00)
 - [#36](https://github.com/sbender9/signalk-venus-plugin/pull/36) fix: battery relay state overwriting Venus relay 0 state (@sbender9)
 
