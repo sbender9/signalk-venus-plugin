@@ -668,7 +668,7 @@ function mapInputState(msg) {
 }
 
 function makeDelta (m, path, value) {
-  return {
+  const delta = {
     updates: [
       {
         $source: `venus.${m.senderName.replace(/\:/g, '')}`,
@@ -682,6 +682,35 @@ function makeDelta (m, path, value) {
       }
     ]
   }
+  
+  if (m.senderName.startsWith('com.victronenergy.vebus')
+      && m.path === '/Mode'
+      && path.endsWith('modeNumber'))
+  {
+    delta.updates[0].values.push({
+      path: path + '.meta',
+      value: {
+        type: 'multiple',
+        possibleValues: [
+          {
+            title: 'On',
+            value: 3
+          },
+          {
+            title: 'Off',
+            value: 4,
+            isOn: false
+          },
+          {
+            title: 'Charger Only',
+            value: 1,
+            abbrev: 'Charge'
+          }
+        ]
+      }
+    })
+  }
+  return delta
 }
 
 function getAlarmDelta (msg) {
