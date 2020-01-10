@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.14.1 (2020/01/10 23:07 +00:00)
+- [#39](https://github.com/sbender9/signalk-venus-plugin/pull/39) fix: gps values from dbus not working (@sbender9)
+
 ### v1.14.0 (2019/08/22 19:47 +00:00)
 - [#37](https://github.com/sbender9/signalk-venus-plugin/pull/37)  feature: support changing the vebus mode (@sbender9)
 
