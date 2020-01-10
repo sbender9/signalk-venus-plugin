@@ -136,12 +136,12 @@ module.exports = function (app, options, handleMessage) {
     },
     '/Ac/ActiveIn/Source': [
       {
-        path: 'electrical.venus.source',
+        path: m => { return `electrical.${m.venusName}.acSource` },
         conversion: convertSource,
         requiresInstance: false
       },
       {
-        path: 'electrical.venus.sourceNumber',
+        path: m => { return `electrical.${m.venusName}.acSourceNumber` },
         requiresInstance: false
       }
     ],
@@ -258,21 +258,33 @@ module.exports = function (app, options, handleMessage) {
       requiresInstance: false
     },
     '/Dc/System/Power': {
-      path: 'electrical.venus.dcPower',
+      path: m => {
+        return `electrical.${m.venusName}.dcPower`
+      },
       requiresInstance: false
     },
+    '/Dc/Vebus/Power': {
+      path: m => {
+        return `electrical.${m.venusName}.vebusDcPower`
+      },
+      requiresInstance: false
+    },    
     '/Dc/Pv/Current': {
-      path: 'electrical.venus.totalPanelCurrent',
+      path: m => {
+        return `electrical.${m.venusName}.totalPanelCurrent`
+      },
       requiresInstance: false
     },
     '/Dc/Pv/Power': {
-      path: 'electrical.venus.totalPanelPower',
+      path: m => {
+        return `electrical.${m.venusName}.totalPanelPower`
+      },
       requiresInstance: false
     },
     '/Course': {
       path: 'navigation.courseOverGroundTrue',
       requiresInstance: false,
-      conversion: msg => degsToRad
+      conversion: degsToRad
     },
     '/Speed': {
       path: 'navigation.speedOverGround',
@@ -282,18 +294,18 @@ module.exports = function (app, options, handleMessage) {
       path: 'navigation.position',
       requiresInstance: false,
       conversion: msg => {
+        lastLat = msg.value
         if (lastLon) {
-          lastLat = msg.value
           return { latitude: msg.value, longitude: lastLon }
         }
       }
     },
-    '/Position/longitude': {
+    '/Position/Longitude': {
       path: 'navigation.position',
       requiresInstance: false,
       conversion: msg => {
+        lastLon = msg.value
         if (lastLat) {
-          lastLon = msg.value
           return { latitude: lastLat, longitude: msg.value }
         }
       }
@@ -371,6 +383,10 @@ module.exports = function (app, options, handleMessage) {
       mappings.forEach(mapping => {
         let theValue = m.value
 
+        if ( _.isUndefined(m.venusName) ) {
+          m.venusName = 'venus'
+        }
+        
         if (
           ((isUndefined(mapping.requiresInstance) || mapping.requiresInstance) && isUndefined(m.instanceName)) || !makePath(m)
         ) {
@@ -383,6 +399,8 @@ module.exports = function (app, options, handleMessage) {
         if (mapping.conversion) {
           theValue = mapping.conversion(m)
         }
+
+        debug(`converted to ${theValue}`)
 
         if (isUndefined(theValue) || theValue == null) {
           debug('mapping: no value')
@@ -428,9 +446,11 @@ function makePath (msg, path, vebusIsInverterValue) {
   } else if (msg.senderName.startsWith('com.victronenergy.tank')) {
     type = 'tanks'
   } else if ( msg.senderName.startsWith('com.victronenergy.system') ) {
-    return 'venus'
+    type = msg.venusName
   } else if ( msg.senderName.startsWith('com.victronenergy.digitalinput') ) {
     type = 'digitalinput'
+  } else if ( msg.senderName.startsWith('com.victronenergy.gps') ) {
+    return 'gps'
   } else {
     return null
   }
@@ -499,7 +519,7 @@ function isVEBus (msg) {
 
 function convertState (msg, forInverter) {
   var map = stateMaps[senderNamePrefix(msg.senderName)]
-  return map[Number(msg.value)] || 'unknown'
+  return (map && map[Number(msg.value)]) || 'unknown'
 }
 
 function convertStateForVEBusInverter (msg) {
@@ -526,7 +546,7 @@ const modeMaps = {
   'com.victronenergy.inverter': {
     2: 'on',
     4: 'off',
-    5: 'echo'
+    5: 'eco'
   }
 }
 
@@ -667,6 +687,7 @@ function mapInputState(msg) {
   return inputStateMapping[msg.value] || 'unknown'
 }
 
+
 function makeDelta (m, path, value) {
   const delta = {
     updates: [
@@ -690,6 +711,7 @@ function makeDelta (m, path, value) {
     delta.updates[0].values.push({
       path: path + '.meta',
       value: {
+        displayName: 'Inverter Mode',
         type: 'multiple',
         possibleValues: [
           {
