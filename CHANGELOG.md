@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.14.2 (2020/03/06 18:44 +00:00)
+- [#40](https://github.com/sbender9/signalk-venus-plugin/pull/40) fix: initial tank values updated at 'tanks.unknown' (@sbender9)
+
 ### v1.14.1 (2020/01/10 23:07 +00:00)
 - [#39](https://github.com/sbender9/signalk-venus-plugin/pull/39) fix: gps values from dbus not working (@sbender9)
 
