@@ -1,7 +1,6 @@
 const PLUGIN_ID = 'venus'
 const PLUGIN_NAME = 'Victron Venus Plugin'
 
-const debug = require('debug')('signalk-venus-plugin')
 const promiseRetry = require('promise-retry')
 const _ = require('lodash')
 
@@ -117,7 +116,7 @@ module.exports = function (app) {
   }
 
   function actionHandler(context, path, value, relay, cb) {
-    debug(`setting relay ${relay} to ${value}`)
+    app.debug(`setting relay ${relay} to ${value}`)
 
     dbusSetValue('com.victronenergy.system',
                  `/Relay/${relay}/State`,
@@ -145,7 +144,7 @@ module.exports = function (app) {
   }
 
   function chargerModeActionHandler(context, path, value, dest, cb) {
-    debug(`setting charger mode ${dest} to ${value}`)
+    app.debug(`setting charger mode ${dest} to ${value}`)
 
     dbusSetValue(dest,
                  `/Mode`,
@@ -199,7 +198,7 @@ module.exports = function (app) {
         if (!pluginStarted) {
           return null
         }
-        debug(`Dbus connection attempt ${number}`)
+        app.debug(`Dbus connection attempt ${number}`)
         return createDbusListener(
           app,
           venusMessages => {
@@ -282,7 +281,7 @@ module.exports = function (app) {
     Called when the plugin is disabled on a running server with the plugin enabled.
   */
   plugin.stop = function () {
-    debug('stop')
+    app.debug('stop')
     pluginStarted = false
     onStop.forEach(f => f())
     onStop = []

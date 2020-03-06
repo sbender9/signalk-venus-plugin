@@ -1,5 +1,4 @@
 const dbus = require('dbus-native')
-const debug = require('debug')('signalk-venus-plugin:dbus')
 const _ = require('lodash')
 
 module.exports = function (app, messageCallback, address, plugin, pollInterval) {
@@ -16,7 +15,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
           : () => {}
     let msg = `Connecting ${address}`
     setProviderStatus(msg)
-    debug(msg)
+    app.debug(msg)
     var bus
     if (address) {
       bus = dbus.createClient({
@@ -62,7 +61,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       var service = { name: name }
       services[owner] = service
 
-      debug(`${name} is sender ${owner}`)
+      app.debug(`${name} is sender ${owner}`)
 
       bus.invoke(
         {
@@ -78,7 +77,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
             // a process to manage settings on the dbus, the logger to VRM Portal
             // and others. All services that send out data for connected devices do
             // have the /DeviceInstance path.
-            debug(`warning: error getting device instance for ${name}`)
+            app.debug(`warning: error getting device instance for ${name}`)
           } else {
             services[owner].deviceInstance = res[1][0]
           }
@@ -89,7 +88,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
     }
 
     function requestRoot (service) {
-      // debug(`getValue / ${service.name}`)
+      // app.debug(`getValue / ${service.name}`)
       bus.invoke(
         {
           path: '/',
@@ -101,7 +100,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
           if (err) {
             // Some services don't support requesting the root path. They are not
             // interesting to signalk, see above in the comments on /DeviceInstance
-            debug(
+            app.debug(
               `warning: error during GetValue on / for ${service.name} ${err}`
             )
           } else {
@@ -116,7 +115,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
               service.fluidType = data.FluidType
             }
 
-            // debug(`${service.name} ${JSON.stringify(data)}`)
+            // app.debug(`${service.name} ${JSON.stringify(data)}`)
 
             let deviceInstance = service.deviceInstance
 
@@ -202,7 +201,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       if (!service || !service.name) {
         // See comment above explaining why some services don't have the
         // /DeviceInstance path
-        // debug(`warning: unknown service; ${m.sender}`)
+        // app.debug(`warning: unknown service; ${m.sender}`)
         return
       }
 
@@ -215,14 +214,14 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
         m.instanceName = service.deviceInstance
       }
 
-      // debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${m.value}`);
-      // debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${JSON.stringify(m.body)}`);
+      // app.debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${m.value}`);
+      // app.debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${JSON.stringify(m.body)}`);
 
       messageCallback([m])
     }
 
     function setValue (destination, path, value) {
-      debug(`setValue: ${destination} ${path} = ${value}`)
+      app.debug(`setValue: ${destination} ${path} = ${value}`)
       bus.invoke(
         {
           path: path,
@@ -237,7 +236,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
         },
         function (err, res) {
           if (err) {
-            console.error(err)
+            app.error(err)
           }
         }
       )
@@ -263,14 +262,14 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
 
     bus.connection.on('error', error => {
       setProviderError(error.message)
-      console.error(`ERROR: signalk-venus-plugin: ${error.message}`)
+      app.error(error.message)
       reject(error)
       plugin.onError()
     })
 
     bus.connection.on('end', () => {
       setProviderError('lost connection to D-Bus')
-      console.error(`ERROR: lost connection to D-Bus`)
+      app.error(`lost connection to D-Bus`)
       // here we could (should?) also clear the polling timer. But decided not to do that;
       // to be looked at when properly fixing the dbus-connection lost issue.
     })
