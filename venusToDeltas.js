@@ -1,5 +1,4 @@
 const { isArray, isFunction, isUndefined, values, forIn } = require('lodash')
-const debug = require('debug')('signalk-venus-plugin:venusToDeltas')
 const _ = require('lodash')
 
 var lastLat, lastLon
@@ -121,14 +120,14 @@ module.exports = function (app, options, handleMessage) {
     },
     '/Capacity': {
       path: m => {
-        return (
+        return typeof m.fluidType === 'undefined' ? undefined : (
           'tanks.' + getFluidType(m.fluidType) + `.${m.instanceName}.capacity`
         )
       }
     },
     '/Level': {
       path: m => {
-        return (
+        return typeof m.fluidType === 'undefined' ? undefined : (
           'tanks.' + getFluidType(m.fluidType) + `.${m.instanceName}.currentLevel`
         )
       },
@@ -358,7 +357,7 @@ module.exports = function (app, options, handleMessage) {
     var deltas = []
 
     messages.forEach(m => {
-      debug(`${m.path}:${m.value}`)
+      app.debug(`${m.path}:${m.value}`)
       if (m.path.startsWith('/Alarms')) {
         deltas.push(getAlarmDelta(m))
         return
@@ -390,7 +389,7 @@ module.exports = function (app, options, handleMessage) {
         if (
           ((isUndefined(mapping.requiresInstance) || mapping.requiresInstance) && isUndefined(m.instanceName)) || !makePath(m)
         ) {
-          debug(
+          app.debug(
             `mapping: skipping: ${m.senderName} ${mapping.requiresInstance}`
           )
           return
@@ -400,10 +399,10 @@ module.exports = function (app, options, handleMessage) {
           theValue = mapping.conversion(m)
         }
 
-        debug(`converted to ${theValue}`)
+        app.debug(`converted to ${theValue}`)
 
         if (isUndefined(theValue) || theValue == null) {
-          debug('mapping: no value')
+          app.debug('mapping: no value')
           return
         }
 
@@ -419,7 +418,7 @@ module.exports = function (app, options, handleMessage) {
       })
     })
 
-    debug(`produced ${deltas.length} deltas`)
+    app.debug(`produced ${deltas.length} deltas`)
     return deltas
   }
 
