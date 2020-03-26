@@ -53,6 +53,10 @@ module.exports = function (app, options, handleMessage) {
       path: m => `electrical.batteries.${m.instanceName}.lifetimeDischarge`,
       conversion: ahToCoulomb
     },
+    '/History/DischargedEnergy' : {
+      path: m => `electrical.batteries.${m.instanceName}.capacity.dischargedEnergy`,
+      conversion: ahToCoulomb
+    },
     '/Pv/I': {
       path: m => `electrical.solar.${m.instanceName}.panelCurrent`
     },
@@ -159,6 +163,11 @@ module.exports = function (app, options, handleMessage) {
         return makePath(m, `${m.instanceName}.acin.voltage`, true)
       }
     },
+    '/Ac/ActiveIn/L1/F': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acin.frequency`, true)
+      }
+    },
     '/Ac/ActiveIn/L2/I': {
       path: m => {
         return makePath(m, `${m.instanceName}.acin2.current`, true)
@@ -202,6 +211,11 @@ module.exports = function (app, options, handleMessage) {
     '/Ac/Out/L1/V': {
       path: m => {
         return makePath(m, `${m.instanceName}.acout.voltage`, true)
+      }
+    },
+    '/Ac/Out/L1/F': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acout.frequency`, true)
       }
     },
     '/Ac/Out/L2/I': {
