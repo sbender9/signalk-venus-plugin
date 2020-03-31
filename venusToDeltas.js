@@ -63,10 +63,12 @@ module.exports = function (app, options, handleMessage) {
       path: m => `electrical.solar.${m.instanceName}.panelPower`
     },
     '/History/Daily/0/Yield': {
-      path: m => `electrical.solar.${m.instanceName}.yieldToday`
+      path: m => `electrical.solar.${m.instanceName}.yieldToday`,
+      conversion: kWhToJoules
     },
     '/History/Daily/1/Yield': {
-      path: m => `electrical.solar.${m.instanceName}.yieldYesterday`
+      path: m => `electrical.solar.${m.instanceName}.yieldYesterday`,
+      conversion: kWhToJoules
     },
     '/State': [
       {
@@ -640,6 +642,10 @@ function convertAlarmToNotification (m) {
   }
 
   return value
+}
+
+function kWhToJoules (m) {
+  return Number(m.value) * 3600000
 }
 
 function ahToCoulomb (m) {
