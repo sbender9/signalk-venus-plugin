@@ -135,6 +135,14 @@ module.exports = function (app, options, handleMessage) {
       },
       conversion: percentToRatio
     },
+    '/Temperature': {
+      path: m => {
+        return typeof m.temperatureType === 'undefined' ? undefined : (
+          getTemperaturePath(m, options)
+        )
+      },
+      conversion: celsiusToKelvin
+    },
     '/Ac/ActiveIn/Source': [
       {
         path: m => { return `electrical.${m.venusName}.acSource` },
@@ -415,8 +423,10 @@ module.exports = function (app, options, handleMessage) {
 
         var thePath = isFunction(mapping.path) ? mapping.path(m) : mapping.path
 
-        var delta = makeDelta(m, thePath, theValue)
-        deltas.push(delta)
+        if ( !_.isUndefined(thePath) ) {
+          var delta = makeDelta(m, thePath, theValue)
+          deltas.push(delta)
+        }
       })
     })
 
@@ -452,6 +462,8 @@ function makePath (msg, path, vebusIsInverterValue) {
     type = 'digitalinput'
   } else if ( msg.senderName.startsWith('com.victronenergy.gps') ) {
     return 'gps'
+  } else if ( msg.senderName.startsWith('com.victronenergy.temperature')) {
+    return 'temperature'
   } else {
     return null
   }
@@ -671,6 +683,21 @@ const fluidTypeMapping = {
 
 function getFluidType (typeId) {
   return fluidTypeMapping[typeId] || 'unknown'
+}
+
+function getTemperaturePath (m, options) {
+  if ( options.temperatureMappings ) {
+    const mapping = options.temperatureMappings.find(mapping => mapping.venusId == m.instanceName)
+    if ( mapping ) {
+      return mapping.signalkPath
+    }
+  }
+  
+  if ( m.temperatureType === 1 ) {
+    return 'environment.inside.refrigerator.temperature'
+  } else {
+    return `environment.venus.${m.instanceName}.temperature`
+  }
 }
 
 const inputStateMapping = {

@@ -115,6 +115,10 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
               service.fluidType = data.FluidType
             }
 
+            if (!_.isUndefined(data.TemperatureType)) {
+              service.temperatureType = data.TemperatureType
+            }
+
             // app.debug(`${service.name} ${JSON.stringify(data)}`)
 
             let deviceInstance = service.deviceInstance
@@ -139,7 +143,8 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
                 senderName: service.name,
                 value: data[path],
                 instanceName: deviceInstance,
-                fluidType: service.fluidType
+                fluidType: service.fluidType,
+                temperatureType: service.temperatureType
               })
             })
             messageCallback(messages)
