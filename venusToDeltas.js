@@ -4,6 +4,12 @@ const _ = require('lodash')
 var lastLat, lastLon
 
 module.exports = function (app, options, handleMessage) {
+  function debug(msg) {
+    if ( app.debug ) {
+      app.debug(msg)
+    }
+  }
+  
   const venusToSignalKMapping = {
     '/Dc/0/Voltage': {
       path: m => {
@@ -367,7 +373,7 @@ module.exports = function (app, options, handleMessage) {
     var deltas = []
 
     messages.forEach(m => {
-      app.debug(`${m.path}:${m.value}`)
+      debug(`${m.path}:${m.value}`)
       if (m.path.startsWith('/Alarms')) {
         deltas.push(getAlarmDelta(m))
         return
@@ -399,7 +405,7 @@ module.exports = function (app, options, handleMessage) {
         if (
           ((isUndefined(mapping.requiresInstance) || mapping.requiresInstance) && isUndefined(m.instanceName)) || !makePath(m)
         ) {
-          app.debug(
+          debug(
             `mapping: skipping: ${m.senderName} ${mapping.requiresInstance}`
           )
           return
@@ -409,10 +415,10 @@ module.exports = function (app, options, handleMessage) {
           theValue = mapping.conversion(m)
         }
 
-        app.debug(`converted to ${theValue}`)
+        debug(`converted to ${theValue}`)
 
         if (isUndefined(theValue) || theValue == null) {
-          app.debug('mapping: no value')
+          debug('mapping: no value')
           return
         }
 
@@ -430,7 +436,7 @@ module.exports = function (app, options, handleMessage) {
       })
     })
 
-    app.debug(`produced ${deltas.length} deltas`)
+    debug(`produced ${deltas.length} deltas`)
     return deltas
   }
 
