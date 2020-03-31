@@ -3,6 +3,8 @@
 ### v1.15.0 (2020/03/31 13:02 +00:00)
 - [#44](https://github.com/sbender9/signalk-venus-plugin/pull/44) feature: add support for temperature sensors (@sbender9)
 - [#43](https://github.com/sbender9/signalk-venus-plugin/pull/43) fix: convert kWh to Joules for solar yield (@sbender9)
+
+### v1.14.2 (2020/03/06 18:44 +00:00)
 - [#40](https://github.com/sbender9/signalk-venus-plugin/pull/40) fix: initial tank values updated at 'tanks.unknown' (@sbender9)
 
 ### v1.14.1 (2020/01/10 23:07 +00:00)
