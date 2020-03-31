@@ -97,6 +97,26 @@ module.exports = function (app) {
             }
           }
         }
+      },
+      temperatureMappings: {
+        title: 'Temperature Mappings',
+        description: 'Map temperature inputs to Signal K paths',
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            venusId: {
+              title: 'Venus Device Instance',
+              type: 'number',
+              default: 23
+            },
+            signalkPath: {
+              title: 'Signal K Path',
+              type: 'string',
+              default: 'environment.inside.refrigerator.temperature'
+            }
+          }
+        }
       }
       /*,
       sendPosistion: {
