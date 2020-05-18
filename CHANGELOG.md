@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.16.0 (2020/05/18 21:20 +00:00)
+- [#45](https://github.com/sbender9/signalk-venus-plugin/pull/45) feature: add option to disable getting position from Venus OS (@sbender9)
+
 ### v1.15.0 (2020/03/31 13:02 +00:00)
 - [#44](https://github.com/sbender9/signalk-venus-plugin/pull/44) feature: add support for temperature sensors (@sbender9)
 - [#43](https://github.com/sbender9/signalk-venus-plugin/pull/43) fix: convert kWh to Joules for solar yield (@sbender9)
