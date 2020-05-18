@@ -45,6 +45,11 @@ module.exports = function (app) {
         title: 'Interval (in seconds) to poll venus for current values',
         default: 20
       },
+      usePosition: {
+        type: 'boolean',
+        title: 'Use the position from Venus OS',
+        default: true
+      },
       relayPath0: {
         type: 'string',
         title: 'The Signal K path for relay 1',

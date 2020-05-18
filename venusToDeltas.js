@@ -310,7 +310,7 @@ module.exports = function (app, options, handleMessage) {
       requiresInstance: false,
       conversion: msg => {
         lastLat = msg.value
-        if (lastLon) {
+        if (lastLon && (_.isUndefined(options.usePosition) || options.usePosition)) {
           return { latitude: msg.value, longitude: lastLon }
         }
       }
@@ -320,7 +320,7 @@ module.exports = function (app, options, handleMessage) {
       requiresInstance: false,
       conversion: msg => {
         lastLon = msg.value
-        if (lastLat) {
+        if (lastLat && (_.isUndefined(options.usePosition) || options.usePosition)) {
           return { latitude: lastLat, longitude: msg.value }
         }
       }
