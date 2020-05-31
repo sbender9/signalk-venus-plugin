@@ -22,6 +22,13 @@ module.exports = function (app) {
     'Plugin taking Battery, and other, from the D-Bus in Venus'
 
   plugin.schema = () => {
+    let knowPaths
+    if ( plugin.getKnownPaths ) {
+      knowPaths = plugin.getKnownPaths().sort()
+    } else {
+      let options = app.readPluginOptions()
+      knowPaths = options.configuration && options.configuration.blacklist ? options.configuration.blacklist : []
+    }
     return {
       title: PLUGIN_NAME,
       type: 'object',
@@ -130,7 +137,7 @@ module.exports = function (app) {
           type: 'array',
           items: {
             type: 'string',
-            enum: plugin.getKnownPaths().sort()
+            enum: knowPaths
           }
         }
         /*,
