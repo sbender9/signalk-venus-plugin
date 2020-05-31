@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.17.0 (2020/05/31 17:04 +00:00)
+- [#46](https://github.com/sbender9/signalk-venus-plugin/pull/46) feature: add ability to blacklist specific paths (@sbender9)
+
 ### v1.16.0 (2020/05/18 21:20 +00:00)
 - [#45](https://github.com/sbender9/signalk-venus-plugin/pull/45) feature: add option to disable getting position from Venus OS (@sbender9)
 
