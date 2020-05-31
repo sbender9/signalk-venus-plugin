@@ -2,6 +2,7 @@ const { isArray, isFunction, isUndefined, values, forIn } = require('lodash')
 const _ = require('lodash')
 
 var lastLat, lastLon
+var knownPaths = []
 
 module.exports = function (app, options, handleMessage) {
   function debug(msg) {
@@ -430,8 +431,14 @@ module.exports = function (app, options, handleMessage) {
         var thePath = isFunction(mapping.path) ? mapping.path(m) : mapping.path
 
         if ( !_.isUndefined(thePath) ) {
-          var delta = makeDelta(m, thePath, theValue)
-          deltas.push(delta)
+          if ( knownPaths.indexOf(thePath) == -1 )
+          {
+            knownPaths.push(thePath)
+          }
+          if ( !options.blacklist || options.blacklist.indexOf(thePath) == -1 ) {
+            var delta = makeDelta(m, thePath, theValue)
+            deltas.push(delta)
+          } 
         }
       })
     })
@@ -440,7 +447,11 @@ module.exports = function (app, options, handleMessage) {
     return deltas
   }
 
-  return { toDelta: toDelta }
+  function getKnownPaths() {
+    return knownPaths
+  }
+
+  return { toDelta, getKnownPaths }
 }
 
 function percentToRatio (msg) {

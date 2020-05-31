@@ -21,114 +21,132 @@ module.exports = function (app) {
   plugin.description =
     'Plugin taking Battery, and other, from the D-Bus in Venus'
 
-  plugin.schema = {
-    title: PLUGIN_NAME,
-    type: 'object',
-    properties: {
-      installType: {
-        type: 'string',
-        title: 'How to connect to Venus D-Bus',
-        enum: ['local', 'remote'],
-        enumNames: [
-          'Connect to localhost (signalk-server is running on a Venus device)',
-          'Connect to remote Venus installation'
-        ],
-        default: 'local'
-      },
-      dbusAddress: {
-        type: 'string',
-        title: 'Address for remote Venus device (D-Bus address notation)',
-        default: 'tcp:host=192.168.1.57,port=78'
-      },
-      pollInterval: {
-        type: 'number',
-        title: 'Interval (in seconds) to poll venus for current values',
-        default: 20
-      },
-      usePosition: {
-        type: 'boolean',
-        title: 'Use the position from Venus OS',
-        default: true
-      },
-      relayPath0: {
-        type: 'string',
-        title: 'The Signal K path for relay 1',
-        default: 'electrical.switches.venus-0'
-      },
-      /*
-      relayDisplayName0: {
-        type: 'string',
-        title: 'The Display Name for relay 1',
-      },
-      */
-      relayPath1: {
-        type: 'string',
-        title: 'The Signal K path for relay 2',
-        default: 'electrical.switches.venus-1'
-      },
-      /*
-      relayDisplayName1: {
-        type: 'string',
-        title: 'The Display Name for relay 2',
-      },
-      */
-      instanceMappings: {
-        title: 'Instance Mappings',
-        description: 'Map venus device instance numbers to Signal K instances',
-        type: 'array',
-        items: {
-          type: 'object',
-          properties: {
-            type: {
-              enum: [
-                'com.victronenergy.battery',
-                'com.victronenergy.tank',
-                'com.victronenergy.solarcharger'
-              ],
-              enumNames: [
-                'Battery',
-                'Tank',
-                'Solar Charger'
-              ],
-            },
-            
-            venusId: {
-              title: 'Venus Device Instance',
-              type: 'number'
-            },
-            signalkId: {
-              title: 'Signal K Instance',
-              type: 'string'
+  plugin.schema = () => {
+    let knowPaths
+    if ( plugin.getKnownPaths ) {
+      knowPaths = plugin.getKnownPaths().sort()
+    } else {
+      let options = app.readPluginOptions()
+      knowPaths = options.configuration && options.configuration.blacklist ? options.configuration.blacklist : [ 'no known paths yet' ]
+    }
+    return {
+      title: PLUGIN_NAME,
+      type: 'object',
+      properties: {
+        installType: {
+          type: 'string',
+          title: 'How to connect to Venus D-Bus',
+          enum: ['local', 'remote'],
+          enumNames: [
+            'Connect to localhost (signalk-server is running on a Venus device)',
+            'Connect to remote Venus installation'
+          ],
+          default: 'local'
+        },
+        dbusAddress: {
+          type: 'string',
+          title: 'Address for remote Venus device (D-Bus address notation)',
+          default: 'tcp:host=192.168.1.57,port=78'
+        },
+        pollInterval: {
+          type: 'number',
+          title: 'Interval (in seconds) to poll venus for current values',
+          default: 20
+        },
+        usePosition: {
+          type: 'boolean',
+          title: 'Use the position from Venus OS',
+          default: true
+        },
+        relayPath0: {
+          type: 'string',
+          title: 'The Signal K path for relay 1',
+          default: 'electrical.switches.venus-0'
+        },
+        /*
+          relayDisplayName0: {
+          type: 'string',
+          title: 'The Display Name for relay 1',
+          },
+        */
+        relayPath1: {
+          type: 'string',
+          title: 'The Signal K path for relay 2',
+          default: 'electrical.switches.venus-1'
+        },
+        /*
+          relayDisplayName1: {
+          type: 'string',
+          title: 'The Display Name for relay 2',
+          },
+        */
+        instanceMappings: {
+          title: 'Instance Mappings',
+          description: 'Map venus device instance numbers to Signal K instances',
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              type: {
+                enum: [
+                  'com.victronenergy.battery',
+                  'com.victronenergy.tank',
+                  'com.victronenergy.solarcharger'
+                ],
+                enumNames: [
+                  'Battery',
+                  'Tank',
+                  'Solar Charger'
+                ],
+              },
+              
+              venusId: {
+                title: 'Venus Device Instance',
+                type: 'number'
+              },
+              signalkId: {
+                title: 'Signal K Instance',
+                type: 'string'
+              }
             }
           }
-        }
-      },
-      temperatureMappings: {
-        title: 'Temperature Mappings',
-        description: 'Map temperature inputs to Signal K paths',
-        type: 'array',
-        items: {
-          type: 'object',
-          properties: {
-            venusId: {
-              title: 'Venus Device Instance',
-              type: 'number',
-              default: 23
-            },
-            signalkPath: {
-              title: 'Signal K Path',
-              type: 'string',
-              default: 'environment.inside.refrigerator.temperature'
+        },
+        temperatureMappings: {
+          title: 'Temperature Mappings',
+          description: 'Map temperature inputs to Signal K paths',
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              venusId: {
+                title: 'Venus Device Instance',
+                type: 'number',
+                default: 23
+              },
+              signalkPath: {
+                title: 'Signal K Path',
+                type: 'string',
+                default: 'environment.inside.refrigerator.temperature'
+              }
             }
           }
+        },
+        blacklist: {
+          title: 'Blacklist',
+          description: 'These paths will be ignored',
+          type: 'array',
+          items: {
+            type: 'string',
+            enum: knowPaths
+          }
         }
+        /*,
+          sendPosistion: {
+          type: 'boolean',
+          title: 'Send Signal K position, course and speed to venus',
+          default: false
+          } */
       }
-      /*,
-      sendPosistion: {
-        type: 'boolean',
-        title: 'Send Signal K position, course and speed to venus',
-        default: false
-      } */
     }
   }
 
@@ -201,10 +219,11 @@ module.exports = function (app) {
     or the plugin is enabled from ui on a running server).
   */
   plugin.start = function (options) {
-    var { toDelta } = venusToDeltas(app, options, handleMessage)
+    var { toDelta, getKnownPaths } = venusToDeltas(app, options, handleMessage)
     pluginStarted = true
     plugin.options = options
     plugin.onError = () => {}
+    plugin.getKnownPaths = getKnownPaths
     this.connect(options, toDelta)
 
     if ( app.registerActionHandler ) {
