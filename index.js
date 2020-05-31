@@ -27,7 +27,7 @@ module.exports = function (app) {
       knowPaths = plugin.getKnownPaths().sort()
     } else {
       let options = app.readPluginOptions()
-      knowPaths = options.configuration && options.configuration.blacklist ? options.configuration.blacklist : []
+      knowPaths = options.configuration && options.configuration.blacklist ? options.configuration.blacklist : [ 'no known paths yet' ]
     }
     return {
       title: PLUGIN_NAME,
