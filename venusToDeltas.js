@@ -586,7 +586,7 @@ function makePath (msg, path, vebusIsInverterValue) {
   } else if ( msg.senderName.startsWith('com.victronenergy.temperature')) {
     return 'temperature'
   } else if ( msg.senderName.startsWith('com.victronenergy.grid')) {
-    return 'grid'
+    type = 'grid'
   } else {
     return null
   }
