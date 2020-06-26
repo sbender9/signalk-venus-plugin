@@ -481,6 +481,8 @@ function makePath (msg, path, vebusIsInverterValue) {
     return 'gps'
   } else if ( msg.senderName.startsWith('com.victronenergy.temperature')) {
     return 'temperature'
+  } else if ( msg.senderName.startsWith('com.victronenergy.grid')) {
+    return 'grid'
   } else {
     return null
   }
