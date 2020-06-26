@@ -1,7 +1,9 @@
 ## Change Log
 
-### v1.18.0 (2020/06/26 23:43 +00:00)
+### v1.18.1 (2020/06/26 23:43 +00:00)
 - [#49](https://github.com/sbender9/signalk-venus-plugin/pull/49) fix: grid paths incorrect (@sbender9)
+
+### v1.18.0 (2020/06/26 23:30 +00:00)
 - [#48](https://github.com/sbender9/signalk-venus-plugin/pull/48) feature: add support for com.victronenergy.grid (@sbender9)
 
 ### v1.17.0 (2020/05/31 17:04 +00:00)
