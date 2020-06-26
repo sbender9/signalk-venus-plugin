@@ -150,6 +150,110 @@ module.exports = function (app, options, handleMessage) {
       },
       conversion: celsiusToKelvin
     },
+    '/Ac/Current': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.current`, true)
+      }
+    },
+    '/Ac/Power': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.power`, true)
+      }
+    },
+    '/Ac/Volage': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.power`, true)
+      }
+    },
+    '/Ac/Energy/Forward': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.energy.forward`, true)
+      }
+    },
+    '/Ac/Energy/Reverse': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.energy.reverse`, true)
+      }
+    },
+    
+    '/Ac/L1/Current': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.l1.current`, true)
+      }
+    },
+    '/Ac/L1/Power': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.l1.power`, true)
+      }
+    },
+    '/Ac/L1/Volage': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.l1.power`, true)
+      }
+    },
+    '/Ac/L1/Energy/Forward': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.l1.energy.forward`, true)
+      }
+    },
+    '/Ac/L1/Energy/Reverse': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.l1.energy.reverse`, true)
+      }
+    },
+
+    '/Ac/L3/Current': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.l3.current`, true)
+      }
+    },
+    '/Ac/L3/Power': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.l3.power`, true)
+      }
+    },
+    '/Ac/L3/Volage': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.l3.power`, true)
+      }
+    },
+    '/Ac/L3/Energy/Forward': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.l3.energy.forward`, true)
+      }
+    },
+    '/Ac/L3/Energy/Reverse': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.l3.energy.reverse`, true)
+      }
+    },
+
+    '/Ac/L2/Current': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.l2.current`, true)
+      }
+    },
+    '/Ac/L2/Power': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.l2.power`, true)
+      }
+    },
+    '/Ac/L2/Volage': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.l2.power`, true)
+      }
+    },
+    '/Ac/L2/Energy/Forward': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.l2.energy.forward`, true)
+      }
+    },
+    '/Ac/L2/Energy/Reverse': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.l2.energy.reverse`, true)
+      }
+    },
+    
     '/Ac/ActiveIn/Source': [
       {
         path: m => { return `electrical.${m.venusName}.acSource` },
