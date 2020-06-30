@@ -162,7 +162,7 @@ module.exports = function (app, options, handleMessage) {
     },
     '/Ac/Volage': {
       path: m => {
-        return makePath(m, `${m.instanceName}.power`, true)
+        return makePath(m, `${m.instanceName}.voltage`, true)
       }
     },
     '/Ac/Energy/Forward': {
@@ -188,7 +188,7 @@ module.exports = function (app, options, handleMessage) {
     },
     '/Ac/L1/Volage': {
       path: m => {
-        return makePath(m, `${m.instanceName}.l1.power`, true)
+        return makePath(m, `${m.instanceName}.l1.voltage`, true)
       }
     },
     '/Ac/L1/Energy/Forward': {
@@ -214,7 +214,7 @@ module.exports = function (app, options, handleMessage) {
     },
     '/Ac/L3/Volage': {
       path: m => {
-        return makePath(m, `${m.instanceName}.l3.power`, true)
+        return makePath(m, `${m.instanceName}.l3.voltage`, true)
       }
     },
     '/Ac/L3/Energy/Forward': {
@@ -240,7 +240,7 @@ module.exports = function (app, options, handleMessage) {
     },
     '/Ac/L2/Volage': {
       path: m => {
-        return makePath(m, `${m.instanceName}.l2.power`, true)
+        return makePath(m, `${m.instanceName}.l2.voltage`, true)
       }
     },
     '/Ac/L2/Energy/Forward': {
@@ -500,12 +500,27 @@ module.exports = function (app, options, handleMessage) {
         mappings = venusToSignalKMapping[m.path] || []
       }
 
+      if ( _.isUndefined(m.venusName) ) {
+        m.venusName = 'venus'
+      }
+
+      if ( mappings.length == 0 ) {
+        if (isUndefined(m.value) || m.value == null || isArray(m.value) ) {
+          return
+        }
+        let thePath = `${m.senderName}.${m.path}`
+        if ( knownPaths.indexOf(thePath) == -1 )
+          {
+            knownPaths.push(thePath)
+          }
+          if ( !options.blacklist || options.blacklist.indexOf(thePath) == -1 ) {
+            var delta = makeDelta(m, thePath, m.value)
+            deltas.push(delta)
+          }
+      }
+      
       mappings.forEach(mapping => {
         let theValue = m.value
-
-        if ( _.isUndefined(m.venusName) ) {
-          m.venusName = 'venus'
-        }
         
         if (
           ((isUndefined(mapping.requiresInstance) || mapping.requiresInstance) && isUndefined(m.instanceName)) || !makePath(m)
@@ -759,16 +774,15 @@ function convertErrorToNotification (m) {
 
 function convertAlarmToNotification (m) {
   var value
-  if (m.value == null || m.value == 0) {
-    value = { state: 'normal', message: 'No Alarm' }
+  var message
+  if (_.isString(m.value)) {
+    message = m.value
   } else {
-    var message
-    if (_.isString(m.value)) {
-      message = m.value
-    } else {
-      message = m.path.split('/')[2]
-    }
-
+    message = m.path.split('/')[2]
+  }
+  if (m.value == null || m.value == 0) {
+    value = { state: 'normal', message: message }
+  } else {
     value = {
       state: m.value == 1 ? 'warning' : 'alarm',
       message: message,
