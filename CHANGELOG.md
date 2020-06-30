@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.18.3 (2020/06/30 21:03 +00:00)
+- [#51](https://github.com/sbender9/signalk-venus-plugin/pull/51) fix: remove adding generic data for unknown data (@sbender9)
+
 ### v1.18.2 (2020/06/30 20:45 +00:00)
 - [#50](https://github.com/sbender9/signalk-venus-plugin/pull/50) fix: /Ac/L*/Voltage has the wrong path (@sbender9)
 
