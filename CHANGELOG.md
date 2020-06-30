@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.18.4 (2020/06/30 21:15 +00:00)
+- [#52](https://github.com/sbender9/signalk-venus-plugin/pull/52) fix: /Ac/L*/Volage typo (@sbender9)
+
 ### v1.18.3 (2020/06/30 21:03 +00:00)
 - [#51](https://github.com/sbender9/signalk-venus-plugin/pull/51) fix: remove adding generic data for unknown data (@sbender9)
 
