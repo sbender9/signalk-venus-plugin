@@ -504,21 +504,6 @@ module.exports = function (app, options, handleMessage) {
         m.venusName = 'venus'
       }
 
-      if ( mappings.length == 0 ) {
-        if (isUndefined(m.value) || m.value == null || isArray(m.value) ) {
-          return
-        }
-        let thePath = `${m.senderName}.${m.path}`
-        if ( knownPaths.indexOf(thePath) == -1 )
-          {
-            knownPaths.push(thePath)
-          }
-          if ( !options.blacklist || options.blacklist.indexOf(thePath) == -1 ) {
-            var delta = makeDelta(m, thePath, m.value)
-            deltas.push(delta)
-          }
-      }
-      
       mappings.forEach(mapping => {
         let theValue = m.value
         
