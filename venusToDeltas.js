@@ -160,7 +160,7 @@ module.exports = function (app, options, handleMessage) {
         return makePath(m, `${m.instanceName}.power`, true)
       }
     },
-    '/Ac/Volage': {
+    '/Ac/Voltage': {
       path: m => {
         return makePath(m, `${m.instanceName}.voltage`, true)
       }
@@ -186,7 +186,7 @@ module.exports = function (app, options, handleMessage) {
         return makePath(m, `${m.instanceName}.l1.power`, true)
       }
     },
-    '/Ac/L1/Volage': {
+    '/Ac/L1/Voltage': {
       path: m => {
         return makePath(m, `${m.instanceName}.l1.voltage`, true)
       }
@@ -212,7 +212,7 @@ module.exports = function (app, options, handleMessage) {
         return makePath(m, `${m.instanceName}.l3.power`, true)
       }
     },
-    '/Ac/L3/Volage': {
+    '/Ac/L3/Voltage': {
       path: m => {
         return makePath(m, `${m.instanceName}.l3.voltage`, true)
       }
@@ -238,7 +238,7 @@ module.exports = function (app, options, handleMessage) {
         return makePath(m, `${m.instanceName}.l2.power`, true)
       }
     },
-    '/Ac/L2/Volage': {
+    '/Ac/L2/Voltage': {
       path: m => {
         return makePath(m, `${m.instanceName}.l2.voltage`, true)
       }
