@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.18.2 (2020/06/30 20:45 +00:00)
+- [#50](https://github.com/sbender9/signalk-venus-plugin/pull/50) fix: /Ac/L*/Voltage has the wrong path (@sbender9)
+
 ### v1.18.1 (2020/06/26 23:43 +00:00)
 - [#49](https://github.com/sbender9/signalk-venus-plugin/pull/49) fix: grid paths incorrect (@sbender9)
 
