@@ -1,5 +1,10 @@
 ## Change Log
 
+### v1.19.0 (2020/07/03 17:25 +00:00)
+- [#55](https://github.com/sbender9/signalk-venus-plugin/pull/55) fix: unable to save the plugin config when there are no know paths (@sbender9)
+- [#54](https://github.com/sbender9/signalk-venus-plugin/pull/54) feature: add ability to map vebus paths (@sbender9)
+- [#53](https://github.com/sbender9/signalk-venus-plugin/pull/53) fix: mappings not always working (@sbender9)
+
 ### v1.18.4 (2020/06/30 21:15 +00:00)
 - [#52](https://github.com/sbender9/signalk-venus-plugin/pull/52) fix: /Ac/L*/Volage typo (@sbender9)
 
