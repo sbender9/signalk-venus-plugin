@@ -91,12 +91,14 @@ module.exports = function (app) {
                 enum: [
                   'com.victronenergy.battery',
                   'com.victronenergy.tank',
-                  'com.victronenergy.solarcharger'
+                  'com.victronenergy.solarcharger',
+                  'com.victronenergy.vebus'
                 ],
                 enumNames: [
                   'Battery',
                   'Tank',
-                  'Solar Charger'
+                  'Solar Charger',
+                  'VE.Bus'
                 ],
               },
               
