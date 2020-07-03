@@ -219,6 +219,15 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
         m.instanceName = service.deviceInstance
       }
 
+      if ( plugin.options.instanceMappings ) {
+        const mapping = plugin.options.instanceMappings.find(mapping => {
+          return service.name.startsWith(mapping.type) && mapping.venusId == m.instanceName
+        })
+        if ( !_.isUndefined(mapping) ) {
+          m.instanceName = mapping.signalkId
+        }
+      }      
+
       // app.debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${m.value}`);
       // app.debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${JSON.stringify(m.body)}`);
 
