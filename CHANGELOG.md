@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.20.0 (2020/07/05 18:37 +00:00)
+- [#56](https://github.com/sbender9/signalk-venus-plugin/pull/56) feature: add Inverter Only option for MultiPlus switch (@sbender9)
+
 ### v1.19.0 (2020/07/03 17:25 +00:00)
 - [#55](https://github.com/sbender9/signalk-venus-plugin/pull/55) fix: unable to save the plugin config when there are no know paths (@sbender9)
 - [#54](https://github.com/sbender9/signalk-venus-plugin/pull/54) feature: add ability to map vebus paths (@sbender9)
