@@ -880,7 +880,12 @@ function makeDelta (m, path, value) {
           {
             title: 'Charger Only',
             value: 1,
-            abbrev: 'Charge'
+            abbrev: 'Chg'
+          },
+          {
+            title: 'Inverter Only',
+            value: 2,
+            abbrev: 'Inv'
           }
         ]
       }
