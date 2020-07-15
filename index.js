@@ -137,7 +137,7 @@ module.exports = function (app) {
           }
         },
         blacklist: {
-          title: 'Blacklist',
+          title: 'Block List',
           description: 'These paths will be ignored',
           type: 'array',
           items: {
