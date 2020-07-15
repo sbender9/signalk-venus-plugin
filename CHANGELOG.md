@@ -1,5 +1,9 @@
 ## Change Log
 
+### v1.21.0 (2020/07/15 13:29 +00:00)
+- [#57](https://github.com/sbender9/signalk-venus-plugin/pull/57) refactor: change "Blacklist" to "Block List" in the UI (@sbender9)
+- [#42](https://github.com/sbender9/signalk-venus-plugin/pull/42) add frequency and discharge capacity (@dpreuss)
+
 ### v1.20.0 (2020/07/05 18:37 +00:00)
 - [#56](https://github.com/sbender9/signalk-venus-plugin/pull/56) feature: add Inverter Only option for MultiPlus switch (@sbender9)
 
