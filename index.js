@@ -3,11 +3,13 @@ const PLUGIN_NAME = 'Victron Venus Plugin'
 
 const promiseRetry = require('promise-retry')
 const _ = require('lodash')
-
+const mqtt = require('mqtt');
 const createDbusListener = require('./dbus-listener')
 const venusToDeltas = require('./venusToDeltas')
 
 const gpsDestination = 'com.victronenergy.gps'
+
+const supportedMQTTTypes = [ 'battery', 'solarcharger', 'tank', 'vebus', 'inverter', 'temperature' ]
 
 module.exports = function (app) {
   const plugin = {}
@@ -15,7 +17,9 @@ module.exports = function (app) {
   let dbusSetValue
   let pluginStarted = false
   let modesRegistered = []
-
+  let keepAlive
+  var fluidTypes = {}
+  
   plugin.id = PLUGIN_ID
   plugin.name = PLUGIN_NAME
   plugin.description =
@@ -39,17 +43,28 @@ module.exports = function (app) {
         installType: {
           type: 'string',
           title: 'How to connect to Venus D-Bus',
-          enum: ['local', 'remote'],
+          enum: ['local', 'remote', 'mqtt'],
           enumNames: [
-            'Connect to localhost (signalk-server is running on a Venus device)',
-            'Connect to remote Venus installation'
+            'Connect to localhost via dbus (signalk-server is running on a Venus device)',
+            'Connect to remote Venus installation via dbus',
+            'Connect to remote Venus installation via MQTT'
           ],
-          default: 'local'
+          default: 'mqtt'
         },
         dbusAddress: {
           type: 'string',
           title: 'Address for remote Venus device (D-Bus address notation)',
           default: 'tcp:host=192.168.1.57,port=78'
+        },
+        MQTT: {
+          type: 'object',
+          properties: {
+            url: {
+              type: 'string',
+              title: 'Venus MQTT URL',
+              default: 'mqtt://venus.local:1883'
+            }
+          }
         },
         pollInterval: {
           type: 'number',
@@ -229,7 +244,6 @@ module.exports = function (app) {
     plugin.options = options
     plugin.onError = () => {}
     plugin.getKnownPaths = getKnownPaths
-    this.connect(options, toDelta)
 
     if ( app.registerActionHandler ) {
       [0, 1].forEach(relay => {
@@ -238,6 +252,12 @@ module.exports = function (app) {
                                   path,
                                   getActionHandler(relay))
       })
+    }
+
+    if ( options.installType === 'mqtt' ) {
+      startMQTT(options, toDelta)
+    } else {
+      this.connect(options, toDelta)
     }
   }
 
@@ -335,8 +355,131 @@ module.exports = function (app) {
     onStop.forEach(f => f())
     onStop = []
     modesRegistered = []
+
+    if ( keepAlive ) {
+      clearInterval(keepAlive)
+      keepAlive = undefined
+    }
   }
 
+  function startMQTT(options, toDelta) {
+    var url = options.MQTT.url
+    var client = mqtt.connect(url)
+
+    plugin.needsID = true
+
+    app.debug(`connecting to ${url}`)
+
+    client.on('connect', function () {
+      app.debug(`connected to ${url}`)
+      client.subscribe('N/+/+/#')
+      app.setProviderStatus(`Connected to ${url}`)
+
+      //client.publish(`R/${portalID}/system/0/Serial`)
+
+      //client.subscribe(`N/${portalID}/+/#`)
+    })
+
+    client.on('error', error => {
+      console.error(`error connecting to mqtt ${error}`)
+      app.setProviderError(`connecting to mqtt: ${error}`)
+    })
+
+    client.on('close', () => {
+      console.log(`mqtt close`)
+    });
+
+    client.on('reconnect', () => {
+      console.log(`mqtt reconnect`)
+    });
+
+    client.on('message', function (topic, json) {
+      app.debug(`${topic}: ${json}`)
+
+      var parts = topic.split('/')
+      var type = parts[2]
+      var instance = parts[3]
+      var fluidType
+
+      var message = JSON.parse(json)
+      
+      if ( plugin.needsID ) {
+        if ( topic.endsWith('system/0/Serial') ) {
+          let portalID = message.value
+          app.debug('detected portalId %s', portalID)
+          client.publish(`R/${portalID}/system/0/Serial`)
+          client.subscribe(`N/${portalID}/+/#`)
+          plugin.needsID = false
+
+          if ( keepAlive ) {
+            clearInterval(keepAlive)
+          }
+          
+          keepAlive = setInterval(function() {
+            app.debug("send keep-alive")
+            client.publish(`R/${portalID}/system/0/Serial`)
+          }, 50*1000)
+        }
+        return
+      }
+
+      if ( type == 'tank' ) {
+        if ( parts[parts.length-1] == 'FluidType' ) {
+          fluidTypes[instance] = message.value
+          return
+        }
+        fluidType = fluidTypes[instance]
+        if ( fluidType == 'unknown' ) {
+          return
+        } else if ( _.isUndefined(fluidType) ) {
+          client.publish(`R/${parts[1]}/${type}/${instance}/FluidType`)
+          client.publish(`R/${parts[1]}/${type}/${instance}/Capacity`)
+          fluidTypes[instance] = 'unknown'
+          return
+        }
+      }
+
+      let senderName = `com.victronenergy.${type}.${instance}`
+      if ( options.instanceMappings ) {
+        const mapping = plugin.options.instanceMappings.find(mapping => {
+          return senderName.startsWith(mapping.type) && mapping.venusId == instance
+        })
+        if ( !_.isUndefined(mapping) ) {
+          instance = mapping.signalkId
+        }
+      }
+      
+      var m = {
+        path: '/' + parts.slice(4).join('/'),
+        instanceName: instance,
+        senderName,
+        value: message.value,
+        fluidType: fluidType
+      }
+
+      //app.debug(JSON.stringify(m))
+
+      if ( m.senderName.startsWith('com.victronenergy.vebus')
+           && m.path === '/Mode'
+           && modesRegistered.indexOf(m.senderName) == -1 ) {
+        const path = `electrical.chargers.${m.instanceName}.modeNumber`
+        app.registerActionHandler('vessels.self',
+                                  path,
+                                  getChargerModeActionHandler(m.senderName))
+        modesRegistered.push(m.senderName)
+      }
+
+      var deltas = toDelta([m])
+
+      deltas.forEach(delta => {
+        //app.debug(JSON.stringify(delta))
+        app.handleMessage(PLUGIN_ID, delta)
+      })
+    })
+
+    onStop.push(_ => client.end());
+  }
+  
   return plugin
 }
 
