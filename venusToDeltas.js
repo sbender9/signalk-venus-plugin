@@ -3,6 +3,7 @@ const _ = require('lodash')
 
 var lastLat, lastLon
 var knownPaths = []
+var sentModeMeta = false
 
 module.exports = function (app, options, handleMessage) {
   function debug(msg) {
@@ -30,26 +31,30 @@ module.exports = function (app, options, handleMessage) {
     '/Dc/0/Power': {
       path: m => {
         return makePath(m, `${m.instanceName}.power`)
-      }
+      },
+      units: 'W'
     },
     '/Dc/0/Temperature': {
       path: m => {
         return makePath(m, `${m.instanceName}.temperature`)
       },
-      conversion: celsiusToKelvin
+      conversion: celsiusToKelvin,
+      units: 'K'
     },
     '/Soc': {
       path: m => {
         return makePath(m, `${m.instanceName}.capacity.stateOfCharge`)
       },
-      conversion: percentToRatio
+      conversion: percentToRatio,
+      units: 'ratio'
     },
     '/TimeToGo': {
       path: m => `electrical.batteries.${m.instanceName}.capacity.timeRemaining`
     },
     '/ConsumedAmphours': {
       path: m => `electrical.batteries.${m.instanceName}.capacity.consumedCharge`,
-      conversion: ahToCoulomb
+      conversion: ahToCoulomb,
+      units: 'C'
     },
     '/History/LastDischarge': {
       path: m =>
@@ -62,7 +67,8 @@ module.exports = function (app, options, handleMessage) {
     },
     '/History/DischargedEnergy' : {
       path: m => `electrical.batteries.${m.instanceName}.capacity.dischargedEnergy`,
-      conversion: ahToCoulomb
+      conversion: ahToCoulomb,
+      units: 'C'
     },
     '/Pv/I': {
       path: m => `electrical.solar.${m.instanceName}.panelCurrent`
@@ -71,15 +77,18 @@ module.exports = function (app, options, handleMessage) {
       path: m => `electrical.solar.${m.instanceName}.panelVoltage`
     },
     '/Yield/Power': {
-      path: m => `electrical.solar.${m.instanceName}.panelPower`
+      path: m => `electrical.solar.${m.instanceName}.panelPower`,
+      units: 'W'
     },
     '/History/Daily/0/Yield': {
       path: m => `electrical.solar.${m.instanceName}.yieldToday`,
-      conversion: kWhToJoules
+      conversion: kWhToJoules,
+      units: 'J'
     },
     '/History/Daily/1/Yield': {
       path: m => `electrical.solar.${m.instanceName}.yieldYesterday`,
-      conversion: kWhToJoules
+      conversion: kWhToJoules,
+      units: 'J'
     },
     '/State': [
       {
@@ -152,22 +161,26 @@ module.exports = function (app, options, handleMessage) {
           getTemperaturePath(m, options)
         )
       },
-      conversion: celsiusToKelvin
+      conversion: celsiusToKelvin,
+      units: 'T'
     },
     '/Ac/Current': {
       path: m => {
         return makePath(m, `${m.instanceName}.current`, true)
-      }
+      },
+      units: 'A'
     },
     '/Ac/Power': {
       path: m => {
         return makePath(m, `${m.instanceName}.power`, true)
-      }
+      },
+      units: 'W'
     },
     '/Ac/Voltage': {
       path: m => {
         return makePath(m, `${m.instanceName}.voltage`, true)
-      }
+      },
+      units: 'V'
     },
     '/Ac/Energy/Forward': {
       path: m => {
@@ -183,17 +196,20 @@ module.exports = function (app, options, handleMessage) {
     '/Ac/L1/Current': {
       path: m => {
         return makePath(m, `${m.instanceName}.l1.current`, true)
-      }
+      },
+      units: 'A'
     },
     '/Ac/L1/Power': {
       path: m => {
         return makePath(m, `${m.instanceName}.l1.power`, true)
-      }
+      },
+      units: 'W'
     },
     '/Ac/L1/Voltage': {
       path: m => {
         return makePath(m, `${m.instanceName}.l1.voltage`, true)
-      }
+      },
+      units: 'V'
     },
     '/Ac/L1/Energy/Forward': {
       path: m => {
@@ -209,17 +225,20 @@ module.exports = function (app, options, handleMessage) {
     '/Ac/L3/Current': {
       path: m => {
         return makePath(m, `${m.instanceName}.l3.current`, true)
-      }
+      },
+      units: 'A'
     },
     '/Ac/L3/Power': {
       path: m => {
         return makePath(m, `${m.instanceName}.l3.power`, true)
-      }
+      },
+      units: 'W'
     },
     '/Ac/L3/Voltage': {
       path: m => {
         return makePath(m, `${m.instanceName}.l3.voltage`, true)
-      }
+      },
+      units: 'V'
     },
     '/Ac/L3/Energy/Forward': {
       path: m => {
@@ -235,17 +254,20 @@ module.exports = function (app, options, handleMessage) {
     '/Ac/L2/Current': {
       path: m => {
         return makePath(m, `${m.instanceName}.l2.current`, true)
-      }
+      },
+      units: 'A'
     },
     '/Ac/L2/Power': {
       path: m => {
         return makePath(m, `${m.instanceName}.l2.power`, true)
-      }
+      },
+      units: 'W'
     },
     '/Ac/L2/Voltage': {
       path: m => {
         return makePath(m, `${m.instanceName}.l2.voltage`, true)
-      }
+      },
+      units: 'V'
     },
     '/Ac/L2/Energy/Forward': {
       path: m => {
@@ -272,107 +294,128 @@ module.exports = function (app, options, handleMessage) {
     '/Ac/ActiveIn/L1/I': {
       path: m => {
         return makePath(m, `${m.instanceName}.acin.current`, true)
-      }
+      },
+      units: 'A'
     },
     '/Ac/ActiveIn/L1/P': {
       path: m => {
         return makePath(m, `${m.instanceName}.acin.power`, true)
-      }
+      },
+      units: 'W'
     },
     '/Ac/ActiveIn/L1/V': {
       path: m => {
         return makePath(m, `${m.instanceName}.acin.voltage`, true)
-      }
+      },
+      units: 'V'
     },
     '/Ac/ActiveIn/L1/F': {
       path: m => {
         return makePath(m, `${m.instanceName}.acin.frequency`, true)
-      }
+      },
+      units: 'Hz'
     },
     '/Ac/ActiveIn/L2/I': {
       path: m => {
         return makePath(m, `${m.instanceName}.acin2.current`, true)
-      }
+      },
+      units: 'A'
     },
     '/Ac/ActiveIn/L2/P': {
       path: m => {
         return makePath(m, `${m.instanceName}.acin2.power`, true)
-      }
+      },
+      units: 'W'
     },
     '/Ac/ActiveIn/L2/V': {
       path: m => {
         return makePath(m, `${m.instanceName}.acin2.voltage`, true)
-      }
+      },
+      units: 'V'
     },
     '/Ac/ActiveIn/L3/I': {
       path: m => {
         return makePath(m, `${m.instanceName}.acin3.current`, true)
-      }
+      },
+      units: 'A'
     },
     '/Ac/ActiveIn/L3/P': {
       path: m => {
         return makePath(m, `${m.instanceName}.acin3.power`, true)
-      }
+      },
+      units: 'W'
     },
     '/Ac/ActiveIn/L3/V': {
       path: m => {
         return makePath(m, `${m.instanceName}.acin3.voltage`, true)
-      }
+      },
+      units: 'V'
     },
     '/Ac/Out/L1/I': {
       path: m => {
         return makePath(m, `${m.instanceName}.acout.current`, true)
-      }
+      },
+      units: 'A'
     },
     '/Ac/Out/L1/P': {
       path: m => {
         return makePath(m, `${m.instanceName}.acout.power`, true)
-      }
+      },
+      units: 'W'
     },
     '/Ac/Out/L1/V': {
       path: m => {
         return makePath(m, `${m.instanceName}.acout.voltage`, true)
-      }
+      },
+      units: 'V'
     },
     '/Ac/Out/L1/F': {
       path: m => {
         return makePath(m, `${m.instanceName}.acout.frequency`, true)
-      }
+      },
+      units: 'Hz'
     },
     '/Ac/Out/L2/I': {
       path: m => {
         return makePath(m, `${m.instanceName}.acout2.current`, true)
-      }
+      },
+      units: 'A'
     },
     '/Ac/Out/L2/P': {
       path: m => {
         return makePath(m, `${m.instanceName}.acout2.power`, true)
-      }
+      },
+      units: 'W'
     },
     '/Ac/Out/L2/V': {
       path: m => {
         return makePath(m, `${m.instanceName}.acout2.voltage`, true)
-      }
+      },
+      units: 'V'
     },
     '/Ac/Out/L3/I': {
       path: m => {
         return makePath(m, `${m.instanceName}.acout3.current`, true)
-      }
+      },
+      units: 'A'
     },
     '/Ac/Out/L3/P': {
       path: m => {
         return makePath(m, `${m.instanceName}.acout3.power`, true)
-      }
+      },
+      units: 'W'
     },
     '/Ac/Out/L3/V': {
       path: m => {
         return makePath(m, `${m.instanceName}.acout3.voltage`, true)
-      }
+      },
+      units: 'V'
     },
     '/ExtraBatteryCurrent': {
       path: m => {
         return `electrical.batteries.${m.instanceName}starter.current`
-      }
+      },
+      units: 'A'
     },
     '/Relay/0/State': {
       path: m => {
@@ -395,25 +438,29 @@ module.exports = function (app, options, handleMessage) {
       path: m => {
         return `electrical.${m.venusName}.dcPower`
       },
-      requiresInstance: false
+      requiresInstance: false,
+      units: 'W'
     },
     '/Dc/Vebus/Power': {
       path: m => {
         return `electrical.${m.venusName}.vebusDcPower`
       },
-      requiresInstance: false
+      requiresInstance: false,
+      units: 'W'
     },    
     '/Dc/Pv/Current': {
       path: m => {
         return `electrical.${m.venusName}.totalPanelCurrent`
       },
-      requiresInstance: false
+      requiresInstance: false,
+      units: 'A'
     },
     '/Dc/Pv/Power': {
       path: m => {
         return `electrical.${m.venusName}.totalPanelPower`
       },
-      requiresInstance: false
+      requiresInstance: false,
+      units: 'W'
     },
     '/Course': {
       path: 'navigation.courseOverGroundTrue',
@@ -494,7 +541,7 @@ module.exports = function (app, options, handleMessage) {
     messages.forEach(m => {
       debug(`${m.path}:${m.value}`)
       if (m.path.startsWith('/Alarms')) {
-        deltas.push(getAlarmDelta(m))
+        deltas.push(getAlarmDelta(app, m))
         return
       }
 
@@ -552,10 +599,23 @@ module.exports = function (app, options, handleMessage) {
           if ( knownPaths.indexOf(thePath) == -1 )
           {
             knownPaths.push(thePath)
+            if ( mapping.units && app.supportsMetaDeltas ) {
+              let meta = {updates: [ { meta: [{ path: thePath, value: {units: mapping.units} }]  } ]}
+              deltas.push(meta)
+            }
           }
           if ( !options.blacklist || options.blacklist.indexOf(thePath) == -1 ) {
-            var delta = makeDelta(m, thePath, theValue)
+            var delta = makeDelta(app, m, thePath, theValue)
             deltas.push(delta)
+
+            if (sentModeMeta === false
+                && m.senderName.startsWith('com.victronenergy.vebus')
+                && m.path === '/Mode'
+                && thePath.endsWith('modeNumber')
+                && app.supportsMetaDeltas) {
+              deltas.push({updates: [ { meta: [{ path: thePath, value: modeMeta }]  } ]})
+              sentModeMeta = true
+            }
           } 
         }
       })
@@ -856,7 +916,7 @@ function mapInputState(msg) {
 }
 
 
-function makeDelta (m, path, value) {
+function makeDelta (app, m, path, value) {
   const delta = {
     updates: [
       {
@@ -872,48 +932,51 @@ function makeDelta (m, path, value) {
     ]
   }
   
-  if (m.senderName.startsWith('com.victronenergy.vebus')
+  if (!app.supportsMetaDeltas
+      && m.senderName.startsWith('com.victronenergy.vebus')
       && m.path === '/Mode'
       && path.endsWith('modeNumber'))
   {
     delta.updates[0].values.push({
       path: path + '.meta',
-      value: {
-        displayName: 'Inverter Mode',
-        type: 'multiple',
-        possibleValues: [
-          {
-            title: 'On',
-            value: 3
-          },
-          {
-            title: 'Off',
-            value: 4,
-            isOn: false
-          },
-          {
-            title: 'Charger Only',
-            value: 1,
-            abbrev: 'Chg'
-          },
-          {
-            title: 'Inverter Only',
-            value: 2,
-            abbrev: 'Inv'
-          }
-        ]
-      }
+      value: modeMeta
     })
   }
   return delta
 }
 
-function getAlarmDelta (msg) {
+const modeMeta = {
+  displayName: 'Inverter Mode',
+  type: 'multiple',
+  possibleValues: [
+    {
+      title: 'On',
+      value: 3
+    },
+    {
+      title: 'Off',
+      value: 4,
+      isOn: false
+    },
+    {
+      title: 'Charger Only',
+      value: 1,
+      abbrev: 'Chg'
+    },
+    {
+      title: 'Inverter Only',
+      value: 2,
+      abbrev: 'Inv'
+    }
+  ]
+}
+
+function getAlarmDelta (app, msg) {
   var name = msg.path.substring(1).replace(/\//g, '.') // alarms.LowVoltage
   name = name.substring(name.indexOf('.') + 1) // LowVoltate
   name = name.charAt(0).toLowerCase() + name.substring(1) // lowVoltate
 
   var path = 'notifications.' + makePath(msg, `${msg.instanceName}.${name}`)
   var value = convertAlarmToNotification(msg)
-  return makeDelta(msg, path, value)
+  return makeDelta(app, msg, path, value)
 }
