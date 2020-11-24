@@ -33,18 +33,19 @@ install.
 Then there are two settings. The first is how to connect to the Venus communication bus,
 called D-Bus. Choose between these two:
 
-A. Connect to localhost
-B. Connect to a Venus device over tcp
+- A. Connect to localhost
+- B. Connect to a Venus device over tcp
 
-Use option one when signalk-server is installed on to Venus itself. Use option 2 in case
-that signalk is one device, for example a raspberrypi running Raspbian, which needs to connect
+Use option A when signalk-server is installed on the Venus itself. 
+
+Use option B in case that signalk is one device, for example a raspberrypi running Raspbian, which needs to connect
 to for example a Venus GX or Color Control GX elsewhere on the network.
 
-When using option B, also put in the ipaddress and port.
+When using option B enter in the ipaddress and port of the Venus device in the plugin configuration.
 
-When using option B, its also necessary to open up the port on the Venus device. It must be
+When using option B, it is also necessary to open up the port on the Venus device. It must be
 configured to allow D-Bus connections via tcp, as its by default not binding its D-Bus daemon
-to tcp. To make it do so, add these three lines to `/etc/dbus-1/system.conf` (above the `<policy context="default">` section) on the Venus device:
+to tcp. To make it do so, add these three lines exactly as they are to `/etc/dbus-1/system.conf` (above the `<policy context="default">` section) on the Venus device:
     
       <listen>tcp:host=0.0.0.0,port=78</listen>
       <auth>ANONYMOUS</auth>
