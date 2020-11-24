@@ -1,6 +1,10 @@
 ## Change Log
 
-### v1.21.0 (2020/07/15 13:29 +00:00)
+### v1.22.0 (2020/11/24 02:26 +00:00)
+- [#61](https://github.com/sbender9/signalk-venus-plugin/pull/61) doc: improve dbus tcp instructions (@tkurki)
+- [#62](https://github.com/sbender9/signalk-venus-plugin/pull/62) feature: send meta deltas (@sbender9)
+
+### v1.21.0 (2020/07/15 13:30 +00:00)
 - [#57](https://github.com/sbender9/signalk-venus-plugin/pull/57) refactor: change "Blacklist" to "Block List" in the UI (@sbender9)
 - [#42](https://github.com/sbender9/signalk-venus-plugin/pull/42) add frequency and discharge capacity (@dpreuss)
 
