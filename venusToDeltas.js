@@ -162,7 +162,7 @@ module.exports = function (app, options, handleMessage) {
         )
       },
       conversion: celsiusToKelvin,
-      units: 'T'
+      units: 'K'
     },
     '/Ac/Current': {
       path: m => {
