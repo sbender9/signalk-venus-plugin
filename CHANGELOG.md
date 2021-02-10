@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.22.1 (2021/02/10 15:17 +00:00)
+- [#64](https://github.com/sbender9/signalk-venus-plugin/pull/64) fix: units for venus temperatures are wrong (@sbender9)
+
 ### v1.22.0 (2020/11/24 02:26 +00:00)
 - [#61](https://github.com/sbender9/signalk-venus-plugin/pull/61) doc: improve dbus tcp instructions (@tkurki)
 - [#62](https://github.com/sbender9/signalk-venus-plugin/pull/62) feature: send meta deltas (@sbender9)
