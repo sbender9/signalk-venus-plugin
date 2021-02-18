@@ -4,8 +4,8 @@ This code is a [Signal K Node Server](https://github.com/SignalK/signalk-server-
 reads data from a Victron GX-device, such as the
 [Cerbo GX](https://www.victronenergy.com/panel-systems-remote-monitoring/cerbo-gx) into signalk-server.
 
-Besides using those commercially available devices, it is also possible to run the
-[Venus OS](https://github.com/victronenergy/venus/wiki) on a
+Besides using the Cerbo GX, or any of the other commercially available GX devices, it is also
+possible to run [Venus OS](https://github.com/victronenergy/venus/wiki) on a
 [RaspberryPi2 or 3](https://github.com/victronenergy/venus/wiki/raspberrypi-install-venus-image),
 for example.
 
