@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.23.1 (2021/02/26 23:53 +00:00)
+- [#68](https://github.com/sbender9/signalk-venus-plugin/pull/68) fix: mqtt connection dropping after a minute (@sbender9)
+
 ### v1.23.0 (2021/02/26 20:33 +00:00)
 - [#67](https://github.com/sbender9/signalk-venus-plugin/pull/67) fix: limit default debug logging (@sbender9)
 - [#66](https://github.com/sbender9/signalk-venus-plugin/pull/66) feature: add support to get data via mqtt (@sbender9)
