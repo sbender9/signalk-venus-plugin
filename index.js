@@ -19,6 +19,9 @@ module.exports = function (app) {
   let modesRegistered = []
   let relaysRegistered = []
   var fluidTypes = {}
+  let sentDeltas = {}
+  let pollInterval
+  let keepAlive
   
   plugin.id = PLUGIN_ID
   plugin.name = PLUGIN_NAME
@@ -365,6 +368,15 @@ module.exports = function (app) {
     onStop.forEach(f => f())
     onStop = []
     modesRegistered = []
+    sentDeltas = {}
+    if ( pollInterval ) {
+      clearInterval(pollInterval)
+      pollInterval = null
+    }
+    if ( keepAlive ) {
+      clearInterval(keepAlive)
+      keepAlive = null
+    }
   }
 
   function startMQTT(options, toDelta) {
@@ -413,7 +425,18 @@ module.exports = function (app) {
     });
 
     client.on('message', function (topic, json) {
-      //app.debug(`${topic}: ${json}`)
+      if ( json.length === 0 ) {
+        app.debug('offline: %s', topic)
+        if ( sentDeltas[topic] ) {
+          if ( info.delta.updates[0].values && info.delta.updates[0].values.length ) {
+            const delta = JSON.parse(JSON.stringify(delta))
+            delta.updates[0].values[0].value = null
+            app.handleMessage(PLUGIN_ID, delta)
+          }
+          delete sentDeltas[topic]
+        }
+        return
+      }
 
       var parts = topic.split('/')
       var type = parts[2]
@@ -436,13 +459,22 @@ module.exports = function (app) {
           client.publish(`R/${plugin.portalID}/system/0/Serial`)
           client.subscribe(`N/${plugin.portalID}/+/#`)
           plugin.needsID = false
-          setInterval(() => {
-            app.debug('refreshing data...')
-            client.unsubscribe('N/+/+/#')
-            client.subscribe('N/+/+/#')
-            client.unsubscribe('N/${plugin.portalID}/+/#')
-            client.subscribe(`N/${plugin.portalID}/+/#`)
-          }, options.pollInterval*1000)
+          if ( options.pollInterval !== -1 ) {
+            if ( pollInterval ) {
+              clearInterval(pollInterval)
+            }
+            pollInterval = setInterval(() => {
+              app.debug('resending old deltas...')
+              resendDeltas()
+            }, options.pollInterval*1000)
+            if ( keepAlive ) {
+              clearInterval(keepAlive)
+            }
+            keepAlive = setInterval(() => {
+              app.debug('sending keep alive')
+              client.publish(`R/${plugin.portalID}/system/0/Serial`)
+            }, 50*1000)
+          }
         }
         return
       }
@@ -507,13 +539,35 @@ module.exports = function (app) {
 
       var deltas = toDelta([m])
 
-      deltas.forEach(delta => {
-        //app.debug(JSON.stringify(delta))
-        app.handleMessage(PLUGIN_ID, delta)
-      })
+      if ( deltas.length ) {
+        const delta = deltas[0]
+        if ( delta.updates[0].values ) {
+          sentDeltas[topic] = {
+            delta: JSON.parse(JSON.stringify(delta)),
+            time: Date.now(),
+            topic
+          }
+        }
+        
+        deltas.forEach(delta => app.handleMessage(PLUGIN_ID, delta))
+      }
     })
 
     onStop.push(_ => client.end());
+  }
+
+  function resendDeltas() {
+    const now = Date.now()
+    Object.values(sentDeltas).forEach((info) => {
+      if ( info.topic === 'N/c0847dba509e/system/0/Relay/0/State' ){
+        app.debug('relay')
+      }
+      if ( now - info.time > ((plugin.options.pollInterval-1)*1000) ) {
+        app.debug('resending %s', info.topic)
+        app.debug('%j', info.delta)
+        app.handleMessage(PLUGIN_ID, JSON.parse(JSON.stringify(info.delta)))
+      }
+    })
   }
   
   return plugin
