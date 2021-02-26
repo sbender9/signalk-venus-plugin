@@ -44,13 +44,14 @@ module.exports = function (app) {
         installType: {
           type: 'string',
           title: 'How to connect to Venus D-Bus',
-          enum: ['local', 'remote', 'mqtt'],
+          enum: ['mqtt', 'mqtts', 'local', 'remote'],
           enumNames: [
+            'Connect to remote Venus installation via MQTT (Plain text)',
+            'Connect to remote Venus installation via MQTT (SSL)',
             'Connect to localhost via dbus (signalk-server is running on a Venus device)',
-            'Connect to remote Venus installation via dbus',
-            'Connect to remote Venus installation via MQTT'
+            'Connect to remote Venus installation via dbus'
           ],
-          default: 'local'
+          default: 'mqtt'
         },
         dbusAddress: {
           type: 'string',
@@ -60,10 +61,10 @@ module.exports = function (app) {
         MQTT: {
           type: 'object',
           properties: {
-            url: {
+            host: {
               type: 'string',
-              title: 'Venus MQTT URL',
-              default: 'mqtt://venus.local:1883'
+              title: 'Venus MQTT Host',
+              default: 'venus.local'
             }
           }
         },
@@ -255,7 +256,7 @@ module.exports = function (app) {
     plugin.onError = () => {}
     plugin.getKnownPaths = getKnownPaths
     
-    if ( options.installType === 'mqtt' ) {
+    if ( options.installType === 'mqtt' || options.installType === 'mqtts' ) {
       startMQTT(options, toDelta)
     } else {
       if ( app.registerActionHandler ) {
@@ -373,8 +374,20 @@ module.exports = function (app) {
   }
 
   function startMQTT(options, toDelta) {
-    var url = options.MQTT.url
-    var client = mqtt.connect(url)
+    var host = options.MQTT.host
+
+    if ( !host || !host.length ) {
+      app.setPluginError('no host configured')
+      return
+    }
+
+    const url = `${options.installType}://${host}`
+
+    app.debug('using mqtt url %s', url)
+    
+    var client = mqtt.connect(url, {
+      rejectUnauthorized: false
+    })
     plugin.client = client
 
     plugin.needsID = true
@@ -384,7 +397,7 @@ module.exports = function (app) {
     client.on('connect', function () {
       app.debug(`connected to ${url}`)
       client.subscribe('N/+/+/#')
-      app.setProviderStatus(`Connected to ${url}`)
+      app.setPluginStatus(`Connected to ${url}`)
 
       //client.publish(`R/${portalID}/system/0/Serial`)
 
@@ -393,7 +406,7 @@ module.exports = function (app) {
 
     client.on('error', error => {
       app.error(`error connecting to mqtt ${error}`)
-      app.setProviderError(`connecting to mqtt: ${error}`)
+      app.setPluginError(`connecting to mqtt: ${error}`)
     })
 
     client.on('close', () => {
