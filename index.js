@@ -50,7 +50,7 @@ module.exports = function (app) {
             'Connect to remote Venus installation via dbus',
             'Connect to remote Venus installation via MQTT'
           ],
-          default: 'mqtt'
+          default: 'local'
         },
         dbusAddress: {
           type: 'string',
