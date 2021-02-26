@@ -7,7 +7,7 @@
     "dbus-native": "^0.2.5",
     "debug": "^3.1.0",
     "lodash": "^4.17.4",
-    "mqtt": "^4.2.0",
+    "mqtt": "^4.2.6",
     "promise-retry": "^1.1.1"
   },
   "devDependencies": {
