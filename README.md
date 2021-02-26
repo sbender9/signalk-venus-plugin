@@ -25,55 +25,23 @@ In which case you don't need to self install or configure this plugin. See
 Use the #victron channel on the [Signal K Slack](http://slack-invite.signalk.org/).
 
 ## Plugin installation & configuration
-Installing is simple, though do read and heed the warning below (!). The plugin is available in the signalk app store. Simply click to
-install.
+Installing is simple. The plugin is available in the signalk app store. Simply click to install.
 
-Then there are two settings. The first is how to connect to the Venus communication bus,
-called D-Bus. Choose between these two:
+Then there are two settings. The first is how to connect to Venus OS. Choose between these:
 
 - A. Connect to localhost
-- B. Connect to a GX-device over tcp
+- B. Connect to a GX-device over tcp using MQTT (Plain text)
+- C. Connect to a GX-device over tcp using MQTT (SSL)
 
 Use option A when signalk-server is installed on the GX-device itself. 
 
-Use option B in case signalk-server is a separate device, for example a raspberrypi running
+Use option B or C in case signalk-server is a separate device, for example a raspberrypi running
 Raspbian, in which case the plugin needs to connect to the GX-device
-on the ethernet/wifi network.
+on the ethernet/wifi network. You should use SSL if GX-device is not on the local network. 
 
-When using option B enter in the ipaddress and port of the Venus device in the plugin configuration.
+When using option B or C go enter the hostname or ipaddress of the Venus device in the plugin configuration.
 
-When using option B, it is also necessary to open up the port on the Venus device. It must be
-configured to allow D-Bus connections via tcp, as its by default not binding its D-Bus daemon
-to tcp. To make it do so, add these three lines exactly as they are to `/etc/dbus-1/system.conf` (above the `<policy context="default">` section) on the Venus device:
-    
-      <listen>tcp:host=0.0.0.0,port=78</listen>
-      <auth>ANONYMOUS</auth>
-      <allow_anonymous/>
-
-Now double check and extremely carefully make sure no mistake is made in editing that dbus config file.
-
-WARNING: a typo or other error in there will brick the GX-device. And requires a special serial console
-cable or other procedure to recover it. And -obviously- all these changes are on your own
-risk and not covered by (Victron) warranty nor (Victron) support.
-
-Reboot afterwards. And also remember that any update of the GX-device will override these
-(and any other) changes to the rootfs.
-
-__Lastly: make sure to only open D-Bus on TCP on a trusted network, its not secure at all.__
-
-To make above change, you'll need
-[root access to the Venus device](https://www.victronenergy.com/live/ccgx:root_access).
-
-## Recovering a bricked GX-device
-
-In case you did make a mistake in the config file, and now your GX is in an endless reboot
-loop; here is what to do.
-
-For the CCGX I don't know how to recover it. Try checking
-[this thread](https://community.victronenergy.com/questions/78081/recovering-a-ccgx.html).
-
-For all other models, best is to get a serial console cable. See the Venus OS root access
-document for how to connect it.
+Also ensure that MQTT is turned on in the GX-devices Services Settings.
 
 ## Test harness
 

@@ -3,11 +3,13 @@ const PLUGIN_NAME = 'Victron Venus Plugin'
 
 const promiseRetry = require('promise-retry')
 const _ = require('lodash')
-
+const mqtt = require('mqtt');
 const createDbusListener = require('./dbus-listener')
 const venusToDeltas = require('./venusToDeltas')
 
 const gpsDestination = 'com.victronenergy.gps'
+
+const supportedMQTTTypes = [ 'battery', 'solarcharger', 'tank', 'vebus', 'inverter', 'temperature' ]
 
 module.exports = function (app) {
   const plugin = {}
@@ -15,7 +17,9 @@ module.exports = function (app) {
   let dbusSetValue
   let pluginStarted = false
   let modesRegistered = []
-
+  let relaysRegistered = []
+  var fluidTypes = {}
+  
   plugin.id = PLUGIN_ID
   plugin.name = PLUGIN_NAME
   plugin.description =
@@ -39,17 +43,29 @@ module.exports = function (app) {
         installType: {
           type: 'string',
           title: 'How to connect to Venus D-Bus',
-          enum: ['local', 'remote'],
+          enum: ['mqtt', 'mqtts', 'local', 'remote'],
           enumNames: [
-            'Connect to localhost (signalk-server is running on a Venus device)',
-            'Connect to remote Venus installation'
+            'Connect to remote Venus installation via MQTT (Plain text)',
+            'Connect to remote Venus installation via MQTT (SSL)',
+            'Connect to localhost via dbus (signalk-server is running on a Venus device)',
+            'Connect to remote Venus installation via dbus'
           ],
-          default: 'local'
+          default: 'mqtt'
         },
         dbusAddress: {
           type: 'string',
           title: 'Address for remote Venus device (D-Bus address notation)',
           default: 'tcp:host=192.168.1.57,port=78'
+        },
+        MQTT: {
+          type: 'object',
+          properties: {
+            host: {
+              type: 'string',
+              title: 'Venus MQTT Host',
+              default: 'venus.local'
+            }
+          }
         },
         pollInterval: {
           type: 'number',
@@ -166,10 +182,14 @@ module.exports = function (app) {
   function actionHandler(context, path, value, relay, cb) {
     app.debug(`setting relay ${relay} to ${value}`)
 
-    dbusSetValue('com.victronenergy.system',
-                 `/Relay/${relay}/State`,
-                 value ? 1 : 0)
-
+    if ( plugin.options.installType === 'mqtt' ) {
+      plugin.client.publish(relay, JSON.stringify({ value }))
+    } else {
+      dbusSetValue('com.victronenergy.system',
+                   `/Relay/${relay}/State`,
+                   value ? 1 : 0)
+    }
+    
     setTimeout(() => {
       var val = app.getSelfPath(path)
       if ( val && val.value == value ) {
@@ -194,9 +214,14 @@ module.exports = function (app) {
   function chargerModeActionHandler(context, path, value, dest, cb) {
     app.debug(`setting charger mode ${dest} to ${value}`)
 
-    dbusSetValue(dest,
-                 `/Mode`,
-                 value)
+    if ( plugin.options.installType === 'mqtt' ) {
+      plugin.client.publish(dest, JSON.stringify({ value }))
+    } else {
+      dbusSetValue(dest,
+                   `/Mode`,
+                   value)
+      
+    }
 
     setTimeout(() => {
       var val = app.getSelfPath(path)
@@ -229,15 +254,20 @@ module.exports = function (app) {
     plugin.options = options
     plugin.onError = () => {}
     plugin.getKnownPaths = getKnownPaths
-    this.connect(options, toDelta)
-
-    if ( app.registerActionHandler ) {
-      [0, 1].forEach(relay => {
-        let path =  (options['relayPath' + relay] || `electrical.switches.venus-${relay}`) + '.state'
-        app.registerActionHandler('vessels.self',
-                                  path,
-                                  getActionHandler(relay))
-      })
+    
+    if ( options.installType === 'mqtt' || options.installType === 'mqtts' ) {
+      startMQTT(options, toDelta)
+    } else {
+      if ( app.registerActionHandler ) {
+        [0, 1].forEach(relay => {
+          let path =  (options['relayPath' + relay] || `electrical.switches.venus-${relay}`) + '.state'
+          app.registerActionHandler('vessels.self',
+                                    path,
+                                    getActionHandler(relay))
+        })
+      }
+      
+      this.connect(options, toDelta)
     }
   }
 
@@ -337,6 +367,155 @@ module.exports = function (app) {
     modesRegistered = []
   }
 
+  function startMQTT(options, toDelta) {
+    var host = options.MQTT.host
+
+    if ( !host || !host.length ) {
+      app.setPluginError('no host configured')
+      return
+    }
+
+    const url = `${options.installType}://${host}`
+
+    app.debug('using mqtt url %s', url)
+    
+    var client = mqtt.connect(url, {
+      rejectUnauthorized: false
+    })
+    plugin.client = client
+
+    plugin.needsID = true
+    plugin.portalID = null
+
+    app.debug(`connecting to ${url}`)
+
+    client.on('connect', function () {
+      app.debug(`connected to ${url}`)
+      client.subscribe('N/+/+/#')
+      app.setPluginStatus(`Connected to ${url}`)
+
+      //client.publish(`R/${portalID}/system/0/Serial`)
+
+      //client.subscribe(`N/${portalID}/+/#`)
+    })
+
+    client.on('error', error => {
+      app.error(`error connecting to mqtt ${error}`)
+      app.setPluginError(`connecting to mqtt: ${error}`)
+    })
+
+    client.on('close', () => {
+      app.debug(`mqtt close`)
+    });
+
+    client.on('reconnect', () => {
+      app.debug(`mqtt reconnect`)
+    });
+
+    client.on('message', function (topic, json) {
+      //app.debug(`${topic}: ${json}`)
+
+      var parts = topic.split('/')
+      var type = parts[2]
+      var instance = parts[3]
+      var fluidType
+
+      var message
+
+      try {
+        message = JSON.parse(json)
+      } catch ( err ) {
+        app.debug(err)
+        return
+      }
+      
+      if ( plugin.needsID ) {
+        if ( topic.endsWith('system/0/Serial') ) {
+          plugin.portalID = message.value
+          app.debug('detected portalId %s', plugin.portalID)
+          client.publish(`R/${plugin.portalID}/system/0/Serial`)
+          client.subscribe(`N/${plugin.portalID}/+/#`)
+          plugin.needsID = false
+          setInterval(() => {
+            app.debug('refreshing data...')
+            client.unsubscribe('N/+/+/#')
+            client.subscribe('N/+/+/#')
+            client.unsubscribe('N/${plugin.portalID}/+/#')
+            client.subscribe(`N/${plugin.portalID}/+/#`)
+          }, options.pollInterval*1000)
+        }
+        return
+      }
+
+      if ( type == 'tank' ) {
+        if ( parts[parts.length-1] == 'FluidType' ) {
+          fluidTypes[instance] = message.value
+          return
+        }
+        fluidType = fluidTypes[instance]
+        if ( fluidType == 'unknown' ) {
+          return
+        } else if ( _.isUndefined(fluidType) ) {
+          client.publish(`R/${parts[1]}/${type}/${instance}/FluidType`)
+          client.publish(`R/${parts[1]}/${type}/${instance}/Capacity`)
+          fluidTypes[instance] = 'unknown'
+          return
+        }
+      }
+
+      let senderName = `com.victronenergy.${type}.${instance}`
+      if ( options.instanceMappings ) {
+        const mapping = plugin.options.instanceMappings.find(mapping => {
+          return senderName.startsWith(mapping.type) && mapping.venusId == instance
+        })
+        if ( !_.isUndefined(mapping) ) {
+          instance = mapping.signalkId
+        }
+      }
+      
+      var m = {
+        path: '/' + parts.slice(4).join('/'),
+        instanceName: instance,
+        senderName,
+        value: message.value,
+        fluidType: fluidType
+      }
+
+      //app.debug(JSON.stringify(m))
+
+      if ( m.senderName.startsWith('com.victronenergy.vebus')
+           && m.path === '/Mode'
+           && modesRegistered.indexOf(m.senderName) === -1 ) {
+        const path = `electrical.chargers.${m.instanceName}.modeNumber`
+        const wtopic = 'W' + topic.slice(1)
+        app.registerActionHandler('vessels.self',
+                                  path,
+                                  getChargerModeActionHandler(wtopic))
+        modesRegistered.push(m.senderName)
+      } else if ( m.senderName.startsWith('com.victronenergy.system')
+                  && parts.length > 6
+                  && parts[4] === 'Relay' && parts[6] === 'State'
+                  && relaysRegistered.indexOf(topic) === -1 ) {
+        const relay = parts[5]
+        let path =  (options['relayPath' + relay] || `electrical.switches.venus-${relay}`) + '.state'
+        const wtopic = 'W' + topic.slice(1)
+        app.registerActionHandler('vessels.self',
+                                  path,
+                                  getActionHandler(wtopic))
+        relaysRegistered.push(topic)
+      }
+
+      var deltas = toDelta([m])
+
+      deltas.forEach(delta => {
+        //app.debug(JSON.stringify(delta))
+        app.handleMessage(PLUGIN_ID, delta)
+      })
+    })
+
+    onStop.push(_ => client.end());
+  }
+  
   return plugin
 }
 
