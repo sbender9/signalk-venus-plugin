@@ -18,7 +18,6 @@ module.exports = function (app) {
   let pluginStarted = false
   let modesRegistered = []
   let relaysRegistered = []
-  let keepAlive
   var fluidTypes = {}
   
   plugin.id = PLUGIN_ID
@@ -366,11 +365,6 @@ module.exports = function (app) {
     onStop.forEach(f => f())
     onStop = []
     modesRegistered = []
-
-    if ( keepAlive ) {
-      clearInterval(keepAlive)
-      keepAlive = undefined
-    }
   }
 
   function startMQTT(options, toDelta) {
@@ -391,6 +385,7 @@ module.exports = function (app) {
     plugin.client = client
 
     plugin.needsID = true
+    plugin.portalID = null
 
     app.debug(`connecting to ${url}`)
 
@@ -425,24 +420,29 @@ module.exports = function (app) {
       var instance = parts[3]
       var fluidType
 
-      var message = JSON.parse(json)
+      var message
+
+      try {
+        message = JSON.parse(json)
+      } catch ( err ) {
+        app.debug(err)
+        return
+      }
       
       if ( plugin.needsID ) {
         if ( topic.endsWith('system/0/Serial') ) {
-          let portalID = message.value
-          app.debug('detected portalId %s', portalID)
-          client.publish(`R/${portalID}/system/0/Serial`)
-          client.subscribe(`N/${portalID}/+/#`)
+          plugin.portalID = message.value
+          app.debug('detected portalId %s', plugin.portalID)
+          client.publish(`R/${plugin.portalID}/system/0/Serial`)
+          client.subscribe(`N/${plugin.portalID}/+/#`)
           plugin.needsID = false
-
-          if ( keepAlive ) {
-            clearInterval(keepAlive)
-          }
-          
-          keepAlive = setInterval(function() {
-            app.debug("send keep-alive")
-            client.publish(`R/${portalID}/system/0/Serial`)
-          }, 50*1000)
+          setInterval(() => {
+            app.debug('refreshing data...')
+            client.unsubscribe('N/+/+/#')
+            client.subscribe('N/+/+/#')
+            client.unsubscribe('N/${plugin.portalID}/+/#')
+            client.subscribe(`N/${plugin.portalID}/+/#`)
+          }, options.pollInterval*1000)
         }
         return
       }
