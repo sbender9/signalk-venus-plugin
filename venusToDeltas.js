@@ -6,11 +6,7 @@ var knownPaths = []
 var sentModeMeta = false
 
 module.exports = function (app, options, handleMessage) {
-  function debug(msg) {
-    if ( app.debug ) {
-      app.debug(msg)
-    }
-  }
+  const debug = app.debug.extend('venusToDeltas')
   
   const venusToSignalKMapping = {
     '/Dc/0/Voltage': {
