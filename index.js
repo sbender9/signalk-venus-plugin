@@ -198,7 +198,7 @@ module.exports = function (app) {
         cb({
           state: 'FAILURE',
           message: 'Did not receive change confirmation'
-          })
+        })
       }
     }, 1000)
     
@@ -234,7 +234,7 @@ module.exports = function (app) {
         })
       }
     }, 1000)
-    
+
     return { state: 'PENDING' }
   }
 
