@@ -1,5 +1,10 @@
 ## Change Log
 
+### v1.23.0 (2021/02/26 20:33 +00:00)
+- [#67](https://github.com/sbender9/signalk-venus-plugin/pull/67) fix: limit default debug logging (@sbender9)
+- [#66](https://github.com/sbender9/signalk-venus-plugin/pull/66) feature: add support to get data via mqtt (@sbender9)
+- [#65](https://github.com/sbender9/signalk-venus-plugin/pull/65) README: add warning about modifying the dbus conf (@mpvader)
+
 ### v1.22.1 (2021/02/10 15:17 +00:00)
 - [#64](https://github.com/sbender9/signalk-venus-plugin/pull/64) fix: units for venus temperatures are wrong (@sbender9)
 
