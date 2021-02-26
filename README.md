@@ -25,11 +25,9 @@ In which case you don't need to self install or configure this plugin. See
 Use the #victron channel on the [Signal K Slack](http://slack-invite.signalk.org/).
 
 ## Plugin installation & configuration
-Installing is simple, though do read and heed the warning below (!). The plugin is available in the signalk app store. Simply click to
-install.
+Installing is simple. The plugin is available in the signalk app store. Simply click to install.
 
-Then there are two settings. The first is how to connect to the Venus communication bus,
-called D-Bus. Choose between these:
+Then there are two settings. The first is how to connect to Venus OS. Choose between these:
 
 - A. Connect to localhost
 - B. Connect to a GX-device over tcp using MQTT (Plain text)
