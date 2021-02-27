@@ -540,13 +540,10 @@ module.exports = function (app) {
       var deltas = toDelta([m])
 
       if ( deltas.length ) {
-        const delta = deltas[0]
-        if ( delta.updates[0].values ) {
-          sentDeltas[topic] = {
-            delta: JSON.parse(JSON.stringify(delta)),
-            time: Date.now(),
-            topic
-          }
+        sentDeltas[topic] = {
+          deltas: JSON.parse(JSON.stringify(deltas)),
+          time: Date.now(),
+          topic
         }
         
         deltas.forEach(delta => app.handleMessage(PLUGIN_ID, delta))
@@ -559,13 +556,14 @@ module.exports = function (app) {
   function resendDeltas() {
     const now = Date.now()
     Object.values(sentDeltas).forEach((info) => {
-      if ( info.topic === 'N/c0847dba509e/system/0/Relay/0/State' ){
-        app.debug('relay')
-      }
       if ( now - info.time > ((plugin.options.pollInterval-1)*1000) ) {
         app.debug('resending %s', info.topic)
-        app.debug('%j', info.delta)
-        app.handleMessage(PLUGIN_ID, JSON.parse(JSON.stringify(info.delta)))
+        //app.debug('%j', info.delta)
+        info.deltas.forEach((delta) => {
+          if ( delta.updates[0].values ) {
+            app.handleMessage(PLUGIN_ID, JSON.parse(JSON.stringify(delta)))
+          }
+        })
       }
     })
   }
