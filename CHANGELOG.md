@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.23.2 (2021/02/27 00:10 +00:00)
+- [#69](https://github.com/sbender9/signalk-venus-plugin/pull/69) fix: some mqtt values not getting refreshed (@sbender9)
+
 ### v1.23.1 (2021/02/26 23:53 +00:00)
 - [#68](https://github.com/sbender9/signalk-venus-plugin/pull/68) fix: mqtt connection dropping after a minute (@sbender9)
 
