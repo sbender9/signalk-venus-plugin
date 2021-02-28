@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.24.1 (2021/02/28 16:16 +00:00)
+- [#72](https://github.com/sbender9/signalk-venus-plugin/pull/72) fix: relay display name entry not showing in plugin configuration (@sbender9)
+
 ### v1.24.0 (2021/02/28 16:06 +00:00)
 - [#70](https://github.com/sbender9/signalk-venus-plugin/pull/70) fix: errors when a device goes away (@sbender9)
 - [#71](https://github.com/sbender9/signalk-venus-plugin/pull/71) feature: add the ability to specify Display Name meta for relays (@sbender9)
