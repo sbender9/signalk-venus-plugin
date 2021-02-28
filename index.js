@@ -257,6 +257,13 @@ module.exports = function (app) {
     plugin.options = options
     plugin.onError = () => {}
     plugin.getKnownPaths = getKnownPaths
+
+    if ( options.relayDisplayName0 && options.relayDisplayName0.length ) {
+      sendMeta(options.relayPath0, { displayName: options.relayDisplayName0 })
+    }
+    if ( options.relayDisplayName1 && options.relayDisplayName1.length ) {
+      sendMeta(options.relayPath1, { displayName: options.relayDisplayName1 })
+    }
     
     if ( options.installType === 'mqtt' || options.installType === 'mqtts' ) {
       startMQTT(options, toDelta)
@@ -567,7 +574,21 @@ module.exports = function (app) {
       }
     })
   }
-  
+
+  function sendMeta(path, value) {
+    app.handleMessage(PLUGIN_ID, {
+      updates: [
+        {
+          meta: [
+            {
+              path,
+              value
+            }
+          ]
+        }
+      ]
+    })
+  }
   return plugin
 }
 
