@@ -85,23 +85,19 @@ module.exports = function (app) {
           title: 'The Signal K path for relay 1',
           default: 'electrical.switches.venus-0'
         },
-        /*
-          relayDisplayName0: {
+        relayDisplayName0: {
           type: 'string',
-          title: 'The Display Name for relay 1',
-          },
-        */
+          title: 'The Display Name for relay 1 (meta)',
+        },
         relayPath1: {
           type: 'string',
           title: 'The Signal K path for relay 2',
           default: 'electrical.switches.venus-1'
         },
-        /*
-          relayDisplayName1: {
+        relayDisplayName1: {
           type: 'string',
-          title: 'The Display Name for relay 2',
-          },
-        */
+          title: 'The Display Name for relay 2 (meta)',
+        },
         instanceMappings: {
           title: 'Instance Mappings',
           description: 'Map venus device instance numbers to Signal K instances',
