@@ -1,5 +1,9 @@
 ## Change Log
 
+### v1.24.0 (2021/02/28 16:06 +00:00)
+- [#70](https://github.com/sbender9/signalk-venus-plugin/pull/70) fix: errors when a device goes away (@sbender9)
+- [#71](https://github.com/sbender9/signalk-venus-plugin/pull/71) feature: add the ability to specify Display Name meta for relays (@sbender9)
+
 ### v1.23.2 (2021/02/27 00:10 +00:00)
 - [#69](https://github.com/sbender9/signalk-venus-plugin/pull/69) fix: some mqtt values not getting refreshed (@sbender9)
 
