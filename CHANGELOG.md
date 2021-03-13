@@ -1,6 +1,9 @@
 ## Change Log
 
-### v1.24.2 (2021/03/13 18:55 +00:00)
+### v1.24.3 (2021/03/13 19:28 +00:00)
+- [#75](https://github.com/sbender9/signalk-venus-plugin/pull/75) fix: don't send "normal" notifications unless needed (@sbender9)
+
+### v1.24.2 (2021/03/13 18:56 +00:00)
 - [#74](https://github.com/sbender9/signalk-venus-plugin/pull/74) fix: don't ignore all null values coming over mqtt (@sbender9)
 - [#73](https://github.com/sbender9/signalk-venus-plugin/pull/73) fix: preserve existing notification methods (@sbender9)
 
