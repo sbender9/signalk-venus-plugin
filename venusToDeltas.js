@@ -667,8 +667,65 @@ module.exports = function (app, options, handleMessage) {
     var value = convertAlarmToNotification(msg, path)
     return makeDelta(app, msg, path, value)
   }
-  
 
+  function convertErrorToNotification (m, path) {
+    var value
+
+    const existing = app.getSelfPath(path)
+    
+    if (m.value == 0) {
+      if ( existing && existing.state !== 'normal' ) {
+        value = { state: 'normal', message: 'No Error' }
+      }
+    } else {
+      var msg
+      if (m.senderName.startsWith('com.victronenergy.solarcharger')) {
+        msg = solarErrorCodeMap[m.value]
+      }
+
+      if (!msg) {
+        msg = `Unknown Error ${m.value}: ${m.text}`
+      }
+
+      let method = [ "visual", "sound" ]
+      if ( existing ) {
+        method = existing.method
+      }
+      
+      value = {
+        state: 'alarm',
+        message: msg,
+        method,
+      }
+    }
+    
+    return value
+  }
+
+  function convertAlarmToNotification (m, path) {
+    var value
+    var message
+    if (_.isString(m.value)) {
+      message = m.value
+    } else {
+      message = m.path.split('/')[2]
+    }
+    const existing = app.getSelfPath(path)
+    if (m.value == null || m.value == 0) {
+      if ( existing && existing.state !== 'normal' ) {
+        value = { state: 'normal', message: message }
+      }
+    } else {
+      value = {
+        state: m.value == 1 ? 'warning' : 'alarm',
+        message: message,
+        method: ['visual', 'sound']
+      }
+    }
+    
+    return value
+  }
+  
   return { toDelta, getKnownPaths }
 }
 
@@ -814,56 +871,6 @@ const solarErrorCodeMap = {
   22: 'Charger temperature sensor miswired',
   23: 'Charger temperature sensor disconnected',
   34: 'Input current too high'
-}
-
-function convertErrorToNotification (m, path) {
-  var value
-  if (m.value == 0) {
-    value = { state: 'normal', message: 'No Error' }
-  } else {
-    var msg
-    if (m.senderName.startsWith('com.victronenergy.solarcharger')) {
-      msg = solarErrorCodeMap[m.value]
-    }
-
-    if (!msg) {
-      msg = `Unknown Error ${m.value}: ${m.text}`
-    }
-
-    let method = [ "visual", "sound" ]
-    const existing = app.getSelfPath(path)
-    if ( existing && existing.state !== 'normal' ) {
-      method = existing.method
-    }
-    value = {
-      state: 'alarm',
-      message: msg,
-      method,
-    }
-  }
-
-  return value
-}
-
-function convertAlarmToNotification (m) {
-  var value
-  var message
-  if (_.isString(m.value)) {
-    message = m.value
-  } else {
-    message = m.path.split('/')[2]
-  }
-  if (m.value == null || m.value == 0) {
-    value = { state: 'normal', message: message }
-  } else {
-    value = {
-      state: m.value == 1 ? 'warning' : 'alarm',
-      message: message,
-      method: ['visual', 'sound']
-    }
-  }
-
-  return value
 }
 
 function kWhToJoules (m) {
