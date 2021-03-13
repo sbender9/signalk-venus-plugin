@@ -6,7 +6,7 @@ var knownPaths = []
 var sentModeMeta = false
 
 module.exports = function (app, options, handleMessage) {
-  const debug = app.debug.extend('venusToDeltas')
+  const debug = app && app.debug ? app.debug.extend('venusToDeltas') : () => {}
   
   const venusToSignalKMapping = {
     '/Dc/0/Voltage': {
@@ -573,11 +573,11 @@ module.exports = function (app, options, handleMessage) {
           return
         }
 
-        if (mapping.conversion) {
-          theValue = mapping.conversion(m)
-        }
+        var thePath = isFunction(mapping.path) ? mapping.path(m) : mapping.path
 
-        debug(`converted to ${theValue}`)
+        if (mapping.conversion) {
+          theValue = mapping.conversion(m, thePath)
+        }
 
         if (isUndefined(theValue) || theValue == null) {
           debug('mapping: no value')
@@ -588,8 +588,6 @@ module.exports = function (app, options, handleMessage) {
           // seem to get this for unknown values
           theValue = null
         }
-
-        var thePath = isFunction(mapping.path) ? mapping.path(m) : mapping.path
 
         if ( !_.isUndefined(thePath) ) {
           if ( knownPaths.indexOf(thePath) == -1 )
@@ -602,6 +600,7 @@ module.exports = function (app, options, handleMessage) {
           }
           if ( !options.blacklist || options.blacklist.indexOf(thePath) == -1 ) {
             var delta = makeDelta(app, m, thePath, theValue)
+
             deltas.push(delta)
 
             if (sentModeMeta === false
@@ -665,7 +664,7 @@ module.exports = function (app, options, handleMessage) {
     name = name.charAt(0).toLowerCase() + name.substring(1) // lowVoltate
     
     var path = 'notifications.' + makePath(msg, `${msg.instanceName}.${name}`)
-    var value = convertAlarmToNotification(msg)
+    var value = convertAlarmToNotification(msg, path)
     return makeDelta(app, msg, path, value)
   }
   
@@ -817,7 +816,7 @@ const solarErrorCodeMap = {
   34: 'Input current too high'
 }
 
-function convertErrorToNotification (m) {
+function convertErrorToNotification (m, path) {
   var value
   if (m.value == 0) {
     value = { state: 'normal', message: 'No Error' }
@@ -831,10 +830,15 @@ function convertErrorToNotification (m) {
       msg = `Unknown Error ${m.value}: ${m.text}`
     }
 
+    let method = [ "visual", "sound" ]
+    const existing = app.getSelfPath(path)
+    if ( existing && existing.state !== 'normal' ) {
+      method = existing.method
+    }
     value = {
       state: 'alarm',
       message: msg,
-      method: ['visual', 'sound']
+      method,
     }
   }
 
