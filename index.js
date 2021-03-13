@@ -432,7 +432,7 @@ module.exports = function (app) {
         app.debug('offline: %s', topic)
         const info = sentDeltas[topic]
         if ( info ) {
-          if ( info.delta.updates[0].values && info.delta.updates[0].values.length ) {
+          if ( info.delta.updates && info.delta.updates[0].values && info.delta.updates[0].values.length ) {
             const delta = JSON.parse(JSON.stringify(info.delta))
             delta.updates[0].values[0].value = null
             app.handleMessage(PLUGIN_ID, delta)
@@ -468,7 +468,7 @@ module.exports = function (app) {
               clearInterval(pollInterval)
             }
             pollInterval = setInterval(() => {
-              app.debug('resending old deltas...')
+              app.debug('resending deltas...')
               resendDeltas()
             }, options.pollInterval*1000)
             if ( keepAlive ) {
@@ -477,6 +477,7 @@ module.exports = function (app) {
             keepAlive = setInterval(() => {
               app.debug('sending keep alive')
               client.publish(`R/${plugin.portalID}/system/0/Serial`)
+              client.subscribe(`N/${plugin.portalID}/+/#`)
             }, 50*1000)
           }
         }
@@ -541,16 +542,37 @@ module.exports = function (app) {
         relaysRegistered.push(topic)
       }
 
-      var deltas = toDelta([m])
+      var deltas = toDelta([m], true)
 
       if ( deltas.length ) {
-        sentDeltas[topic] = {
-          deltas: JSON.parse(JSON.stringify(deltas)),
-          time: Date.now(),
-          topic
-        }
+
+        deltas = deltas.filter(delta => {
+          if ( delta.updates ) {
+            delta.updates = delta.updates.filter(update => {
+              if ( update.values ) {
+                update.values = update.values.filter(vp => {
+                  return vp.value != null || sentDeltas[topic]
+                })
+                return update.values.length > 0
+              }
+              return true
+            })
+            return delta.updates.length > 0
+          }
+          return true
+        })
+
+        if ( deltas.length !== 0 ) {
+          sentDeltas[topic] = {
+            deltas: JSON.parse(JSON.stringify(deltas)),
+            time: Date.now(),
+            topic
+          }
         
-        deltas.forEach(delta => app.handleMessage(PLUGIN_ID, delta))
+          deltas.forEach(delta => {
+            app.handleMessage(PLUGIN_ID, delta)
+          })
+        }
       }
     })
 
@@ -561,7 +583,7 @@ module.exports = function (app) {
     const now = Date.now()
     Object.values(sentDeltas).forEach((info) => {
       if ( now - info.time > ((plugin.options.pollInterval-1)*1000) ) {
-        app.debug('resending %s', info.topic)
+        //app.debug('resending %s', info.topic)
         //app.debug('%j', info.delta)
         info.deltas.forEach((delta) => {
           if ( delta.updates[0].values ) {
