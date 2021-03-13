@@ -1,5 +1,9 @@
 ## Change Log
 
+### v1.24.2 (2021/03/13 18:55 +00:00)
+- [#74](https://github.com/sbender9/signalk-venus-plugin/pull/74) fix: don't ignore all null values coming over mqtt (@sbender9)
+- [#73](https://github.com/sbender9/signalk-venus-plugin/pull/73) fix: preserve existing notification methods (@sbender9)
+
 ### v1.24.1 (2021/02/28 16:16 +00:00)
 - [#72](https://github.com/sbender9/signalk-venus-plugin/pull/72) fix: relay display name entry not showing in plugin configuration (@sbender9)
 
