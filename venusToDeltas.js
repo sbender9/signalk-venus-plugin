@@ -531,7 +531,7 @@ module.exports = function (app, options, handleMessage) {
     }
   })
 
-  function toDelta (messages) {
+  function toDelta (messages, sendNulls) {
     var deltas = []
 
     messages.forEach(m => {
@@ -579,7 +579,7 @@ module.exports = function (app, options, handleMessage) {
           theValue = mapping.conversion(m, thePath)
         }
 
-        if (isUndefined(theValue) || theValue == null) {
+        if (!sendNulls && (isUndefined(theValue) || theValue == null)) {
           debug('mapping: no value')
           return
         }
