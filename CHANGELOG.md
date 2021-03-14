@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.24.4 (2021/03/14 15:43 +00:00)
+- [#77](https://github.com/sbender9/signalk-venus-plugin/pull/77) fix: silenced notifications not staying silenced (@sbender9)
+
 ### v1.24.3 (2021/03/13 19:28 +00:00)
 - [#75](https://github.com/sbender9/signalk-venus-plugin/pull/75) fix: don't send "normal" notifications unless needed (@sbender9)
 
