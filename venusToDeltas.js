@@ -537,8 +537,11 @@ module.exports = function (app, options, handleMessage) {
     messages.forEach(m => {
       debug(`${m.path}:${m.value}`)
       if (m.path.startsWith('/Alarms')) {
-        deltas.push(getAlarmDelta(app, m))
-        return
+        let delta  = getAlarmDelta(app, m)
+        if ( delta ) {
+          deltas.push(delta)
+        }
+        return deltas
       }
 
       if (!m.senderName) {
@@ -665,7 +668,7 @@ module.exports = function (app, options, handleMessage) {
     
     var path = 'notifications.' + makePath(msg, `${msg.instanceName}.${name}`)
     var value = convertAlarmToNotification(msg, path)
-    return makeDelta(app, msg, path, value)
+    return value ? makeDelta(app, msg, path, value) : null
   }
 
   function convertErrorToNotification (m, path) {
@@ -674,7 +677,7 @@ module.exports = function (app, options, handleMessage) {
     const existing = app.getSelfPath(path)
     
     if (m.value == 0) {
-      if ( existing && existing.state !== 'normal' ) {
+      if ( existing && existing.value && existing.value.state !== 'normal' ) {
         value = { state: 'normal', message: 'No Error' }
       }
     } else {
@@ -688,8 +691,8 @@ module.exports = function (app, options, handleMessage) {
       }
 
       let method = [ "visual", "sound" ]
-      if ( existing ) {
-        method = existing.method
+      if ( existing && existing.value ) {
+        method = existing.value.method
       }
       
       value = {
@@ -712,14 +715,19 @@ module.exports = function (app, options, handleMessage) {
     }
     const existing = app.getSelfPath(path)
     if (m.value == null || m.value == 0) {
-      if ( existing && existing.state !== 'normal' ) {
+      if ( existing && existing.value && existing.value.state !== 'normal' ) {
         value = { state: 'normal', message: message }
       }
     } else {
+      let method = [ "visual", "sound" ]
+      if ( existing && existing.value ) {
+        method = existing.value.method
+      }
+      
       value = {
         state: m.value == 1 ? 'warning' : 'alarm',
         message: message,
-        method: ['visual', 'sound']
+        method
       }
     }
     
