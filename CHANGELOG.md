@@ -1,3 +1,9 @@
+# This file is no longer used.
+
+Please see [Releases](https://github.com/sbender9/signalk-venus-plugin/releases)
+
+
+
 ## Change Log
 
 ### v1.24.4 (2021/03/14 15:43 +00:00)
