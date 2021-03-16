@@ -420,6 +420,9 @@ module.exports = function (app) {
     })
 
     client.on('close', () => {
+      sentDeltas = {}
+      plugin.needsID = true
+      plugin.portalID = null
       app.debug(`mqtt close`)
     });
 
