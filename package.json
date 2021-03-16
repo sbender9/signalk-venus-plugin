@@ -11,18 +11,18 @@
     "promise-retry": "^1.1.1"
   },
   "devDependencies": {
+    "@signalk/github-create-release": "^1.2.1",
     "@signalk/signalk-schema": "0.0.1-12",
     "chai": "^4.1.2",
     "chai-things": "0.2",
-    "github-changes": "^1.0.4",
     "mocha": "^4.0.1",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"
   },
   "scripts": {
     "test": "mocha",
-    "changelog": "github-changes -o sbender9 -r signalk-venus-plugin -a --only-pulls --use-commit-body --data=pulls  --tag-name=v$npm_package_version",
-    "release": "git tag -d v$npm_package_version ; npm run changelog && git add CHANGELOG.md && git commit -m 'chore: update changelog' && git tag v$npm_package_version && git push --tags && git push",
+    "create-release": "github-create-release --owner sbender9 --repository signalk-venus-plugin",
+    "release": "git tag -d v$npm_package_version ; git tag v$npm_package_version && git push --tags && git push && npm run create-release",
     "build_ios": "webpack ios.js -o ios_venus.js"
   },
   "keywords": [
