@@ -432,11 +432,18 @@ module.exports = function (app) {
         app.debug('offline: %s', topic)
         const info = sentDeltas[topic]
         if ( info ) {
-          if ( info.delta.updates && info.delta.updates[0].values && info.delta.updates[0].values.length ) {
-            const delta = JSON.parse(JSON.stringify(info.delta))
-            delta.updates[0].values[0].value = null
-            app.handleMessage(PLUGIN_ID, delta)
-          }
+          info.deltas.forEach(delta => {
+            if ( delta.updates ) {
+              delta.updates.forEach(update => {
+                if ( update.values ) {
+                  update.values.forEach(val => {
+                    val.value = null
+                  })
+                }                   
+              })
+              app.handleMessage(PLUGIN_ID, delta)
+            }
+          })
           delete sentDeltas[topic]
         }
         return
