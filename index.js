@@ -596,8 +596,9 @@ module.exports = function (app) {
         //app.debug('resending %s', info.topic)
         //app.debug('%j', info.delta)
         info.deltas.forEach((delta) => {
-          if ( delta.updates[0].values ) {
-            app.handleMessage(PLUGIN_ID, JSON.parse(JSON.stringify(delta)))
+          if ( delta.updates[0].values && delta.updates[0].values.length > 0 &&
+               !delta.updates[0].values[0].path.startsWith('notifications.') ) {
+              app.handleMessage(PLUGIN_ID, JSON.parse(JSON.stringify(delta)))
           }
         })
       }
