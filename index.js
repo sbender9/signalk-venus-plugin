@@ -552,27 +552,12 @@ module.exports = function (app) {
         relaysRegistered.push(topic)
       }
 
-      var deltas = toDelta([m], true)
+      var deltas = toDelta([m])
 
       if ( deltas.length ) {
+        let anyUpdates = (deltas) => deltas.find(delta => delta.updates.find(update => update.values && update.values.length > 0))
 
-        deltas = deltas.filter(delta => {
-          if ( delta.updates ) {
-            delta.updates = delta.updates.filter(update => {
-              if ( update.values ) {
-                update.values = update.values.filter(vp => {
-                  return vp.value != null || sentDeltas[topic]
-                })
-                return update.values.length > 0
-              }
-              return true
-            })
-            return delta.updates.length > 0
-          }
-          return true
-        })
-
-        if ( deltas.length !== 0 ) {
+        if ( anyUpdates(deltas) ) {
           sentDeltas[topic] = {
             deltas: JSON.parse(JSON.stringify(deltas)),
             time: Date.now(),

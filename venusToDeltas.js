@@ -45,7 +45,8 @@ module.exports = function (app, options, handleMessage) {
       units: 'ratio'
     },
     '/TimeToGo': {
-      path: m => `electrical.batteries.${m.instanceName}.capacity.timeRemaining`
+      path: m => `electrical.batteries.${m.instanceName}.capacity.timeRemaining`,
+      sendNulls: true
     },
     '/ConsumedAmphours': {
       path: m => `electrical.batteries.${m.instanceName}.capacity.consumedCharge`,
@@ -531,7 +532,7 @@ module.exports = function (app, options, handleMessage) {
     }
   })
 
-  function toDelta (messages, sendNulls) {
+  function toDelta (messages) {
     var deltas = []
 
     messages.forEach(m => {
@@ -553,9 +554,6 @@ module.exports = function (app, options, handleMessage) {
 
       if ( m.senderName.startsWith('com.victronenergy.digitalinput') ) {
         mappings = digitalInputsMappings[m.path] ? digitalInputsMappings[m.path] : []
-
-        if ( m.path === '/Alarm' && m.value === 2 ) {
-        }
       } else {
         mappings = venusToSignalKMapping[m.path] || []
       }
@@ -582,17 +580,19 @@ module.exports = function (app, options, handleMessage) {
           theValue = mapping.conversion(m, thePath)
         }
 
-        if (!sendNulls && (isUndefined(theValue) || theValue == null)) {
-          debug('mapping: no value')
-          return
-        }
-
         if (isArray(theValue)) {
           // seem to get this for unknown values
           theValue = null
         }
-
-        if ( !_.isUndefined(thePath) ) {
+        
+        if (!mapping.sendNulls &&
+            (isUndefined(theValue) || theValue === null) &&
+            knownPaths.indexOf(thePath) === -1 ) {
+          debug('mapping: no value')
+          return
+        }
+        
+        if ( !_.isUndefined(thePath) && !_.isUndefined(theValue) ) {
           if ( knownPaths.indexOf(thePath) == -1 )
           {
             knownPaths.push(thePath)
