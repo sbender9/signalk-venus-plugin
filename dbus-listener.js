@@ -78,6 +78,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
             // and others. All services that send out data for connected devices do
             // have the /DeviceInstance path.
             app.debug(`warning: error getting device instance for ${name}`)
+            services[owner].deviceInstance = 99
           } else {
             services[owner].deviceInstance = res[1][0]
           }
