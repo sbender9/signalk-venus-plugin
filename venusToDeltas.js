@@ -536,7 +536,7 @@ module.exports = function (app, options, handleMessage) {
     var deltas = []
 
     messages.forEach(m => {
-      debug(`${m.path}:${m.value}`)
+      debug('%j', m)
       if (m.path.startsWith('/Alarms')) {
         let delta  = getAlarmDelta(app, m)
         if ( delta ) {
