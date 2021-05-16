@@ -525,7 +525,8 @@ module.exports = function (app) {
         instanceName: instance,
         senderName,
         value: message.value,
-        fluidType: fluidType
+        fluidType: fluidType,
+        topic
       }
 
       //app.debug(JSON.stringify(m))
