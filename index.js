@@ -19,6 +19,7 @@ module.exports = function (app) {
   let modesRegistered = []
   let relaysRegistered = []
   var fluidTypes = {}
+  var temperatureTypes = {}
   let sentDeltas = {}
   let pollInterval
   let keepAlive
@@ -456,6 +457,7 @@ module.exports = function (app) {
       var type = parts[2]
       var instance = parts[3]
       var fluidType
+      var temperatureType
 
       var message
 
@@ -465,6 +467,8 @@ module.exports = function (app) {
         app.debug(err)
         return
       }
+
+      //app.debug(topic)
       
       if ( plugin.needsID ) {
         if ( topic.endsWith('system/0/Serial') ) {
@@ -508,6 +512,19 @@ module.exports = function (app) {
           fluidTypes[instance] = 'unknown'
           return
         }
+      } else if ( type === 'temperature' ) {
+        if ( parts[parts.length-1] == 'TemperatureType' ) {
+          temperatureTypes[instance] = message.value
+          return
+        }
+        temperatureType = temperatureTypes[instance]
+        if ( fluidType == 'unknown' ) {
+          return
+        } else if ( _.isUndefined(temperatureType) ) {
+          client.publish(`R/${parts[1]}/${type}/${instance}/TemperatureType`)
+          temperatureTypes[instance] = 'unknown'
+          return
+        }
       }
 
       let senderName = `com.victronenergy.${type}.${instance}`
@@ -526,7 +543,8 @@ module.exports = function (app) {
         senderName,
         value: message.value,
         fluidType: fluidType,
-        topic
+        topic,
+        temperatureType
       }
 
       //app.debug(JSON.stringify(m))
