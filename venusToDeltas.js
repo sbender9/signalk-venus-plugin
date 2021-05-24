@@ -750,7 +750,7 @@ const stateMaps = {
     5: 'float',
     6: 'other',
     7: 'equalize',
-    252: 'ESS'
+    252: 'Ext. Control'
   },
 
   'com.victronenergy.vebus': {
