@@ -410,7 +410,7 @@ module.exports = function (app, options, handleMessage) {
     },
     '/ExtraBatteryCurrent': {
       path: m => {
-        return `electrical.batteries.${m.instanceName}starter.current`
+        return makePath(m, `${m.instanceName}.extraBatteryCurrent`, true)
       },
       units: 'A'
     },
