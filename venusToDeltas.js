@@ -831,6 +831,12 @@ const modeMaps = {
     2: 'on',
     4: 'off',
     5: 'eco'
+  },
+  'com.victronenergy.battery': {
+    0: 'sleep',
+    1: 'hibernation',
+    2: 'standby',
+    3: 'on'
   }
 }
 
@@ -838,7 +844,8 @@ const statePropName = {
   'com.victronenergy.vebus': 'chargingMode',
   'com.victronenergy.charger': 'chargingMode',
   'com.victronenergy.solarcharger': 'controllerMode',
-  'com.victronenergy.inverter': 'inverterMode'
+  'com.victronenergy.inverter': 'inverterMode',
+  'com.victronenergy.battery': 'mode'
 }
 
 function getStatePropName (msg) {
