@@ -416,13 +416,7 @@ module.exports = function (app, options, handleMessage) {
     },
     '/Relay/0/State': {
       path: m => {
-        /*
-        if ( senderNamePrefix(m.senderName) === 'com.victronenergy.battery' )
-        {
-          return `electrical.batteries.${m.instanceName}.relay.state`
-        }
-        else*/
-        if (senderNamePrefix(m.senderName) === 'com.victronenergy.system')
+        if (m.senderName === 'com.victronenergy.system')
         {
           return (options.relayPath0 || 'electrical.switches.venus-0') + '.state'
         } else {
