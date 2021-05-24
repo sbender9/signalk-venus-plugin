@@ -416,7 +416,7 @@ module.exports = function (app, options, handleMessage) {
     },
     '/Relay/0/State': {
       path: m => {
-        if (m.senderName === 'com.victronenergy.system')
+        if (m.senderName.startsWith('com.victronenergy.system'))
         {
           return (options.relayPath0 || 'electrical.switches.venus-0') + '.state'
         } else {
