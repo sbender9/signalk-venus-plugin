@@ -173,7 +173,9 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       old_owner = m.body[1]
       new_owner = m.body[2]
 
-      if (name.startsWith('com.victronenergy')) {
+      app.debug('name owner change: %j', m)
+
+      if (name.startsWith('com.victronenergy') && new_owner && new_owner.length > 0 ) {
         initService(new_owner, name)
       } else {
         delete services[old_owner]
