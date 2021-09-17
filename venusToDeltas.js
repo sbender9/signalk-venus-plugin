@@ -547,78 +547,89 @@ module.exports = function (app, options, handleMessage) {
         return
       }
 
-
-      let mappings
-
-      if ( m.senderName.startsWith('com.victronenergy.digitalinput') ) {
-        mappings = digitalInputsMappings[m.path] ? digitalInputsMappings[m.path] : []
+      if ( m.path === '/' ) {
+        let values = msg.value
+        delete msg.value // don't copy these
+        values.forEach((v) => {
+          mapMessage(app, { ...msg, path: m.path + v[0], value: v[1][1][0] }, deltas)
+        })
       } else {
-        mappings = venusToSignalKMapping[m.path] || []
+        mapMessage(app, m, deltas)
       }
-
-      if ( _.isUndefined(m.venusName) ) {
-        m.venusName = 'venus'
-      }
-
-      mappings.forEach(mapping => {
-        let theValue = m.value
-        
-        if (
-          ((isUndefined(mapping.requiresInstance) || mapping.requiresInstance) && isUndefined(m.instanceName)) || !makePath(m)
-        ) {
-          debug(
-            `mapping: skipping: ${m.senderName} ${mapping.requiresInstance}`
-          )
-          return
-        }
-
-        var thePath = isFunction(mapping.path) ? mapping.path(m) : mapping.path
-
-        if (mapping.conversion) {
-          theValue = mapping.conversion(m, thePath)
-        }
-
-        if (isArray(theValue)) {
-          // seem to get this for unknown values
-          theValue = null
-        }
-        
-        if (!mapping.sendNulls &&
-            (isUndefined(theValue) || theValue === null) &&
-            knownPaths.indexOf(thePath) === -1 ) {
-          debug('mapping: no value')
-          return
-        }
-        
-        if ( !_.isUndefined(thePath) && !_.isUndefined(theValue) ) {
-          if ( knownPaths.indexOf(thePath) == -1 )
-          {
-            knownPaths.push(thePath)
-            if ( mapping.units && app.supportsMetaDeltas ) {
-              let meta = {updates: [ { meta: [{ path: thePath, value: {units: mapping.units} }]  } ]}
-              deltas.push(meta)
-            }
-          }
-          if ( !options.blacklist || options.blacklist.indexOf(thePath) == -1 ) {
-            var delta = makeDelta(app, m, thePath, theValue)
-
-            deltas.push(delta)
-
-            if (sentModeMeta === false
-                && m.senderName.startsWith('com.victronenergy.vebus')
-                && m.path === '/Mode'
-                && thePath.endsWith('modeNumber')
-                && app.supportsMetaDeltas) {
-              deltas.push({updates: [ { meta: [{ path: thePath, value: modeMeta }]  } ]})
-              sentModeMeta = true
-            }
-          } 
-        }
-      })
     })
 
     debug(`produced ${deltas.length} deltas`)
     return deltas
+  }
+
+  function mapMessage(app, m, deltas) {
+    let mappings
+    
+    if ( m.senderName.startsWith('com.victronenergy.digitalinput') ) {
+      mappings = digitalInputsMappings[m.path] ? digitalInputsMappings[m.path] : []
+    } else {
+      mappings = venusToSignalKMapping[m.path] || []
+    }
+
+    if ( _.isUndefined(m.venusName) ) {
+      m.venusName = 'venus'
+    }
+
+    mappings.forEach(mapping => {
+      let theValue = m.value
+      
+      if (
+        ((isUndefined(mapping.requiresInstance) || mapping.requiresInstance) && isUndefined(m.instanceName)) || !makePath(m)
+      ) {
+        debug(
+          `mapping: skipping: ${m.senderName} ${mapping.requiresInstance}`
+        )
+        return
+      }
+
+      var thePath = isFunction(mapping.path) ? mapping.path(m) : mapping.path
+
+      if (mapping.conversion) {
+        theValue = mapping.conversion(m, thePath)
+      }
+
+      if (isArray(theValue)) {
+        // seem to get this for unknown values
+        theValue = null
+      }
+      
+      if (!mapping.sendNulls &&
+          (isUndefined(theValue) || theValue === null) &&
+          knownPaths.indexOf(thePath) === -1 ) {
+        debug('mapping: no value')
+        return
+      }
+      
+      if ( !_.isUndefined(thePath) && !_.isUndefined(theValue) ) {
+        if ( knownPaths.indexOf(thePath) == -1 )
+        {
+          knownPaths.push(thePath)
+          if ( mapping.units && (!app || app.supportsMetaDeltas) ) {
+            let meta = {updates: [ { meta: [{ path: thePath, value: {units: mapping.units} }]  } ]}
+            deltas.push(meta)
+          }
+        }
+        if ( !options.blacklist || options.blacklist.indexOf(thePath) == -1 ) {
+          var delta = makeDelta(app, m, thePath, theValue)
+
+          deltas.push(delta)
+
+          if (sentModeMeta === false
+              && m.senderName.startsWith('com.victronenergy.vebus')
+              && m.path === '/Mode'
+              && thePath.endsWith('modeNumber')
+              && app.supportsMetaDeltas) {
+            deltas.push({updates: [ { meta: [{ path: thePath, value: modeMeta }]  } ]})
+            sentModeMeta = true
+          }
+        } 
+      }
+    })
   }
 
   function getKnownPaths() {
@@ -672,7 +683,7 @@ module.exports = function (app, options, handleMessage) {
   function convertErrorToNotification (m, path) {
     var value
 
-    const existing = app.getSelfPath(path)
+    const existing = app ? app.getSelfPath(path) : undefined
     
     if (m.value == 0) {
       if ( existing && existing.value && existing.value.state !== 'normal' ) {
@@ -965,7 +976,7 @@ function makeDelta (app, m, path, value) {
     ]
   }
   
-  if (!app.supportsMetaDeltas
+  if ((!app || !app.supportsMetaDeltas)
       && m.senderName.startsWith('com.victronenergy.vebus')
       && m.path === '/Mode'
       && path.endsWith('modeNumber'))

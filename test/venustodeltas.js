@@ -15,6 +15,11 @@ function toFull(delta) {
   if (!delta.context) {
     delta.context = 'vessels.' + signalkSchema.fakeMmsiId
   }
+  delta.updates.forEach(u => {
+    if ( !u.timestamp ) {
+      u.timestamp = new Date().toISOString()
+    }
+  })
   var contextParts = delta.context.split('.')
   var full = signalkSchema.deltaToFull(delta)
   return full[contextParts[0]][contextParts[1]]
@@ -186,14 +191,14 @@ describe('venustodeltas', function () {
         "senderName": 'com.victronenergy.battery.ttyO0',
         "instanceName": 0
       }])
-      expect(deltas.length).to.equal(1)
-      expect(deltas[0]).to.nested.deep.include({
+      expect(deltas.length).to.equal(2)
+      expect(deltas[1]).to.nested.deep.include({
         'updates[0].values[0]': {
           path: 'electrical.batteries.0.capacity.stateOfCharge',
           value: .58099998474121094
         }
       })
-      var tree = toFull(deltas[0])
+      var tree = toFull(deltas[1])
       tree.should.be.validSignalKVesselIgnoringIdentity
     })
   })
@@ -373,8 +378,10 @@ describe('venustodeltas', function () {
           value: 'bulk'
         }
       })
-      //var tree = toFull(deltas[0])
-      //tree.should.be.validSignalKVesselIgnoringIdentity
+      var tree = toFull(deltas[0])
+      console.log(JSON.stringify(tree))
+      delete tree.electrical.solar['0'].controllerMode //we don't have a valid value for this
+      tree.should.be.validSignalKVesselIgnoringIdentity
     })
   })
 
