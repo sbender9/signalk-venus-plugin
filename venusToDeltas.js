@@ -660,6 +660,11 @@ module.exports = function (app, options, handleMessage) {
   }
 
   function getAlarmDelta (app, msg) {
+    if ( msg.senderName.startsWith('com.victronenergy.tank') ) {
+      //ignore for now
+      return
+    }
+    
     var name = msg.path.substring(1).replace(/\//g, '.') // alarms.LowVoltage
     name = name.substring(name.indexOf('.') + 1) // LowVoltate
     name = name.charAt(0).toLowerCase() + name.substring(1) // lowVoltate
