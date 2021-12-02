@@ -313,7 +313,10 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       "type='signal',interface='com.victronenergy.BusItem',member='PropertiesChanged'",
       d => {}
     )
+    bus.addMatch(
+      "type='signal',interface='com.victronenergy.BusItem',member='ItemsChanged'",
+      d => {}
+    )
     bus.addMatch("type='signal',member='NameOwnerChanged'", d => {})
-    bus.addMatch("type='signal',member='ItemsChanged'", d => {})
   })
 }
