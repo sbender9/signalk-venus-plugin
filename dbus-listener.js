@@ -250,9 +250,9 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
 
         msg.instanceName = instanceName
         msg.senderName = senderName
-      
-        messageCallback([msg])
       })
+
+      messageCallback(entries)
     }
 
     function setValue (destination, path, value) {
