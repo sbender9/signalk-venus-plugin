@@ -174,6 +174,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
                   _.isArray(m.body[0][1][0]) &&
                   m.body[0][1][0].length > 0
                 ) {
+        //this is a dict update, not getting  'ItemsChanged'
         properties_changed(m)
       }
     }
