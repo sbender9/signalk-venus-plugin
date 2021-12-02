@@ -156,8 +156,8 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
 
     function signal_receive (m) {
       if (
-        m.interface == 'com.victronenergy.BusItem' &&
-        m.member == 'PropertiesChanged'
+        m.interface === 'com.victronenergy.BusItem' 
+        && m.member === 'PropertiesChanged'
       ) {
         properties_changed(m)
       } else if (
@@ -165,6 +165,16 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
         m.member == 'NameOwnerChanged'
       ) {
         name_owner_changed(m)
+      } else if ( m.body &&
+                  m.body.length > 0 &&
+                  _.isArray(m.body[0]) &&
+                  m.body[0].length > 1 &&
+                  _.isArray(m.body[0][1]) &&
+                  m.body[0][1].length > 0 &&
+                  _.isArray(m.body[0][1][0]) &&
+                  m.body[0][1][0].length > 0
+                ) {
+        properties_changed(m)
       }
     }
 
@@ -194,17 +204,8 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       //   flags: 1,
       //   body: [ [ [Object], [Object] ] ]}
 
-      m.body[0].forEach(entry => {
-        if (entry[0] == 'Text') {
-          m.text = entry[1][1][0]
-        } else if (entry[0] == 'Value') {
-          m.value = entry[1][1][0]
-        } else if (entry[0] == 'Valid') {
-          // Ignoring Valid because it is deprecated
-        }
-      })
-
-      var service = services[m.sender]
+      const sender = m.sender
+      var service = services[sender]
 
       if (!service || !service.name) {
         // See comment above explaining why some services don't have the
@@ -213,28 +214,56 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
         return
       }
 
-      m.senderName = service.name
-
-      if (m.path == '/DeviceInstance') {
-        services[m.sender].deviceInstance = m.value
-        m.instanceName = m.value
-      } else {
-        m.instanceName = service.deviceInstance
-      }
+      const senderName = service.name
+      let instanceName = service.deviceInstance
 
       if ( plugin.options.instanceMappings ) {
         const mapping = plugin.options.instanceMappings.find(mapping => {
           return service.name.startsWith(mapping.type) && mapping.venusId == m.instanceName
         })
         if ( !_.isUndefined(mapping) ) {
-          m.instanceName = mapping.signalkId
+          instanceName = mapping.signalkId
         }
       }      
 
-      // app.debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${m.value}`);
-      // app.debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${JSON.stringify(m.body)}`);
+      let entries
 
-      messageCallback([m])
+      if ( !m.member ) {
+        entries = m.body[0][1][0]
+          .filter(item => _.isArray(item) && item.length > 0 )
+          .map(item => {
+            return { path: '/' + item[0], value: item[1][1][0] }
+          })
+      } else if ( m.member === 'PropertiesChanged' ) {
+        let value, text
+        
+        m.body[0].forEach(entry => {
+          if (entry[0] == 'Text') {
+            text = entry[1][1][0]
+          } else if (entry[0] == 'Value') {
+            value = entry[1][1][0]
+          } else if (entry[0] == 'Valid') {
+            // Ignoring Valid because it is deprecated
+          }
+        })
+        entries = [ { path: m.path, value, text} ]
+      }
+
+
+      entries.forEach(msg => {
+        let instanceName
+        if (msg.path == '/DeviceInstance') {
+          instanceName = msg.value
+          services[sender].instanceName
+        } else {
+          instanceName = service.deviceInstance
+        }
+
+        msg.instanceName = instanceName
+        msg.senderName = senderName
+      
+        messageCallback([msg])
+      })
     }
 
     function setValue (destination, path, value) {
