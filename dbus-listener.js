@@ -157,7 +157,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
     function signal_receive (m) {
       if (
         m.interface === 'com.victronenergy.BusItem' 
-        && m.member === 'PropertiesChanged'
+          && (m.member === 'PropertiesChanged' || m.member === 'ItemsChanged')
       ) {
         properties_changed(m)
       } else if (
@@ -165,20 +165,9 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
         m.member == 'NameOwnerChanged'
       ) {
         name_owner_changed(m)
-      } else if ( m.body &&
-                  m.body.length > 0 &&
-                  _.isArray(m.body[0]) &&
-                  m.body[0].length > 1 &&
-                  _.isArray(m.body[0][1]) &&
-                  m.body[0][1].length > 0 &&
-                  _.isArray(m.body[0][1][0]) &&
-                  m.body[0][1][0].length > 0
-                ) {
-        //this is a dict update, not getting  'ItemsChanged'
-        properties_changed(m)
-      }
+      } 
     }
-
+    
     function name_owner_changed (m) {
       name = m.body[0]
       old_owner = m.body[1]
@@ -191,6 +180,17 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       } else {
         delete services[old_owner]
       }
+    }
+
+    function setValueAndText(data, res) {
+      data.forEach(entry => {
+        if (entry[0] == 'Text') {
+          res.text =  entry[1][1][0]
+        } else if (entry[0] == 'Value') {
+          res.value = entry[1][1][0]
+        } 
+      })
+      return res
     }
 
     function properties_changed (m) {
@@ -229,25 +229,13 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
 
       let entries
 
-      if ( !m.member ) {
-        entries = m.body[0][1][0]
-          .filter(item => _.isArray(item) && item.length > 0 )
+      if ( m.member === 'ItemsChanged' ) {
+        entries = m.body[0]
           .map(item => {
-            return { path: '/' + item[0], value: item[1][1][0] }
+            return setValueAndText(item[1], { path: item[0] })
           })
       } else if ( m.member === 'PropertiesChanged' ) {
-        let value, text
-        
-        m.body[0].forEach(entry => {
-          if (entry[0] == 'Text') {
-            text = entry[1][1][0]
-          } else if (entry[0] == 'Value') {
-            value = entry[1][1][0]
-          } else if (entry[0] == 'Valid') {
-            // Ignoring Valid because it is deprecated
-          }
-        })
-        entries = [ { path: m.path, value, text} ]
+        entries = [ setValueAndText(m.body[0], { path: m.path}) ]
       }
 
 
@@ -255,7 +243,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
         let instanceName
         if (msg.path == '/DeviceInstance') {
           instanceName = msg.value
-          services[sender].instanceName
+          services[sender].deviceInstance = instanceName
         } else {
           instanceName = service.deviceInstance
         }
@@ -326,5 +314,6 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       d => {}
     )
     bus.addMatch("type='signal',member='NameOwnerChanged'", d => {})
+    bus.addMatch("type='signal',member='ItemsChanged'", d => {})
   })
 }
