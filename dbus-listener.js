@@ -156,8 +156,8 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
 
     function signal_receive (m) {
       if (
-        m.interface == 'com.victronenergy.BusItem' &&
-        m.member == 'PropertiesChanged'
+        m.interface === 'com.victronenergy.BusItem' 
+          && (m.member === 'PropertiesChanged' || m.member === 'ItemsChanged')
       ) {
         properties_changed(m)
       } else if (
@@ -165,9 +165,9 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
         m.member == 'NameOwnerChanged'
       ) {
         name_owner_changed(m)
-      }
+      } 
     }
-
+    
     function name_owner_changed (m) {
       name = m.body[0]
       old_owner = m.body[1]
@@ -182,6 +182,17 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       }
     }
 
+    function setValueAndText(data, res) {
+      data.forEach(entry => {
+        if (entry[0] == 'Text') {
+          res.text =  entry[1][1][0]
+        } else if (entry[0] == 'Value') {
+          res.value = entry[1][1][0]
+        } 
+      })
+      return res
+    }
+
     function properties_changed (m) {
       // Message contents:
       // { serial: 5192,
@@ -194,17 +205,8 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       //   flags: 1,
       //   body: [ [ [Object], [Object] ] ]}
 
-      m.body[0].forEach(entry => {
-        if (entry[0] == 'Text') {
-          m.text = entry[1][1][0]
-        } else if (entry[0] == 'Value') {
-          m.value = entry[1][1][0]
-        } else if (entry[0] == 'Valid') {
-          // Ignoring Valid because it is deprecated
-        }
-      })
-
-      var service = services[m.sender]
+      const sender = m.sender
+      var service = services[sender]
 
       if (!service || !service.name) {
         // See comment above explaining why some services don't have the
@@ -213,28 +215,44 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
         return
       }
 
-      m.senderName = service.name
-
-      if (m.path == '/DeviceInstance') {
-        services[m.sender].deviceInstance = m.value
-        m.instanceName = m.value
-      } else {
-        m.instanceName = service.deviceInstance
-      }
+      const senderName = service.name
+      let instanceName = service.deviceInstance
 
       if ( plugin.options.instanceMappings ) {
         const mapping = plugin.options.instanceMappings.find(mapping => {
           return service.name.startsWith(mapping.type) && mapping.venusId == m.instanceName
         })
         if ( !_.isUndefined(mapping) ) {
-          m.instanceName = mapping.signalkId
+          instanceName = mapping.signalkId
         }
       }      
 
-      // app.debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${m.value}`);
-      // app.debug(`${m.sender}:${m.senderName}:${m.instanceName}: ${m.path} = ${JSON.stringify(m.body)}`);
+      let entries
 
-      messageCallback([m])
+      if ( m.member === 'ItemsChanged' ) {
+        entries = m.body[0]
+          .map(item => {
+            return setValueAndText(item[1], { path: item[0] })
+          })
+      } else if ( m.member === 'PropertiesChanged' ) {
+        entries = [ setValueAndText(m.body[0], { path: m.path}) ]
+      }
+
+
+      entries.forEach(msg => {
+        let instanceName
+        if (msg.path == '/DeviceInstance') {
+          instanceName = msg.value
+          services[sender].deviceInstance = instanceName
+        } else {
+          instanceName = service.deviceInstance
+        }
+
+        msg.instanceName = instanceName
+        msg.senderName = senderName
+      })
+
+      messageCallback(entries)
     }
 
     function setValue (destination, path, value) {
@@ -293,6 +311,10 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
 
     bus.addMatch(
       "type='signal',interface='com.victronenergy.BusItem',member='PropertiesChanged'",
+      d => {}
+    )
+    bus.addMatch(
+      "type='signal',interface='com.victronenergy.BusItem',member='ItemsChanged'",
       d => {}
     )
     bus.addMatch("type='signal',member='NameOwnerChanged'", d => {})
