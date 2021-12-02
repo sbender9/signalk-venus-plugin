@@ -652,6 +652,8 @@ module.exports = function (app, options, handleMessage) {
       type = 'grid'
     } else if ( msg.senderName.startsWith('com.victronenergy.vecan')) {
       type = 'vecan'
+    } else if ( msg.senderName.startsWith('com.victronenergy.hub4')) {
+      type = 'hub4'
     } else {
       app.debug('no path for %s', msg.senderName)
       return null
@@ -668,10 +670,15 @@ module.exports = function (app, options, handleMessage) {
     var name = msg.path.substring(1).replace(/\//g, '.') // alarms.LowVoltage
     name = name.substring(name.indexOf('.') + 1) // LowVoltate
     name = name.charAt(0).toLowerCase() + name.substring(1) // lowVoltate
-    
-    var path = 'notifications.' + makePath(msg, `${msg.instanceName}.${name}`)
-    var value = convertAlarmToNotification(msg, path)
-    return value ? makeDelta(app, msg, path, value) : null
+
+
+    var path = makePath(msg, `${msg.instanceName}.${name}`)
+    if ( !path ) {
+      path = `electrical.venus.${msg.instanceName}.${name}`
+    }
+    var npath = 'notifications.' + path
+    var value = convertAlarmToNotification(msg, npath)
+    return value ? makeDelta(app, msg, npath, value) : null
   }
 
   function convertErrorToNotification (m, path) {
