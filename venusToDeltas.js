@@ -654,7 +654,15 @@ module.exports = function (app, options, handleMessage) {
       type = 'vecan'
     } else if ( msg.senderName.startsWith('com.victronenergy.hub4')) {
       type = 'hub4'
-    } else {
+	} else if ( msg.senderName.startsWith('com.victronenergy.dcsource')) {
+		type = 'dcsource'
+	} else if ( msg.senderName.startsWith('com.victronenergy.dcload')) {
+		type = 'dcload'
+	} else if ( msg.senderName.startsWith('com.victronenergy.alternator')) {
+		type = 'alternator'
+	} else if ( msg.senderName.startsWith('com.victronenergy.dcdc')) {
+		type = 'dcdc'
+	} else {
       app.debug('no path for %s', msg.senderName)
       return null
     }
