@@ -654,6 +654,14 @@ module.exports = function (app, options, handleMessage) {
       type = 'vecan'
     } else if ( msg.senderName.startsWith('com.victronenergy.hub4')) {
       type = 'hub4'
+    } else if ( msg.senderName.startsWith('com.victronenergy.dcsource')) {
+        type = 'dcsource'
+    } else if ( msg.senderName.startsWith('com.victronenergy.dcload')) {
+        type = 'dcload'
+    } else if ( msg.senderName.startsWith('com.victronenergy.alternator')) {
+        type = 'alternator'
+    } else if ( msg.senderName.startsWith('com.victronenergy.dcdc')) {
+        type = 'dcdc'
     } else {
       app.debug('no path for %s', msg.senderName)
       return null
@@ -800,7 +808,27 @@ const stateMaps = {
     1: 'low power mode',
     2: 'fault',
     9: 'inverting'
-  }
+  },
+
+  'com.victronenergy.alternator': {
+    0: 'off',
+    1: 'bulk',
+    2: 'absorbtion',
+    5: 'float',
+    7: 'Ext Control',
+    8: 'disabled',
+    9: 'float'
+  },
+
+  'com.victronenergy.dcdc': {
+    0: 'off',
+    1: 'bulk',
+    2: 'absorbtion',
+    5: 'float',
+    7: 'Ext Control',
+    8: 'disabled',
+    9: 'float'
+	}
 }
 
 function senderNamePrefix (senderName) {
@@ -847,6 +875,16 @@ const modeMaps = {
     1: 'hibernation',
     2: 'standby',
     3: 'on'
+  },
+  'com.victronenergy.alternator': {
+    0: 'standalone',
+    1: 'master',
+    2: 'slave'
+  },
+  'com.victronenergy.dcdc': {
+    0: 'standalone',
+    1: 'master',
+    2: 'slave'
   }
 }
 
@@ -855,7 +893,9 @@ const statePropName = {
   'com.victronenergy.charger': 'chargingMode',
   'com.victronenergy.solarcharger': 'controllerMode',
   'com.victronenergy.inverter': 'inverterMode',
-  'com.victronenergy.battery': 'mode'
+  'com.victronenergy.battery': 'mode',
+  'com.victronenergy.alternator': 'chargingMode',
+  'com.victronenergy.dcdc': 'chargingMode'
 }
 
 function getStatePropName (msg) {
