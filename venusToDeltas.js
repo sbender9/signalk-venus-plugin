@@ -642,29 +642,14 @@ module.exports = function (app, options, handleMessage) {
       type = 'tanks'
     } else if ( msg.senderName.startsWith('com.victronenergy.system') ) {
       type = msg.venusName
-    } else if ( msg.senderName.startsWith('com.victronenergy.digitalinput') ) {
-      type = 'digitalinput'
-    } else if ( msg.senderName.startsWith('com.victronenergy.gps') ) {
-      return 'gps'
-    } else if ( msg.senderName.startsWith('com.victronenergy.temperature')) {
-      return 'temperature'
-    } else if ( msg.senderName.startsWith('com.victronenergy.grid')) {
-      type = 'grid'
-    } else if ( msg.senderName.startsWith('com.victronenergy.vecan')) {
-      type = 'vecan'
-    } else if ( msg.senderName.startsWith('com.victronenergy.hub4')) {
-      type = 'hub4'
-    } else if ( msg.senderName.startsWith('com.victronenergy.dcsource')) {
-      type = 'dcsource'
-    } else if ( msg.senderName.startsWith('com.victronenergy.dcload')) {
-      type = 'dcload'
-    } else if ( msg.senderName.startsWith('com.victronenergy.alternator')) {
-      type = 'alternator'
-    } else if ( msg.senderName.startsWith('com.victronenergy.dcdc')) {
-      type = 'dcdc'
     } else {
-      app.debug('no path for %s', msg.senderName)
-      return null
+      let parts = msg.senderName.split('.')
+      if ( parts.length > 2 ) {
+        type = parts[2]
+      } else {
+        app.debug('no path for %s', msg.senderName)
+        return null
+      }
     }
     return 'electrical.' + type + '.' + (path || '')
   }
