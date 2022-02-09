@@ -96,7 +96,10 @@ module.exports = function (app, options, handleMessage) {
       },
       {
         path: m => {
-          return makePath(m, `${m.instanceName}.${getStatePropName(m)}Number`)
+          let propName = getStatePropName(m)
+          if ( propName ) {
+            return makePath(m, `${m.instanceName}.${propName}Number`)
+          }
         }
       },
 
@@ -826,7 +829,7 @@ function isVEBus (msg) {
 
 function convertState (msg, forInverter) {
   var map = stateMaps[senderNamePrefix(msg.senderName)]
-  return (map && map[Number(msg.value)]) || 'unknown'
+  return (map && map[Number(msg.value)]) || msg.value
 }
 
 function convertStateForVEBusInverter (msg) {
@@ -884,7 +887,7 @@ const statePropName = {
 }
 
 function getStatePropName (msg) {
-  return statePropName[senderNamePrefix(msg.senderName)]
+  return statePropName[senderNamePrefix(msg.senderName)] || 'state'
 }
 
 function convertMode (msg) {
