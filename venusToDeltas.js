@@ -153,7 +153,8 @@ module.exports = function (app, options, handleMessage) {
           'tanks.' + getFluidType(m.fluidType) + `.${m.instanceName}.currentLevel`
         )
       },
-      conversion: percentToRatio
+      conversion: percentToRatio,
+      units: 'ratio'
     },
     '/Temperature': {
       path: m => {
@@ -163,6 +164,26 @@ module.exports = function (app, options, handleMessage) {
       },
       conversion: celsiusToKelvin,
       units: 'K'
+    },
+    '/Humidity': {
+      path: m => {
+        return typeof m.temperatureType === 'undefined' ? undefined : (
+          getTemperaturePath(m, options, 'humidity')
+        )
+      },
+      conversion: percentToRatio,
+      units: 'ratio'
+    },
+    '/Pressure': {
+      path: m => {
+        return typeof m.temperatureType === 'undefined' ? undefined : (
+          getTemperaturePath(m, options, 'pressure')
+        )
+      },
+      conversion: (msg) => {
+        return msg.value * 100  // hPa -> Pa
+      },
+      units: 'Pa'
     },
     '/Ac/Current': {
       path: m => {
@@ -955,18 +976,23 @@ function getFluidType (typeId) {
   return fluidTypeMapping[typeId] || 'unknown'
 }
 
-function getTemperaturePath (m, options) {
+function getTemperaturePath (m, options, name='temperature') {
   if ( options.temperatureMappings ) {
     const mapping = options.temperatureMappings.find(mapping => mapping.venusId == m.instanceName)
     if ( mapping ) {
-      return mapping.signalkPath
+      let path = mapping.signalkPath
+      if ( name !== 'temperature' ) {
+        let parts = path.split('.')
+        path = parts.slice(0, parts.length-1) + `.${name}`
+      }
+      return path
     }
   }
   
   if ( m.temperatureType === 1 ) {
-    return 'environment.inside.refrigerator.temperature'
+    return `environment.inside.refrigerator.${name}`
   } else {
-    return `environment.venus.${m.instanceName}.temperature`
+    return `environment.venus.${m.instanceName}.${name}`
   }
 }
 
