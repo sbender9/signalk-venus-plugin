@@ -983,7 +983,7 @@ function getTemperaturePath (m, options, name='temperature') {
       let path = mapping.signalkPath
       if ( name !== 'temperature' ) {
         let parts = path.split('.')
-        path = parts.slice(0, parts.length-1) + `.${name}`
+        path = parts.slice(0, parts.length-1).join('.') + `.${name}`
       }
       return path
     }
