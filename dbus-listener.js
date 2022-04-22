@@ -208,7 +208,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       const sender = m.sender
       var service = services[sender]
 
-      if (!service || !service.name) {
+      if (!service || !service.name || ! service.deviceInstance) {
         // See comment above explaining why some services don't have the
         // /DeviceInstance path
         // app.debug(`warning: unknown service; ${m.sender}`)
@@ -220,12 +220,12 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
 
       if ( plugin.options.instanceMappings ) {
         const mapping = plugin.options.instanceMappings.find(mapping => {
-          return service.name.startsWith(mapping.type) && mapping.venusId == m.instanceName
+          return service.name.startsWith(mapping.type) && mapping.venusId == service.deviceInstance
         })
         if ( !_.isUndefined(mapping) ) {
           instanceName = mapping.signalkId
         }
-      }      
+      } 
 
       let entries
 
@@ -240,14 +240,6 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
 
 
       entries.forEach(msg => {
-        let instanceName
-        if (msg.path == '/DeviceInstance') {
-          instanceName = msg.value
-          services[sender].deviceInstance = instanceName
-        } else {
-          instanceName = service.deviceInstance
-        }
-
         msg.instanceName = instanceName
         msg.senderName = senderName
       })
