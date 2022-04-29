@@ -850,7 +850,7 @@ function isVEBus (msg) {
 
 function convertState (msg, forInverter) {
   var map = stateMaps[senderNamePrefix(msg.senderName)]
-  return (map && map[Number(msg.value)]) || msg.value
+  return (map && map[Number(msg.value)]) || String(msg.value)
 }
 
 function convertStateForVEBusInverter (msg) {
