@@ -208,7 +208,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       const sender = m.sender
       var service = services[sender]
 
-      if (!service || !service.name || ! service.deviceInstance) {
+      if (!service || !service.name || typeof service.deviceInstance === 'undefinded' ) {
         // See comment above explaining why some services don't have the
         // /DeviceInstance path
         // app.debug(`warning: unknown service; ${m.sender}`)
