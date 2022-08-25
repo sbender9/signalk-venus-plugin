@@ -211,8 +211,8 @@ module.exports = function (app) {
     }
   }
 
-  function chargerModeActionHandler(context, path, value, dest, cb) {
-    app.debug(`setting charger mode ${dest} to ${value}`)
+  function modeActionHandler(context, path, value, dest, cb) {
+    app.debug(`setting mode ${dest} to ${value}`)
 
     if ( plugin.options.installType === 'mqtt' ) {
       plugin.client.publish(dest, JSON.stringify({ value }))
@@ -238,11 +238,12 @@ module.exports = function (app) {
     return { state: 'PENDING' }
   }
 
-  function getChargerModeActionHandler(dest) {
+  function getModeActionHandler(dest) {
     return (context, path, value, cb) => {
-      return chargerModeActionHandler(context, path, value, dest, cb)
+      return modeActionHandler(context, path, value, dest, cb)
     }
   }
+
 
   /*
     Called when the plugin is started (server is started with plugin enabled
@@ -290,13 +291,20 @@ module.exports = function (app) {
           venusMessages => {
 
             venusMessages.forEach(m => {
-              if ( m.senderName.startsWith('com.victronenergy.vebus')
+              if ( (m.senderName.startsWith('com.victronenergy.vebus')
+                    || m.senderName.startsWith('com.victronenergy.solarcharger'))
                    && m.path === '/Mode'
                    && modesRegistered.indexOf(m.senderName) == -1 ) {
-                const path = `electrical.chargers.${m.instanceName}.modeNumber`
+                let path
+
+                if ( m.senderName.startsWith('com.victronenergy.vebus') ) {
+                  path = `electrical.chargers.${m.instanceName}.modeNumber`
+                } else {
+                  path = `electrical.solar.${m.instanceName}.modeSwitch.state`
+                }
                 app.registerActionHandler('vessels.self',
                                           path,
-                                          getChargerModeActionHandler(m.senderName))
+                                          getModeActionHandler(m.senderName))
                 modesRegistered.push(m.senderName)
               }
             })
@@ -549,14 +557,21 @@ module.exports = function (app) {
 
       //app.debug(JSON.stringify(m))
 
-      if ( m.senderName.startsWith('com.victronenergy.vebus')
+      if ( (m.senderName.startsWith('com.victronenergy.vebus')
+            || m.senderName.startsWith('com.victronenergy.solarcharger'))
            && m.path === '/Mode'
            && modesRegistered.indexOf(m.senderName) === -1 ) {
-        const path = `electrical.chargers.${m.instanceName}.modeNumber`
+        let path
+
+        if ( m.senderName.startsWith('com.victronenergy.vebus') ) {
+          path = `electrical.chargers.${m.instanceName}.modeNumber`
+        } else {
+          path = `electrical.solar.${m.instanceName}.modeSwitch.state`
+        }
         const wtopic = 'W' + topic.slice(1)
         app.registerActionHandler('vessels.self',
                                   path,
-                                  getChargerModeActionHandler(wtopic))
+                                  getModeActionHandler(wtopic))
         modesRegistered.push(m.senderName)
       } else if ( m.senderName.startsWith('com.victronenergy.system')
                   && parts.length > 6
