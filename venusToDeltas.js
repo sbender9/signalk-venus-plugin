@@ -509,6 +509,16 @@ module.exports = function (app, options, handleMessage) {
           return { latitude: lastLat, longitude: msg.value }
         }
       }
+    },
+    '/ExternalTemperature': {
+      path: 'environment.outside.temperature',
+      requiresInstance: false,
+      conversion: celsiusToKelvin,
+      units: 'K'
+    },
+    '/WindSpeed': {
+      path: 'environment.wind.speedApparent',
+      requiresInstance: false
     }
   }
 
