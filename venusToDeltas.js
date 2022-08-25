@@ -5,7 +5,7 @@ var lastLat, lastLon
 var knownPaths = []
 var sentModeMeta = false
 
-module.exports = function (app, options, handleMessage) {
+module.exports = function (app, options, putRegistrar) {
   const debug = app && app.debug ? app.debug.extend('venusToDeltas') : () => {}
   
   const venusToSignalKMapping = {
@@ -131,6 +131,8 @@ module.exports = function (app, options, handleMessage) {
       {
         path: m => {
           return makePath(m, `${m.instanceName}.modeNumber`)
+        },
+        putSupport: {
         }
       },
       {
@@ -140,6 +142,9 @@ module.exports = function (app, options, handleMessage) {
         },
         conversion: m => {
           return m.value === 1 ? 1 : 0
+        },
+        putSupport: {
+          conversion: value => { return value === 1 || value === 'on' ? 1 : 0 }
         }
       }
     ],
@@ -456,10 +461,16 @@ module.exports = function (app, options, handleMessage) {
           return makePath(m, `${m.instanceName}.relay.state`, true)
         }
       },
+      putSupport: {
+        conversion: value => { return value === 1 || value === 'on' ? 1 : 0 }
+      },
       requiresInstance: false
     },
     '/Relay/1/State': {
       path: (options.relayPath1 || 'electrical.switches.venus-1') + '.state',
+      putSupport: {
+        conversion: value => { return value === 1 || value === 'on' ? 1 : 0 }
+      },
       requiresInstance: false
     },
     '/Dc/System/Power': {
@@ -644,6 +655,9 @@ module.exports = function (app, options, handleMessage) {
             if ( mapping.units && app && app.supportsMetaDeltas ) {
               let meta = {updates: [ { meta: [{ path: thePath, value: {units: mapping.units} }]  } ]}
               deltas.push(meta)
+            }
+            if ( mapping.putSupport && putRegistrar ) {
+              putRegistrar(thePath, m, mapping.putSupport.conversion)
             }
           }
           if ( !options.blacklist || options.blacklist.indexOf(thePath) == -1 ) {
