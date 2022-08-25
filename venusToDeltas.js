@@ -132,6 +132,15 @@ module.exports = function (app, options, handleMessage) {
         path: m => {
           return makePath(m, `${m.instanceName}.modeNumber`)
         }
+      },
+      {
+        path: m => {
+          return m.senderName.startsWith('com.victronenergy.solarcharger') ?
+            makePath(m, `${m.instanceName}.modeSwitch.state`) : null
+        },
+        conversion: m => {
+          return m.value === 1 ? 1 : 0
+        }
       }
     ],
     '/ErrorCode': {
@@ -608,6 +617,10 @@ module.exports = function (app, options, handleMessage) {
 
         var thePath = isFunction(mapping.path) ? mapping.path(m) : mapping.path
 
+        if ( thePath === null ) {
+          return
+        }
+
         if (mapping.conversion) {
           theValue = mapping.conversion(m, thePath)
         }
@@ -628,7 +641,7 @@ module.exports = function (app, options, handleMessage) {
           if ( knownPaths.indexOf(thePath) == -1 )
           {
             knownPaths.push(thePath)
-            if ( mapping.units && app.supportsMetaDeltas ) {
+            if ( mapping.units && app && app.supportsMetaDeltas ) {
               let meta = {updates: [ { meta: [{ path: thePath, value: {units: mapping.units} }]  } ]}
               deltas.push(meta)
             }
@@ -642,6 +655,7 @@ module.exports = function (app, options, handleMessage) {
                 && m.senderName.startsWith('com.victronenergy.vebus')
                 && m.path === '/Mode'
                 && thePath.endsWith('modeNumber')
+                && app
                 && app.supportsMetaDeltas) {
               deltas.push({updates: [ { meta: [{ path: thePath, value: modeMeta }]  } ]})
               sentModeMeta = true
@@ -1041,7 +1055,8 @@ function makeDelta (app, m, path, value) {
     ]
   }
   
-  if (!app.supportsMetaDeltas
+  if (app
+      && !app.supportsMetaDeltas
       && m.senderName.startsWith('com.victronenergy.vebus')
       && m.path === '/Mode'
       && path.endsWith('modeNumber'))
