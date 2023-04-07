@@ -1,6 +1,6 @@
 {
   "name": "signalk-venus-plugin",
-  "version": "1.29.0",
+  "version": "1.29.1-beta1",
   "description": "Victron Venus-SignalK Integration",
   "main": "index.js",
   "dependencies": {
