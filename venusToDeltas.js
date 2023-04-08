@@ -12,17 +12,20 @@ module.exports = function (app, options, putRegistrar) {
     '/Dc/0/Voltage': {
       path: m => {
         return makePath(m, `${m.instanceName}.voltage`)
-      }
+      },
+      units: 'V'
     },
     '/Dc/1/Voltage': {
       path: m => {
         return makePath(m, `${m.instanceName}-second.voltage`)
-      }
+      },
+      units: 'V'
     },
     '/Dc/0/Current': {
       path: m => {
         return makePath(m, `${m.instanceName}.current`)
-      }
+      },
+      units: 'A'
     },
     '/Dc/0/Power': {
       path: m => {
@@ -68,10 +71,12 @@ module.exports = function (app, options, putRegistrar) {
       units: 'C'
     },
     '/Pv/I': {
-      path: m => `electrical.solar.${m.instanceName}.panelCurrent`
+      path: m => `electrical.solar.${m.instanceName}.panelCurrent`,
+      units: 'A'
     },
     '/Pv/V': {
-      path: m => `electrical.solar.${m.instanceName}.panelVoltage`
+      path: m => `electrical.solar.${m.instanceName}.panelVoltage`,
+      units: 'V'
     },
     '/Yield/Power': {
       path: m => `electrical.solar.${m.instanceName}.panelPower`,
