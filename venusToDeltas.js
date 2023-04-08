@@ -692,6 +692,8 @@ module.exports = function (app, options, putRegistrar) {
 
     if (msg.senderName.startsWith('com.victronenergy.battery')) {
       type = 'batteries'
+    } else if (msg.senderName.startsWith('com.victronenergy.dcload')) {
+      type = 'dcload'
     } else if (msg.senderName.startsWith('com.victronenergy.solarcharger')) {
       type = 'solar'
     } else if (msg.senderName.startsWith('com.victronenergy.charger')) {
