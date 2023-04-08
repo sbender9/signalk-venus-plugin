@@ -632,7 +632,7 @@ module.exports = function (app, options, putRegistrar) {
           return
         }
 
-        if (mapping.conversion) {
+        if (mapping.conversion && !isArray(theValue) && theValue != null) {
           theValue = mapping.conversion(m, thePath)
         }
 
