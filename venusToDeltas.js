@@ -6,6 +6,7 @@ module.exports = function (app, options, state, putRegistrar) {
 
   state.knownPaths = []
   state.sentModeMeta = false
+  state.loggedUnknowns = []
   
   const venusToSignalKMapping = {
     '/Dc/0/Voltage': {
@@ -38,6 +39,18 @@ module.exports = function (app, options, state, putRegistrar) {
       },
       conversion: celsiusToKelvin,
       units: 'K'
+    },
+    '/Dc/0/MidVoltageDeviation': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.midVoltageDeviation`)
+      },
+      units: 'V'
+    },
+    '/Dc/0/MidVoltage': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.midVoltage`)
+      },
+      units: 'V'
     },
     '/Soc': {
       path: m => {
@@ -90,6 +103,99 @@ module.exports = function (app, options, state, putRegistrar) {
       path: m => `electrical.solar.${m.instanceName}.yieldYesterday`,
       conversion: kWhToJoules,
       units: 'J'
+    },
+    '/Load/State': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.loadState`)
+      },
+    },
+    '/MppOperationMode': [
+      {
+        path: m => {
+          return makePath(m, `${m.instanceName}.operationMode`)
+        },
+        conversion: convertMppOperationMode
+      },
+      {
+        path: m => {
+          return makePath(m, `${m.instanceName}.operationModeNumber`)
+        }
+      }
+    ],
+    '/Leds/Temperature': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.leds.temperature`)
+      },
+      meta: {
+        displayName: 'Temperature',
+        onColor: 'bad',
+        order: 1
+      }
+    },
+    '/Leds/LowBattery': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.leds.lowBattery`)
+      },
+      meta: {
+        displayName: 'Low Battery',
+        onColor: 'bad',
+        order: 2
+      }
+    },
+    '/Leds/Overload': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.leds.overload`)
+      },
+      meta: {
+        displayName: 'Overload',
+        onColor: 'bad',
+        order: 3
+      }
+    },
+    '/Leds/Inverter': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.leds.inverter`)
+      },
+      meta: {
+        displayName: 'Inverter',
+        order: 4
+      }
+    },
+    '/Leds/Float': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.leds.float`)
+      },
+      meta: {
+        displayName: 'Float',
+        order: 5
+      }
+    },
+    '/Leds/Bulk': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.leds.bulk`)
+      },
+      meta: {
+        displayName: 'Bulk',
+        order: 6
+      }
+    },
+    '/Leds/Absorption': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.leds.absorption`)
+      },
+      meta: {
+        displayName: 'Absorption',
+        order: 7,
+      }
+    },
+    '/Leds/Mains': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.leds.mains`)
+      },
+      meta: {
+        displayName: 'Mains',
+        order: 8
+      }
     },
     '/State': [
       {
@@ -164,6 +270,14 @@ module.exports = function (app, options, state, putRegistrar) {
           'tanks.' + getFluidType(m.fluidType) + `.${m.instanceName}.capacity`
         )
       }
+    },
+    '/Remaining': {
+      path: m => {
+        return typeof m.fluidType === 'undefined' ? undefined : (
+          'tanks.' + getFluidType(m.fluidType) + `.${m.instanceName}.remaining`
+        )
+      },
+      units: 'm3'
     },
     '/Level': {
       path: m => {
@@ -520,7 +634,7 @@ module.exports = function (app, options, state, putRegistrar) {
       conversion: msg => {
         state.lastLat = msg.value
         if (state.lastLon && (_.isUndefined(options.usePosition) || options.usePosition)) {
-          return { latitude: msg.value, longitude: state.lastLon }
+          return { latitude: msg.value, longitude: state.lastLon, altitude: state.lastAltitude }
         }
       }
     },
@@ -530,7 +644,17 @@ module.exports = function (app, options, state, putRegistrar) {
       conversion: msg => {
         state.lastLon = msg.value
         if (state.lastLat && (_.isUndefined(options.usePosition) || options.usePosition)) {
-          return { latitude: state.lastLat, longitude: msg.value }
+          return { latitude: state.lastLat, longitude: msg.value, altitude: state.lastAltitude }
+        }
+      }
+    },
+    '/Altitude': {
+      path: 'navigation.position',
+      requiresInstance: false,
+      conversion: msg => {
+        state.lastAltitude = msg.value
+        if (state.lastLat && state.lastLon && (_.isUndefined(options.usePosition) || options.usePosition)) {
+          return { latitude: state.lastLat, longitude: state.lastLon, altitude: state.lastAltitude }
         }
       }
     },
@@ -614,6 +738,13 @@ module.exports = function (app, options, state, putRegistrar) {
         mappings = venusToSignalKMapping[m.path] || []
       }
 
+      /*
+      if ( mappings.length === 0 && state.loggedUnknowns.indexOf(m.path) == -1) {
+        console.log(JSON.stringify(m))
+        state.loggedUnknowns.push(m.path)
+        }
+      */
+
       if ( _.isUndefined(m.venusName) ) {
         m.venusName = 'venus'
       }
@@ -656,10 +787,26 @@ module.exports = function (app, options, state, putRegistrar) {
           if ( state.knownPaths.indexOf(thePath) == -1 )
           {
             state.knownPaths.push(thePath)
-            if ( mapping.units && app && app.supportsMetaDeltas ) {
-              let meta = {updates: [ { meta: [{ path: thePath, value: {units: mapping.units} }]  } ]}
-              deltas.push(meta)
+            if ( app && app.supportsMetaDeltas ) {
+              let meta = {}
+              if ( mapping.units ) {
+                meta.units = mapping.units
+              }
+              
+              if ( mapping.meta ) {
+                meta = { ...meta, ...mapping.meta }
+              }
+              
+              if ( Object.keys(meta).length > 0 )  {
+                let delta = {updates: [
+                  {
+                    meta: [{ path: thePath, value: meta }]
+                  }
+                ]}
+                deltas.push(delta)
+              }
             }
+            
             if ( mapping.putSupport && putRegistrar ) {
               putRegistrar(thePath, m, mapping.putSupport.conversion)
             }
@@ -893,12 +1040,23 @@ const stateMaps = {
 	}
 }
 
+const mppOperationModeMap = {
+  0: 'off',
+  1: 'voltage/current limited',
+  2: 'mppt active',
+  255: 'not available'
+}
+
 function senderNamePrefix (senderName) {
   return senderName.substring(0, senderName.lastIndexOf('.'))
 }
 
 function isVEBus (msg) {
   return senderNamePrefix(msg.senderName) === 'com.victronenergy.vebus'
+}
+
+function convertMppOperationMode (msg) {
+  return mppOperationModeMap[Number(msg.value)] || String(msg.value)
 }
 
 function convertState (msg, forInverter) {
