@@ -1,12 +1,11 @@
 const { isArray, isFunction, isUndefined, values, forIn } = require('lodash')
 const _ = require('lodash')
 
-var lastLat, lastLon
-var knownPaths = []
-var sentModeMeta = false
-
-module.exports = function (app, options, putRegistrar) {
+module.exports = function (app, options, state, putRegistrar) {
   const debug = app && app.debug ? app.debug.extend('venusToDeltas') : () => {}
+
+  state.knownPaths = []
+  state.sentModeMeta = false
   
   const venusToSignalKMapping = {
     '/Dc/0/Voltage': {
@@ -519,9 +518,9 @@ module.exports = function (app, options, putRegistrar) {
       path: 'navigation.position',
       requiresInstance: false,
       conversion: msg => {
-        lastLat = msg.value
-        if (lastLon && (_.isUndefined(options.usePosition) || options.usePosition)) {
-          return { latitude: msg.value, longitude: lastLon }
+        state.lastLat = msg.value
+        if (state.lastLon && (_.isUndefined(options.usePosition) || options.usePosition)) {
+          return { latitude: msg.value, longitude: state.lastLon }
         }
       }
     },
@@ -529,9 +528,9 @@ module.exports = function (app, options, putRegistrar) {
       path: 'navigation.position',
       requiresInstance: false,
       conversion: msg => {
-        lastLon = msg.value
-        if (lastLat && (_.isUndefined(options.usePosition) || options.usePosition)) {
-          return { latitude: lastLat, longitude: msg.value }
+        state.lastLon = msg.value
+        if (state.lastLat && (_.isUndefined(options.usePosition) || options.usePosition)) {
+          return { latitude: state.lastLat, longitude: msg.value }
         }
       }
     },
@@ -648,15 +647,15 @@ module.exports = function (app, options, putRegistrar) {
         
         if (!mapping.sendNulls &&
             (isUndefined(theValue) || theValue === null) &&
-            knownPaths.indexOf(thePath) === -1 ) {
+            state.knownPaths.indexOf(thePath) === -1 ) {
           debug('mapping: no value')
           return
         }
         
         if ( !_.isUndefined(thePath) && !_.isUndefined(theValue) ) {
-          if ( knownPaths.indexOf(thePath) == -1 )
+          if ( state.knownPaths.indexOf(thePath) == -1 )
           {
-            knownPaths.push(thePath)
+            state.knownPaths.push(thePath)
             if ( mapping.units && app && app.supportsMetaDeltas ) {
               let meta = {updates: [ { meta: [{ path: thePath, value: {units: mapping.units} }]  } ]}
               deltas.push(meta)
@@ -670,14 +669,14 @@ module.exports = function (app, options, putRegistrar) {
 
             deltas.push(delta)
 
-            if (sentModeMeta === false
+            if (state.sentModeMeta === false
                 && m.senderName.startsWith('com.victronenergy.vebus')
                 && m.path === '/Mode'
                 && thePath.endsWith('modeNumber')
                 && app
                 && app.supportsMetaDeltas) {
               deltas.push({updates: [ { meta: [{ path: thePath, value: modeMeta }]  } ]})
-              sentModeMeta = true
+              state.sentModeMeta = true
             }
           } 
         }
@@ -689,7 +688,7 @@ module.exports = function (app, options, putRegistrar) {
   }
 
   function getKnownPaths() {
-    return knownPaths
+    return state.knownPaths
   }
 
   function makePath (msg, path, vebusIsInverterValue) {
@@ -716,7 +715,7 @@ module.exports = function (app, options, putRegistrar) {
       if ( parts.length > 2 ) {
         type = parts[2]
       } else {
-        app.debug('no path for %s', msg.senderName)
+        debug('no path for %s', msg.senderName)
         return null
       }
     }
@@ -745,6 +744,10 @@ module.exports = function (app, options, putRegistrar) {
 
   function convertErrorToNotification (m, path) {
     var value
+
+    if ( !app || !app.getSelfPath ) {
+      return
+    }
 
     const existing = app.getSelfPath(path)
     
@@ -780,6 +783,11 @@ module.exports = function (app, options, putRegistrar) {
   function convertAlarmToNotification (m, path) {
     var value
     var message
+
+    if ( !app || !app.getSelfPath ) {
+      return
+    }
+
     if (_.isString(m.value)) {
       message = m.value
     } else {

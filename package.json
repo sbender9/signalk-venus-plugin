@@ -8,22 +8,22 @@
     "debug": "^3.1.0",
     "lodash": "^4.17.4",
     "mqtt": "^4.2.6",
-    "promise-retry": "^1.1.1"
+    "promise-retry": "^1.1.1",
+    "webpack-cli": "^5.1.4"
   },
   "devDependencies": {
     "@signalk/github-create-release": "^1.2.1",
     "@signalk/signalk-schema": "0.0.1-12",
     "chai": "^4.1.2",
     "chai-things": "0.2",
-    "mocha": "^4.0.1",
-    "webpack": "^4.42.1",
-    "webpack-cli": "^3.3.11"
+    "mocha": "^4.0.1"
   },
   "scripts": {
     "test": "mocha",
     "create-release": "github-create-release --owner sbender9 --repository signalk-venus-plugin",
     "release": "git tag -d v$npm_package_version ; git tag v$npm_package_version && git push --tags && git push && npm run create-release",
-    "build_ios": "webpack ios.js -o ios_venus.js"
+    "build_ios": "webpack --mode development ./ios.js -o ios_venus.js",
+    "build_prod_ios": "webpack --mode production ./ios.js -o ios_venus.js"
   },
   "keywords": [
     "signalk-node-server-plugin"
