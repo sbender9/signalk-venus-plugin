@@ -450,12 +450,6 @@ module.exports = function (app, options, state, putRegistrar) {
       },
       units: 'V'
     },
-    '/ExtraBatteryCurrent': {
-      path: m => {
-        return makePath(m, `${m.instanceName}.extraBatteryCurrent`, true)
-      },
-      units: 'A'
-    },
     '/Relay/0/State': {
       path: m => {
         if (m.senderName.startsWith('com.victronenergy.system'))
