@@ -217,7 +217,7 @@ module.exports = function (app) {
   */
   plugin.start = function (options) {
     var { toDelta, getKnownPaths } =
-        venusToDeltas(app, options,
+        venusToDeltas(app, options, {},
                       (path, m, converter) => {
                         app.registerActionHandler('vessels.self',
                                                   path,
