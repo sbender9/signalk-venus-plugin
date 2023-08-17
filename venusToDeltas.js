@@ -231,6 +231,21 @@ module.exports = function (app, options, state, putRegistrar) {
         }
       }
     ],
+    '/Devices/0/ExtendStatus/PreferRenewableEnergy': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.preferRenewableEnergy`, true)
+      },
+    },
+    '/Devices/0/ExtendStatus/PreferRenewableEnergyActive': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.preferRenewableEnergyActive`, true)
+      },
+    },
+    'Devices/0/ExtendStatus/SustainMode': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.sustainMode`, true)
+      },
+    },
     '/Mode': [
       {
         path: m => {
@@ -661,7 +676,66 @@ module.exports = function (app, options, state, putRegistrar) {
     '/WindSpeed': {
       path: 'environment.wind.speedApparent',
       requiresInstance: false
-    }
+    },
+    '/SystemState/State': [
+      {
+        path: m => {
+          return `electrical.${m.venusName}.state`
+        },
+        conversion: convertSystemState,
+        requiresInstance: false
+      },
+      {
+        path: m => {
+          return `electrical.${m.venusName}.stateNumber`
+        },
+        requiresInstance: false
+      },
+    ],
+    /*
+    '/SystemState/BatteryLife': {
+      path: m => {
+        return `electrical.${m.venusName}.batteryLife`
+      },
+      requiresInstance: false
+    },
+    '/SystemState/ChargeDisabled': {
+      path: m => {
+        return `electrical.${m.venusName}.chargeDisabled`
+      },
+      requiresInstance: false
+    },
+    '/SystemState/DischargeDisabled': {
+      path: m => {
+        return `electrical.${m.venusName}.dischargeDisabled`
+      },
+      requiresInstance: false
+    },
+    '/SystemState/LowSoc': {
+      path: m => {
+        return `electrical.${m.venusName}.lowSoc`
+      },
+      requiresInstance: false
+    },
+    '/SystemState/SlowCharge': {
+      path: m => {
+        return `electrical.${m.venusName}.slowCharge`
+      },
+      requiresInstance: false
+    },
+    '/SystemState/UserChargeLimited': {
+      path: m => {
+        return `electrical.${m.venusName}.userChargeLimited`
+      },
+      requiresInstance: false
+    },
+    '/SystemState/UserDischargeLimited': {
+      path: m => {
+        return `electrical.${m.venusName}.userDischargeLimited`
+      },
+      requiresInstance: false
+      },
+      */
   }
 
   const digitalInputsMappings = {
@@ -691,7 +765,8 @@ module.exports = function (app, options, state, putRegistrar) {
     },
     '/CustomName': {
       path: m => { return `electrical.venus-input.${m.instanceName}.customName` }
-    }
+    },
+    
   }
 
   // make all mappings arrays
@@ -971,7 +1046,8 @@ const stateMaps = {
     5: 'float',
     6: 'other',
     7: 'equalize',
-    252: 'Ext. Control'
+    245: 'wake up',
+    252: 'external control'
   },
 
   'com.victronenergy.vebus': {
@@ -987,7 +1063,8 @@ const stateMaps = {
     9: 'inverting',
     10: 'power assist',
     11: 'power supply',
-    252: 'bulk protection'
+    245: 'wake up',
+    252: 'external control',
   },
 
   'com.victronenergy.charger': {
@@ -1018,7 +1095,7 @@ const stateMaps = {
     1: 'bulk',
     2: 'absorbtion',
     5: 'float',
-    7: 'Ext Control',
+    7: 'external control',
     8: 'disabled',
     9: 'float'
   },
@@ -1031,7 +1108,26 @@ const stateMaps = {
     7: 'Ext Control',
     8: 'disabled',
     9: 'float'
-	}
+  },
+}
+
+const systemStateMap = {
+  0: 'off',
+  1: 'low power',
+  2: 'fault',
+  3: 'bulk',
+  4: 'absorption',
+  5: 'float',
+  6: 'storage',
+  7: 'equalize',
+  8: 'passthru',
+  9: 'inverting',
+  10: 'assisting',
+  252: 'external control',
+  256: 'discharging',
+  257: 'sustain',
+  258: 'recharge',
+  259: 'scheduled recharge'
 }
 
 const mppOperationModeMap = {
@@ -1049,6 +1145,9 @@ function isVEBus (msg) {
   return senderNamePrefix(msg.senderName) === 'com.victronenergy.vebus'
 }
 
+function convertSystemState(msg) {
+  return systemStateMap[Number(msg.value)] || String(msg.value)
+}
 function convertMppOperationMode (msg) {
   return mppOperationModeMap[Number(msg.value)] || String(msg.value)
 }
@@ -1109,7 +1208,8 @@ const statePropName = {
   'com.victronenergy.inverter': 'inverterMode',
   'com.victronenergy.battery': 'mode',
   'com.victronenergy.alternator': 'chargingMode',
-  'com.victronenergy.dcdc': 'chargingMode'
+  'com.victronenergy.dcdc': 'chargingMode',
+  'com.victronenergy.system': 'state'
 }
 
 function getStatePropName (msg) {
