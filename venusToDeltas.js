@@ -251,7 +251,9 @@ module.exports = function (app, options, state, putRegistrar) {
         path: m => {
           return makePath(m, `${m.instanceName}.mode`)
         },
-        conversion: convertMode
+        conversion: convertMode,
+        putSupport: {
+        }
       },
       {
         path: m => {
@@ -457,8 +459,56 @@ module.exports = function (app, options, state, putRegistrar) {
       {
         path: m => { return `electrical.${m.venusName}.acSourceNumber` },
         requiresInstance: false
+      },
+      {
+        path: m => {
+          return makePath(m, `${m.instanceName}.acin.acSource`, true)
+        },
+        conversion: convertSource,
+      },
+      {
+        path: m => {
+          return makePath(m, `${m.instanceName}.acin.acSourceNumber`, true)
+        },
       }
     ],
+    '/Ac/ActiveIn/CurrentLimit': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acin.currentLimit`, true)
+      },
+      units: 'A',
+      putSupport: {
+      }
+    },
+    '/Ac/In/1/CurrentLimit': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acin.1.currentLimit`, true)
+      },
+      units: 'A',
+      putSupport: {
+      }
+    },
+    '/Ac/In/2/CurrentLimit': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acin.2.currentLimit`, true)
+      },
+      units: 'A',
+      putSupport: {
+      }
+    },
+    '/Ac/State/IgnoreAcIn1': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acState.ignoreAcIn1.state`, true)
+      },
+      putSupport: {
+        putPath: m => '/Ac/Control/IgnoreAcIn1'
+      }
+    },
+    '/Ac/State/AcIn1Available': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.acState.acIn1Available`, true)
+      },
+    },
     '/Ac/ActiveIn/L1/I': {
       path: m => {
         return makePath(m, `${m.instanceName}.acin.current`, true)
@@ -877,7 +927,12 @@ module.exports = function (app, options, state, putRegistrar) {
             }
             
             if ( mapping.putSupport && putRegistrar ) {
-              putRegistrar(thePath, m, mapping.putSupport.conversion)
+              let putPath
+              if ( mapping.putSupport.putPath ) {
+                putPath = mapping.putSupport.putPath(m)
+              }
+              putRegistrar(thePath, m, mapping.putSupport.conversion,
+                           putPath)
             }
           }
           if ( !options.blacklist || options.blacklist.indexOf(thePath) == -1 ) {

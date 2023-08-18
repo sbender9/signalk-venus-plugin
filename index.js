@@ -177,16 +177,24 @@ module.exports = function (app) {
     dbusSetValue(msg.destination, msg.path, msg.value)
   }
 
-  function actionHandler(context, skpath, input, dest, vpath, mqttTopic, converter, cb) {
-    app.debug(`setting mode ${dest} ${vpath} to ${input}`)
+  function actionHandler(context, skpath, input, dest, vpath, mqttTopic, converter, putPath, cb) {
+    let realPath = putPath ? putPath : vpath
+    app.debug(`setting mode ${dest} ${realPath} to ${input}`)
 
     let value = converter ? converter(input) : input
 
     if ( plugin.options.installType === 'mqtt' ) {
-      const wtopic = 'W' + mqttTopic.slice(1)
+      let wtopic
+      if ( putPath ) {
+        // N/985dadcb01dd/system/0/Dc/System/Power
+        let parts = mqttTopic.split('/')
+        wtopic = `W/${parts[1]}/${parts[2]}/${parts[3]}${putPath}`
+      } else {
+        wtopic = 'W' + mqttTopic.slice(1)
+      }
       plugin.client.publish(wtopic, JSON.stringify({ value }))
     } else {
-      dbusSetValue(dest, vpath, value)
+      dbusSetValue(dest, realPath, value)
     }
 
     setTimeout(() => {
@@ -199,14 +207,14 @@ module.exports = function (app) {
           message: 'Did not receive change confirmation'
         })
       }
-    }, 1000)
+    }, 2000)
 
     return { state: 'PENDING' }
   }
 
-  function getActionHandler(m, converter) {
+  function getActionHandler(m, converter, putPath) {
     return (context, path, value, cb) => {
-      return actionHandler(context, path, value, m.senderName, m.path, m.topic, converter, cb)
+      return actionHandler(context, path, value, m.senderName, m.path, m.topic, converter, putPath, cb)
     }
   }
 
@@ -218,10 +226,11 @@ module.exports = function (app) {
   plugin.start = function (options) {
     var { toDelta, getKnownPaths } =
         venusToDeltas(app, options, {},
-                      (path, m, converter) => {
+                      (path, m, converter, confirmPath) => {
                         app.registerActionHandler('vessels.self',
                                                   path,
-                                                  getActionHandler(m,converter))
+                                                  getActionHandler(m,converter,
+                                                                   confirmPath))
                       })
     
     pluginStarted = true
