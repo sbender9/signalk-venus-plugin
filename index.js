@@ -1,6 +1,7 @@
 const PLUGIN_ID = 'venus'
 const PLUGIN_NAME = 'Victron Venus Plugin'
 
+const camelcase = require('camelcase')
 const promiseRetry = require('promise-retry')
 const _ = require('lodash')
 const mqtt = require('mqtt');
@@ -18,6 +19,8 @@ module.exports = function (app) {
   let pluginStarted = false
   var fluidTypes = {}
   var temperatureTypes = {}
+  var customNames = {}
+  var customNameTimeouts = {}
   let sentDeltas = {}
   let pollInterval
   let keepAlive
@@ -73,6 +76,11 @@ module.exports = function (app) {
           type: 'number',
           title: 'Interval (in seconds) to poll venus for current values',
           default: 20
+        },
+        useDeviceNames: {
+          type: 'boolean',
+          title: 'Use the device names for paths',
+          default: true
         },
         usePosition: {
           type: 'boolean',
@@ -177,11 +185,18 @@ module.exports = function (app) {
     dbusSetValue(msg.destination, msg.path, msg.value)
   }
 
-  function actionHandler(context, skpath, input, dest, vpath, mqttTopic, converter, putPath, cb) {
+  function actionHandler(context, skpath, input, dest, vpath, mqttTopic, converter, confirmChange, putPath, cb) {
     let realPath = putPath ? putPath : vpath
     app.debug(`setting mode ${dest} ${realPath} to ${input}`)
 
     let value = converter ? converter(input) : input
+
+    if ( value === undefined ) {
+      return {
+        state: 'FAILURE',
+        message: `Invalid input value: ${input}`
+      }
+    }
 
     if ( plugin.options.installType === 'mqtt' ) {
       let wtopic
@@ -199,7 +214,13 @@ module.exports = function (app) {
 
     setTimeout(() => {
       var val = app.getSelfPath(skpath)
-      if ( val && val.value == value ) {
+      let match = false
+      if ( confirmChange ) {
+        match = val && confirmChange(val.value, value)
+      } else if ( val && val.value == value ) {
+        match = true
+      }
+      if ( match ) {
         cb({ state: 'SUCCESS' })
       } else {
         cb({
@@ -212,31 +233,42 @@ module.exports = function (app) {
     return { state: 'PENDING' }
   }
 
-  function getActionHandler(m, converter, putPath) {
+  function getActionHandler(m, converter, confirmChange, putPath) {
     return (context, path, value, cb) => {
-      return actionHandler(context, path, value, m.senderName, m.path, m.topic, converter, putPath, cb)
+      return actionHandler(context, path, value, m.senderName, m.path, m.topic, converter, confirmChange, putPath, cb)
     }
   }
-
 
   /*
     Called when the plugin is started (server is started with plugin enabled
     or the plugin is enabled from ui on a running server).
   */
   plugin.start = function (options) {
-    var { toDelta, getKnownPaths } =
+
+    if ( options.useDeviceNames === undefined )
+    {
+      //default to false for existing installs, true for new
+      options.useDeviceNames = false;
+      app.savePluginOptions(options, (err) => {
+        app.error('saving plugin options: ' + err)
+      })
+    }
+    
+    var { toDelta, getKnownPaths, hasCustomName } =
         venusToDeltas(app, options, {},
-                      (path, m, converter, confirmPath) => {
+                      (path, m, converter, confirmChange, putPath) => {
                         app.registerActionHandler('vessels.self',
                                                   path,
                                                   getActionHandler(m,converter,
-                                                                   confirmPath))
+                                                                   confirmChange,
+                                                                   putPath))
                       })
     
     pluginStarted = true
     plugin.options = options
     plugin.onError = () => {}
     plugin.getKnownPaths = getKnownPaths
+    plugin.hasCustomName = hasCustomName
 
     if ( options.relayDisplayName0 && options.relayDisplayName0.length ) {
       sendMeta(options.relayPath0, { displayName: options.relayDisplayName0 })
@@ -333,6 +365,10 @@ module.exports = function (app) {
     onStop.forEach(f => f())
     onStop = []
     sentDeltas = {}
+    customNames = {}
+    customNameTimeouts = {}
+    plugin.needsID = true
+    plugin.portalID = null
     if ( pollInterval ) {
       clearInterval(pollInterval)
       pollInterval = null
@@ -382,6 +418,8 @@ module.exports = function (app) {
 
     client.on('close', () => {
       sentDeltas = {}
+      customNames = {}
+      customNameTimeouts = {}
       plugin.needsID = true
       plugin.portalID = null
       app.debug(`mqtt close`)
@@ -458,6 +496,30 @@ module.exports = function (app) {
         return
       }
 
+      let senderName = `com.victronenergy.${type}.${instance}`
+      
+      if ( plugin.options.useDeviceNames !== undefined &&
+           plugin.options.useDeviceNames ) {
+        if ( customNames[senderName] === undefined &&
+             plugin.hasCustomName(`com.victronenergy.${type}`) ) {
+          if ( parts[parts.length-1] === 'CustomName' ) {
+            app.debug('got CustomName "%s" for %s', message.value, senderName)
+            customNames[senderName] = camelcase(message.value)
+          } else {
+            let timeout = customNameTimeouts[senderName]
+            if ( timeout === undefined ) {
+              customNameTimeouts[senderName] = Date.now()
+              return
+            } else if ( Date.now() - timeout > 10 * 1000 ) {
+              customNames[senderName] = instance
+              app.debug('timed out waiting on CustomName for %s', senderName)
+            } else {
+              return
+            }
+          }
+        }
+      }
+      
       if ( type == 'tank' ) {
         if ( parts[parts.length-1] == 'FluidType' ) {
           fluidTypes[instance] = message.value
@@ -478,28 +540,40 @@ module.exports = function (app) {
           return
         }
         temperatureType = temperatureTypes[instance]
-        if ( fluidType == 'unknown' ) {
+        if ( temperatureType == 'unknown' ) {
           return
-        } else if ( _.isUndefined(temperatureType) ) {
+ } else if ( _.isUndefined(temperatureType) ) {
           client.publish(`R/${parts[1]}/${type}/${instance}/TemperatureType`)
           temperatureTypes[instance] = 'unknown'
           return
         }
       }
 
-      let senderName = `com.victronenergy.${type}.${instance}`
+      let instanceName
       if ( options.instanceMappings ) {
         const mapping = plugin.options.instanceMappings.find(mapping => {
           return senderName.startsWith(mapping.type) && mapping.venusId == instance
         })
         if ( !_.isUndefined(mapping) ) {
-          instance = mapping.signalkId
+          instanceName = mapping.signalkId
         }
+      }
+
+      if ( instanceName === undefined )
+      {
+        if ( plugin.options.useDeviceNames !== undefined &&
+             plugin.options.useDeviceNames &&
+             customNames[senderName] !== undefined &&
+             customNames[senderName] !== '' ) {
+          instanceName = customNames[senderName]
+        }
+        else
+          instanceName = instance
       }
       
       var m = {
         path: '/' + parts.slice(4).join('/'),
-        instanceName: instance,
+        instanceName: instanceName,
         senderName,
         value: message.value,
         fluidType: fluidType,

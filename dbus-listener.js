@@ -1,5 +1,6 @@
 const dbus = require('dbus-native')
 const _ = require('lodash')
+const camelcase = require('camelcase')
 
 module.exports = function (app, messageCallback, address, plugin, pollInterval) {
   return new Promise((resolve, reject) => {
@@ -82,10 +83,32 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
           } else {
             services[owner].deviceInstance = res[1][0]
           }
+
+          if ( plugin.options.useDeviceNames !== undefined &&
+               plugin.options.useDeviceNames ) {
+            app.debug('requesting custom name for %s', name)
+            bus.invoke(
+              {
+                path: '/CustomName',
+                destination: name,
+                interface: 'com.victronenergy.BusItem',
+                member: 'GetValue'
+              },
+              function (err, res) {
+                if (!err) {
+                  let customName = res[1][0]
+                  app.debug('got custom name %s for %s', customName, name)
+                  services[owner].customName = camelcase(customName)
+                } else {
+                  services[owner].customName = ''
+                }
+                requestRoot(service)
+              })
+          } else {
+            requestRoot(service)
+          }
         }
       )
-
-      requestRoot(service)
     }
 
     function requestRoot (service) {
@@ -122,21 +145,33 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
 
             // app.debug(`${service.name} ${JSON.stringify(data)}`)
 
-            let deviceInstance = service.deviceInstance
+            let deviceInstance
 
+            /*
+            //FIXME: paths that don't require instance??
             if ( _.isUndefined(deviceInstance) ) {
               return
-            }
+              }
+            */
             
             if ( plugin.options.instanceMappings ) {
               const mapping = plugin.options.instanceMappings.find(mapping => {
-                return service.name.startsWith(mapping.type) && mapping.venusId == deviceInstance
+                return service.name.startsWith(mapping.type) && mapping.venusId == service.deviceInstance
               })
               if ( !_.isUndefined(mapping) ) {
                 deviceInstance = mapping.signalkId
               }
             }
 
+            if ( deviceInstance === undefined )
+            {
+              if ( plugin.options.useDeviceNames !== undefined && plugin.options.useDeviceNames && service.customName !== '' ) {
+                deviceInstance = service.customName
+              }
+              else
+                deviceInstance = service.deviceInstance
+            }
+            
             var messages = []
             _.keys(data).forEach(path => {
               messages.push({
@@ -216,7 +251,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       }
 
       const senderName = service.name
-      let instanceName = service.deviceInstance
+      let instanceName
 
       if ( plugin.options.instanceMappings ) {
         const mapping = plugin.options.instanceMappings.find(mapping => {
@@ -225,7 +260,16 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
         if ( !_.isUndefined(mapping) ) {
           instanceName = mapping.signalkId
         }
-      } 
+      }
+
+      if ( instanceName === undefined )
+      {
+        if ( plugin.options.useDeviceNames !== undefined && plugin.options.useDeviceNames && service.customName !== '' ) {
+          instanceName = service.customName
+        }
+        else
+          instanceName = service.deviceInstance
+      }
 
       let entries
 
