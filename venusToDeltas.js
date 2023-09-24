@@ -9,6 +9,26 @@ module.exports = function (app, options, state, putRegistrar) {
   state.loggedUnknowns = []
   
   const venusToSignalKMapping = {
+    '/CustomName': [
+      {
+        path: m => {
+          return m.value && m.value.length > 0 && makePath(m, `${m.instanceName}.name`)
+        }
+      },
+      {
+        path: m => {
+          if ( m.senderName.startsWith('com.victronenergy.vebus') ) {
+            return m.value && m.value.length > 0 && makePath(m, `${m.instanceName}.name`, true)
+          }
+        }
+      }
+    ],
+    '/Settings/SystemSetup/SystemName': {
+      path: m => {
+        return makePath(m, `name`)
+      },
+      requiresInstance: false
+    },
     '/Dc/0/Voltage': {
       path: m => {
         return makePath(m, `${m.instanceName}.voltage`)
@@ -252,14 +272,31 @@ module.exports = function (app, options, state, putRegistrar) {
           return makePath(m, `${m.instanceName}.mode`)
         },
         conversion: convertMode,
-        putSupport: {
+        putSupport: (m) => {
+          if ( m.senderName.startsWith('com.victronenergy.vebus') ) {
+            return {
+              conversion: convertVeBusModeString,
+              confirmChange: (value, input) => {
+                return convertVeBusMode(input) === value
+              }
+            }
+          }
+        },
+        meta: (m) => {
+          if ( m.senderName.startsWith('com.victronenergy.vebus') ) {
+            return modeMeta
+          }
         }
       },
       {
         path: m => {
           return makePath(m, `${m.instanceName}.modeNumber`)
         },
-        putSupport: {
+        putSupport: (m) => { return {} },
+        meta: (m) => {
+          if ( m.senderName.startsWith('com.victronenergy.vebus') ) {
+            return modeNumberMeta
+          }
         }
       },
       {
@@ -270,8 +307,10 @@ module.exports = function (app, options, state, putRegistrar) {
         conversion: m => {
           return m.value === 1 ? 1 : 0
         },
-        putSupport: {
-          conversion: value => { return value === 1 || value === 'on' ? 1 : 0 }
+        putSupport: (m) => {
+          return {
+            conversion: value => { return value === 1 || value === 'on' ? 1 : 0 }
+          }
         }
       }
     ],
@@ -477,31 +516,30 @@ module.exports = function (app, options, state, putRegistrar) {
         return makePath(m, `${m.instanceName}.acin.currentLimit`, true)
       },
       units: 'A',
-      putSupport: {
-      }
+      putSupport: (m) => { return {} },
     },
     '/Ac/In/1/CurrentLimit': {
       path: m => {
         return makePath(m, `${m.instanceName}.acin.1.currentLimit`, true)
       },
       units: 'A',
-      putSupport: {
-      }
+      putSupport: (m) => { return {} },
     },
     '/Ac/In/2/CurrentLimit': {
       path: m => {
         return makePath(m, `${m.instanceName}.acin.2.currentLimit`, true)
       },
       units: 'A',
-      putSupport: {
-      }
+      putSupport: (m) => { return {} },
     },
     '/Ac/State/IgnoreAcIn1': {
       path: m => {
         return makePath(m, `${m.instanceName}.acState.ignoreAcIn1.state`, true)
       },
-      putSupport: {
-        putPath: m => '/Ac/Control/IgnoreAcIn1'
+      putSupport: (m) => {
+        return {
+          putPath: m => '/Ac/Control/IgnoreAcIn1'
+        }
       }
     },
     '/Ac/State/AcIn1Available': {
@@ -638,15 +676,19 @@ module.exports = function (app, options, state, putRegistrar) {
           return makePath(m, `${m.instanceName}.relay.state`, true)
         }
       },
-      putSupport: {
-        conversion: value => { return value === 1 || value === 'on' ? 1 : 0 }
+      putSupport: (m) => {
+        return {
+          conversion: value => { return value === 1 || value === 'on' ? 1 : 0 }
+        }
       },
       requiresInstance: false
     },
     '/Relay/1/State': {
       path: (options.relayPath1 || 'electrical.switches.venus-1') + '.state',
-      putSupport: {
-        conversion: value => { return value === 1 || value === 'on' ? 1 : 0 }
+      putSupport: (m) => {
+        return {
+          conversion: value => { return value === 1 || value === 'on' ? 1 : 0 }
+        }
       },
       requiresInstance: false
     },
@@ -913,7 +955,11 @@ module.exports = function (app, options, state, putRegistrar) {
               }
               
               if ( mapping.meta ) {
-                meta = { ...meta, ...mapping.meta }
+                let mappingMeta = typeof mapping.meta === 'function' ?
+                    mapping.meta(m) : mapping.meta
+                if ( mappingMeta ) {
+                  meta = { ...meta, ...mappingMeta }
+                }
               }
               
               if ( Object.keys(meta).length > 0 )  {
@@ -925,13 +971,15 @@ module.exports = function (app, options, state, putRegistrar) {
                 deltas.push(delta)
               }
             }
-            
-            if ( mapping.putSupport && putRegistrar ) {
+
+            let putSupport = mapping.putSupport && mapping.putSupport(m)
+            if ( putSupport && putRegistrar ) {
               let putPath
-              if ( mapping.putSupport.putPath ) {
-                putPath = mapping.putSupport.putPath(m)
+              if ( putSupport.putPath ) {
+                putPath = putSupport.putPath(m)
               }
-              putRegistrar(thePath, m, mapping.putSupport.conversion,
+              putRegistrar(thePath, m, putSupport.conversion,
+                           putSupport.confirmChange,
                            putPath)
             }
           }
@@ -939,17 +987,7 @@ module.exports = function (app, options, state, putRegistrar) {
             var delta = makeDelta(app, m, thePath, theValue)
 
             deltas.push(delta)
-
-            if (state.sentModeMeta === false
-                && m.senderName.startsWith('com.victronenergy.vebus')
-                && m.path === '/Mode'
-                && thePath.endsWith('modeNumber')
-                && app
-                && app.supportsMetaDeltas) {
-              deltas.push({updates: [ { meta: [{ path: thePath, value: modeMeta }]  } ]})
-              state.sentModeMeta = true
-            }
-          } 
+          }
         }
       })
     })
@@ -960,6 +998,10 @@ module.exports = function (app, options, state, putRegistrar) {
 
   function getKnownPaths() {
     return state.knownPaths
+  }
+
+  function hasCustomName(service) {
+    return servicesWithCustomNames.indexOf(service) != -1
   }
 
   function makePath (msg, path, vebusIsInverterValue) {
@@ -979,7 +1021,8 @@ module.exports = function (app, options, state, putRegistrar) {
       type = isUndefined(vebusIsInverterValue) ? 'chargers' : 'inverters'
     } else if (msg.senderName.startsWith('com.victronenergy.tank')) {
       type = 'tanks'
-    } else if ( msg.senderName.startsWith('com.victronenergy.system') ) {
+    } else if ( msg.senderName.startsWith('com.victronenergy.system') ||
+                msg.senderName.startsWith('com.victronenergy.settings') ) {
       type = msg.venusName
     } else {
       let parts = msg.senderName.split('.')
@@ -1085,7 +1128,7 @@ module.exports = function (app, options, state, putRegistrar) {
     return value
   }
   
-  return { toDelta, getKnownPaths }
+  return { toDelta, getKnownPaths, hasCustomName }
 }
 
 function percentToRatio (msg) {
@@ -1216,6 +1259,15 @@ function convertStateForVEBusInverter (msg) {
   return convertState(msg, true)
 }
 
+const servicesWithCustomNames = [
+  'com.victronenergy.battery',
+  'com.victronenergy.dcload',
+  'com.victronenergy.solarcharger',
+  'com.victronenergy.inverter',
+  'com.victronenergy.vebus',
+  'com.victronenergy.digitalinput'
+]
+
 const modeMaps = {
   'com.victronenergy.vebus': {
     1: 'charger only',
@@ -1270,6 +1322,18 @@ const statePropName = {
 function getStatePropName (msg) {
   return statePropName[senderNamePrefix(msg.senderName)] || 'state'
 }
+
+function convertVeBusModeString(value) {
+  var map = modeMaps['com.victronenergy.vebus']
+  let entry = Object.entries(map).find(entry => { return entry[1] === value })
+  return entry !== undefined ? Number(entry[0]) : undefined
+}
+
+function convertVeBusMode(value) {
+  var modeMap = modeMaps['com.victronenergy.vebus']
+  return (modeMap && modeMap[Number(value)]) || 'unknown'
+}
+
 
 function convertMode (msg) {
   var modeMap = modeMaps[senderNamePrefix(msg.senderName)]
@@ -1405,7 +1469,7 @@ function makeDelta (app, m, path, value) {
   return delta
 }
 
-const modeMeta = {
+const modeNumberMeta = {
   displayName: 'Inverter Mode',
   type: 'multiple',
   possibleValues: [
@@ -1426,6 +1490,32 @@ const modeMeta = {
     {
       title: 'Inverter Only',
       value: 2,
+      abbrev: 'Inv'
+    }
+  ]
+}
+
+const modeMeta = {
+  displayName: 'Inverter Mode',
+  type: 'multiple',
+  possibleValues: [
+    {
+      title: 'On',
+      value: 'on'
+    },
+    {
+      title: 'Off',
+      value: 'off',
+      isOn: false
+    },
+    {
+      title: 'Charger Only',
+      value: 'charger only',
+      abbrev: 'Chg'
+    },
+    {
+      title: 'Inverter Only',
+      value: 'inverter only',
       abbrev: 'Inv'
     }
   ]

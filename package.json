@@ -4,6 +4,7 @@
   "description": "Victron Venus-SignalK Integration",
   "main": "index.js",
   "dependencies": {
+    "camelcase": "^6.3.0",
     "dbus-native": "^0.2.5",
     "debug": "^3.1.0",
     "lodash": "^4.17.4",
