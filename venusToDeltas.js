@@ -1161,6 +1161,7 @@ const stateMaps = {
     9: 'inverting',
     10: 'power assist',
     11: 'power supply',
+    244: 'sustain',
     245: 'wake up',
     252: 'external control',
   },
