@@ -80,7 +80,7 @@ module.exports = function (app) {
         useDeviceNames: {
           type: 'boolean',
           title: 'Use the device names for paths',
-          default: true
+          default: false
         },
         usePosition: {
           type: 'boolean',
@@ -244,16 +244,6 @@ module.exports = function (app) {
     or the plugin is enabled from ui on a running server).
   */
   plugin.start = function (options) {
-
-    if ( options.useDeviceNames === undefined )
-    {
-      //default to false for existing installs, true for new
-      options.useDeviceNames = false;
-      app.savePluginOptions(options, (err) => {
-        app.error('saving plugin options: ' + err)
-      })
-    }
-    
     var { toDelta, getKnownPaths, hasCustomName } =
         venusToDeltas(app, options, {},
                       (path, m, converter, confirmChange, putPath) => {
