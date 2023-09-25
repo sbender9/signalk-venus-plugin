@@ -1222,9 +1222,10 @@ const systemStateMap = {
   8: 'passthru',
   9: 'inverting',
   10: 'assisting',
+  244: 'sustain',
   252: 'external control',
   256: 'discharging',
-  257: 'sustain',
+  257: 'sustain', //FIXME: did this change to 244??
   258: 'recharge',
   259: 'scheduled recharge'
 }
