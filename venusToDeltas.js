@@ -379,9 +379,6 @@ module.exports = function (app, options, state, putRegistrar) {
           getTemperaturePath(m, options, 'accelerationX')
         )
       },
-      conversion: (msg) => {
-        return msg.value
-      },
       units: 'g'
     },
     '/AccelY': {
@@ -390,9 +387,6 @@ module.exports = function (app, options, state, putRegistrar) {
           getTemperaturePath(m, options, 'accelerationY')
         )
       },
-      conversion: (msg) => {
-        return msg.value
-      },
       units: 'g'
     },
     '/AccelZ': {
@@ -400,9 +394,6 @@ module.exports = function (app, options, state, putRegistrar) {
         return typeof m.temperatureType === 'undefined' ? undefined : (
           getTemperaturePath(m, options, 'accelerationZ')
         )
-      },
-      conversion: (msg) => {
-        return msg.value
       },
       units: 'g'
     },
