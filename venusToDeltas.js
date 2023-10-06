@@ -373,6 +373,30 @@ module.exports = function (app, options, state, putRegistrar) {
       },
       units: 'Pa'
     },
+    '/AccelX': {
+      path: m => {
+        return typeof m.temperatureType === 'undefined' ? undefined : (
+          getTemperaturePath(m, options, 'accelerationX')
+        )
+      },
+      units: 'g'
+    },
+    '/AccelY': {
+      path: m => {
+        return typeof m.temperatureType === 'undefined' ? undefined : (
+          getTemperaturePath(m, options, 'accelerationY')
+        )
+      },
+      units: 'g'
+    },
+    '/AccelZ': {
+      path: m => {
+        return typeof m.temperatureType === 'undefined' ? undefined : (
+          getTemperaturePath(m, options, 'accelerationZ')
+        )
+      },
+      units: 'g'
+    },
     '/Ac/Current': {
       path: m => {
         return makePath(m, `${m.instanceName}.current`, true)
