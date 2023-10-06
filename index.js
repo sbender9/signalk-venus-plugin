@@ -129,11 +129,13 @@ module.exports = function (app) {
               
               venusId: {
                 title: 'Venus Device Instance',
+                description: '(Example: 257)',
                 type: 'number'
               },
               signalkId: {
                 title: 'Signal K Instance',
-                type: 'string'
+                type: 'string',
+                description: '(Example: house)',
               }
             }
           }
