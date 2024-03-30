@@ -1218,9 +1218,8 @@ const stateMaps = {
     1: 'bulk',
     2: 'absorbtion',
     5: 'float',
-    7: 'external control',
-    8: 'disabled',
-    9: 'float'
+    7: 'equalize',
+    252: 'external control'
   },
 
   'com.victronenergy.dcdc': {
@@ -1323,9 +1322,8 @@ const modeMaps = {
     3: 'on'
   },
   'com.victronenergy.alternator': {
-    0: 'standalone',
-    1: 'master',
-    2: 'slave'
+    1: 'on',
+    4: 'off'
   },
   'com.victronenergy.dcdc': {
     0: 'standalone',
