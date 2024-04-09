@@ -114,6 +114,7 @@ module.exports = function (app) {
             properties: {
               type: {
                 enum: [
+                  'com.victronenergy.alternator',
                   'com.victronenergy.battery',
                   'com.victronenergy.dcsource',
                   'com.victronenergy.tank',
@@ -121,6 +122,7 @@ module.exports = function (app) {
                   'com.victronenergy.vebus'
                 ],
                 enumNames: [
+                  'Alternator',
                   'Battery',
                   'DC Source',
                   'Tank',
