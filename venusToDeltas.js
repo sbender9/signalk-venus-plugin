@@ -808,6 +808,14 @@ module.exports = function (app, options, state, putRegistrar) {
         requiresInstance: false
       },
     ],
+    '/FieldDrive': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.fieldDrive`)
+      },
+      conversion: percentToRatio,
+      units: 'ratio'
+    },
+    
     /*
     '/SystemState/BatteryLife': {
       path: m => {
