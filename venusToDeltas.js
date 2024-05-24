@@ -815,6 +815,42 @@ module.exports = function (app, options, state, putRegistrar) {
       conversion: percentToRatio,
       units: 'ratio'
     },
+
+    '/Bms/AllowToCharge': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.bms.allowToCharge`)
+      }
+    },
+    '/Bms/AllowToDischarge': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.bms.allowToDischarge`)
+      }
+    },
+    '/Bms/BmsExpected': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.bms.bmsExpected`)
+      }
+    },
+    '/Bms/BmsType': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.bms.BmsType`)
+      }
+    },
+    '/Bms/Error': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.bms.error`)
+      }
+    },
+    '/Bms/PreAlarm': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.bms.preAlarm`)
+      }
+    },
+    '/Bms/AllowToChargeRate': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.bms.allowToChargeRate`)
+      }
+    },
     
     /*
     '/SystemState/BatteryLife': {
