@@ -828,7 +828,7 @@ module.exports = function (app, options, state, putRegistrar) {
     },
     '/Bms/BmsExpected': {
       path: m => {
-        return makePath(m, `${m.instanceName}.bms.bmsExpected`)
+        return makePath(m, `${m.instanceName}.bms.expected`)
       }
     },
     '/Bms/BmsType': {
