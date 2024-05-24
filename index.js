@@ -274,6 +274,23 @@ module.exports = function (app) {
     } else {
       this.connect(options, toDelta)
     }
+
+    var subscription = {
+      context: "vessels.self",
+      subscribe: [{
+        path: "environment.inside.temperature",
+        policy: 'instant'
+      }]
+    }
+
+    var unsubscribes = []    
+    app.subscriptionmanager.subscribe(subscription, unsubscribes, (err) => app.error(err), delta => {
+      delta.updates.forEach(update => {
+        update.values.forEach(pv => {
+          dbusSetValue('com.victronenergy.temperature.mqtt_temperature_100', '/Temperature', pv.value, 'd')
+        })
+      })
+    })
   }
 
   plugin.connect = function(options, toDelta) {

@@ -293,7 +293,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       messageCallback(entries)
     }
 
-    function setValue (destination, path, value) {
+    function setValue (destination, path, value ,type='n') {
       app.debug(`setValue: ${destination} ${path} = ${value}`)
       bus.invoke(
         {
@@ -303,7 +303,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
           member: 'SetValue',
           body: [
             // top level struct is js array
-            ['n', value] // variant, type is number, value = 1
+            [type, value] // variant, type is number, value = 1
           ],
           signature: 'v'
         },
