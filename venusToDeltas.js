@@ -851,7 +851,26 @@ module.exports = function (app, options, state, putRegistrar) {
         return makePath(m, `${m.instanceName}.bms.allowToChargeRate`)
       }
     },
-    
+    '/Io/AllowToCharge': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.bms.allowToCharge`)
+      }
+    },
+    '/Io/AllowToDischarge': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.bms.allowToDischarge`)
+      },
+    },
+    '/Io/ExternalRelay': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.bms.externalRelay`)
+      }
+    },
+    '/Balancing': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.bms.balancing`)
+      }
+    },
     /*
     '/SystemState/BatteryLife': {
       path: m => {
