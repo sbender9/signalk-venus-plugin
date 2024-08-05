@@ -69,6 +69,10 @@ module.exports = function (app) {
               type: 'string',
               title: 'Venus MQTT Host',
               default: 'venus.local'
+            },
+            password: {
+              type: 'string',
+              title: 'Venus MQTT Password',
             }
           }
         },
@@ -179,6 +183,17 @@ module.exports = function (app) {
     }
   }
 
+  plugin.uiSchema = () => {
+    return {
+      MQTT: {
+        password: {
+          'ui:widget': 'password'
+        }
+      }
+    }
+  }
+
+  
   function handleMessage (delta) {
     app.handleMessage(PLUGIN_ID, delta)
   }
@@ -384,7 +399,9 @@ module.exports = function (app) {
     app.debug('using mqtt url %s', url)
     
     var client = mqtt.connect(url, {
-      rejectUnauthorized: false
+      rejectUnauthorized: true,
+      username: '',
+      password: options.MQTT.password
     })
     plugin.client = client
 
