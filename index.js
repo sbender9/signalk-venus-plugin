@@ -399,7 +399,7 @@ module.exports = function (app) {
     app.debug('using mqtt url %s', url)
     
     var client = mqtt.connect(url, {
-      rejectUnauthorized: true,
+      rejectUnauthorized: false,
       username: '',
       password: options.MQTT.password
     })
