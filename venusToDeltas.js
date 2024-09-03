@@ -750,8 +750,14 @@ module.exports = function (app, options, state, putRegistrar) {
       conversion: degsToRad
     },
     '/Speed': {
-      path: 'navigation.speedOverGround',
-      requiresInstance: false
+      path: m => {
+        if ( m.senderName.startsWith('com.victronenergy.gps') ) {
+          return 'navigation.speedOverGround'
+        } else {
+          return makePath(m, `${m.instanceName}.speed`)
+        }
+      },
+      requiresInstance: false,
     },
     '/Position/Latitude': {
       path: 'navigation.position',
