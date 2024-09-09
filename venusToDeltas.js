@@ -549,26 +549,26 @@ module.exports = function (app, options, state, putRegistrar) {
     },
     '/Ac/In/L1/I': {
       path: m => {
-        return makePath(m, `${m.instanceName}.acin.l1.current`, true)
+        return makePath(m, `${m.instanceName}.acin.1.current`, true)
       },
       units: 'A'
     },
     '/Ac/In/L2/I': {
       path: m => {
-        return makePath(m, `${m.instanceName}.acin.l2.current`, true)
+        return makePath(m, `${m.instanceName}.acin.2.current`, true)
       },
       units: 'A'
     },
     '/Ac/In/1/CurrentLimit': {
       path: m => {
-        return makePath(m, `${m.instanceName}.acin.l1.currentLimit`, true)
+        return makePath(m, `${m.instanceName}.acin.1.currentLimit`, true)
       },
       units: 'A',
       putSupport: (m) => { return {} },
     },
     '/Ac/In/2/CurrentLimit': {
       path: m => {
-        return makePath(m, `${m.instanceName}.acin.l2.currentLimit`, true)
+        return makePath(m, `${m.instanceName}.acin.2.currentLimit`, true)
       },
       units: 'A',
       putSupport: (m) => { return {} },
