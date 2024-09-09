@@ -7,7 +7,7 @@ const _ = require('lodash')
 const mqtt = require('mqtt');
 const createDbusListener = require('./dbus-listener')
 const venusToDeltas = require('./venusToDeltas')
-
+const vrmApiUrl = 'https://vrmapi.victronenergy.com'
 const gpsDestination = 'com.victronenergy.gps'
 
 const supportedMQTTTypes = [ 'battery', 'solarcharger', 'tank', 'vebus', 'inverter', 'temperature' ]
@@ -48,12 +48,13 @@ module.exports = function (app) {
         installType: {
           type: 'string',
           title: 'How to connect to Venus D-Bus',
-          enum: ['mqtt', 'mqtts', 'local', 'remote'],
+          enum: ['mqtt', 'mqtts', 'local', 'remote', 'vrm'],
           enumNames: [
             'Connect to remote Venus installation via MQTT (Plain text)',
             'Connect to remote Venus installation via MQTT (SSL)',
             'Connect to localhost via dbus (signalk-server is running on a Venus device)',
-            'Connect to remote Venus installation via dbus'
+            'Connect to remote Venus installation via dbus',
+            'Connect to remote Venus installation via VRM'
           ],
           default: 'mqtt'
         },
@@ -73,6 +74,23 @@ module.exports = function (app) {
             password: {
               type: 'string',
               title: 'Venus MQTT Password',
+            }
+          }
+        },
+        VRM: {
+          type: 'object',
+          properties: {
+            portalId: {
+              type: 'string',
+              title: 'VRM Portal Id',
+            },
+            userName: {
+              type: 'string',
+              title: 'VRM Email',
+            },
+            password: {
+              type: 'string',
+              title: 'VRM Password',
             }
           }
         },
@@ -189,6 +207,11 @@ module.exports = function (app) {
         password: {
           'ui:widget': 'password'
         }
+      },
+      VRM: {
+        password: {
+          'ui:widget': 'password'
+        }
       }
     }
   }
@@ -284,7 +307,7 @@ module.exports = function (app) {
       sendMeta(options.relayPath1, { displayName: options.relayDisplayName1 })
     }
     
-    if ( options.installType === 'mqtt' || options.installType === 'mqtts' ) {
+    if ( options.installType === 'mqtt' || options.installType === 'mqtts' || options.installType === 'vrm' ) {
       startMQTT(options, toDelta)
     } else {
       this.connect(options, toDelta)
@@ -386,34 +409,104 @@ module.exports = function (app) {
     }
   }
 
-  function startMQTT(options, toDelta) {
-    var host = options.MQTT.host
 
-    if ( !host || !host.length ) {
-      app.setPluginError('no host configured')
-      return
+  function getVRMBrokerHost(portalId) {
+    let sum = 0;
+    
+    for ( let idx = 0; idx < portalId.length; idx++ ) {
+      let c = portalId.charCodeAt(idx)
+      sum += c;
+    }
+    let broker_index = sum % 128;
+    return `mqtt${broker_index}.victronenergy.com`
+  }
+
+  function setupSubscription(options, client) {
+    client.publish(`R/${plugin.portalID}/system/0/Serial`)
+    client.subscribe(`N/${plugin.portalID}/+/#`)
+    if ( options.pollInterval !== -1 ) {
+      if ( pollInterval ) {
+        clearInterval(pollInterval)
+      }
+      pollInterval = setInterval(() => {
+        app.debug('resending deltas...')
+        resendDeltas()
+      }, options.pollInterval*1000)
+      if ( keepAlive ) {
+        clearInterval(keepAlive)
+      }
+      keepAlive = setInterval(() => {
+        app.debug('sending keep alive')
+        client.publish(`R/${plugin.portalID}/system/0/Serial`)
+        client.subscribe(`N/${plugin.portalID}/+/#`)
+      }, 50*1000)
+    }
+  }
+
+  function startMQTT(options, toDelta) {
+    var host
+    var port
+    var scheme
+    var username
+    var password
+    const isVRM = options.installType === 'vrm'
+    
+    if ( isVRM ) {
+      host = getVRMBrokerHost(options.VRM.portalId)
+      port = 8883
+      scheme = 'mqtts'
+      username = options.VRM.userName
+      password = options.VRM.password
+    } else {
+      host = options.MQTT.host
+      port = options.installType === 'mqtt' ? 1883 : 8883
+      scheme = options.installType
+      password = options.MQTT.password
+      username = ''
+
+      if ( !host || !host.length ) {
+        app.setPluginError('no host configured')
+        return
+      }
     }
 
-    const url = `${options.installType}://${host}`
+    const url = `${scheme}://${host}:${port}`
 
     app.debug('using mqtt url %s', url)
-    
-    var client = mqtt.connect(url, {
+
+    let connectOptions = {
       rejectUnauthorized: false,
-      username: '',
-      password: options.MQTT.password
-    })
+    }
+
+    //if ( password && password.length )
+    {
+      connectOptions.username = username
+      connectOptions.password = password
+    }
+    
+    var client = mqtt.connect(url, connectOptions)
     plugin.client = client
 
-    plugin.needsID = true
-    plugin.portalID = null
+    if ( isVRM ) {
+      plugin.portalID = options.VRM.portalId
+      plugin.needsID = false
+    } else {
+      plugin.needsID = true
+      plugin.portalID = null
+    } 
 
     app.debug(`connecting to ${url}`)
 
     client.on('connect', function () {
       app.debug(`connected to ${url}`)
-      client.subscribe('N/+/+/#')
       app.setPluginStatus(`Connected to ${url}`)
+
+      if ( isVRM ) {
+        setupSubscription(options, client)
+      } else {
+        client.subscribe('N/+/+/#')
+      }
+
 
       //client.publish(`R/${portalID}/system/0/Serial`)
 
@@ -429,8 +522,10 @@ module.exports = function (app) {
       sentDeltas = {}
       customNames = {}
       customNameTimeouts = {}
-      plugin.needsID = true
-      plugin.portalID = null
+      if ( isVRM === false ) {
+        plugin.needsID = true
+        plugin.portalID = null
+      }
       app.debug(`mqtt close`)
     });
 
@@ -479,30 +574,17 @@ module.exports = function (app) {
       
       if ( plugin.needsID ) {
         if ( topic.endsWith('system/0/Serial') ) {
-          plugin.portalID = message.value
-          app.debug('detected portalId %s', plugin.portalID)
-          client.publish(`R/${plugin.portalID}/system/0/Serial`)
-          client.subscribe(`N/${plugin.portalID}/+/#`)
-          plugin.needsID = false
-          if ( options.pollInterval !== -1 ) {
-            if ( pollInterval ) {
-              clearInterval(pollInterval)
-            }
-            pollInterval = setInterval(() => {
-              app.debug('resending deltas...')
-              resendDeltas()
-            }, options.pollInterval*1000)
-            if ( keepAlive ) {
-              clearInterval(keepAlive)
-            }
-            keepAlive = setInterval(() => {
-              app.debug('sending keep alive')
-              client.publish(`R/${plugin.portalID}/system/0/Serial`)
-              client.subscribe(`N/${plugin.portalID}/+/#`)
-            }, 50*1000)
+          if ( !isVRM ) {
+            plugin.portalID = message.value
+            app.debug('detected portalId %s', plugin.portalID)
           }
+          plugin.needsID = false
+          setupSubscription(options, client)
         }
-        return
+
+        if ( !isVRM ) {
+          return
+        }
       }
 
       let senderName = `com.victronenergy.${type}.${instance}`
