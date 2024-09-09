@@ -478,7 +478,7 @@ module.exports = function (app) {
       rejectUnauthorized: false,
     }
 
-    //if ( password && password.length )
+    if ( password && password.length )
     {
       connectOptions.username = username
       connectOptions.password = password
