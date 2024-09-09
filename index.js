@@ -24,6 +24,7 @@ module.exports = function (app) {
   let sentDeltas = {}
   let pollInterval
   let keepAlive
+  let seenMQTTTopics = []
   
   plugin.id = PLUGIN_ID
   plugin.name = PLUGIN_NAME
@@ -395,6 +396,7 @@ module.exports = function (app) {
     onStop.forEach(f => f())
     onStop = []
     sentDeltas = {}
+    seenMQTTTopics = []
     customNames = {}
     customNameTimeouts = {}
     plugin.needsID = true
@@ -585,6 +587,11 @@ module.exports = function (app) {
         if ( !isVRM ) {
           return
         }
+      }
+
+      if ( seenMQTTTopics.indexOf(topic) == -1 ) {
+        app.debug(`found ${topic} = ${message.value}`)
+        seenMQTTTopics.push(topic)
       }
 
       let senderName = `com.victronenergy.${type}.${instance}`
