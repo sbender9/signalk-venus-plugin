@@ -894,6 +894,69 @@ module.exports = function (app, options, state, putRegistrar) {
         return makePath(m, `${m.instanceName}.bms.balancing`)
       }
     },
+    '/RunningByConditionCode': [
+      {
+        path: m => {
+          return makePath(m, `${m.instanceName}.runningByCondition`)
+        },
+        conversion: convertRunningByConditionCode
+      },
+      {
+        path: m => {
+          return makePath(m, `${m.instanceName}.runningByConditionCode`)
+        }
+      }
+    ],
+    '/Runtime': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.runtime`)
+      },
+      units: 's'
+    },
+    '/TodayRuntime': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.todayRuntime`)
+      },
+      units: 's'
+    },
+    '/ManualStart': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.manualStart`)
+      },
+      conversion: msg => { return msg.value == 1 ? true : false },
+      putSupport: (m) => {
+        return {
+          conversion: value => { return value === 1 || value === true ? 1 : 0 }
+        }
+      },
+      units: 'bool'
+    },
+    '/ManualStartTimer': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.manualStartTimer`)
+      },
+      putSupport: (m) => { return {} },
+      units: 's'
+    },
+    '/QuietHours': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.quietHours`)
+      },
+      conversion: msg => { return msg.value == 1 ? true : false },
+      units: 'bool'
+    },
+    '/AutoStartEnabled': {
+      path: m => {
+        return makePath(m, `${m.instanceName}.autoStartEnabled`)
+      },
+      conversion: msg => { return msg.value == 1 ? true : false },
+      putSupport: (m) => {
+        return {
+          conversion: value => { return value === 1 || value === true ? 1 : 0 }
+        }
+      },
+      units: 'bool'
+    },
     /*
     '/SystemState/BatteryLife': {
       path: m => {
@@ -1318,6 +1381,15 @@ const stateMaps = {
     8: 'disabled',
     9: 'float'
   },
+
+  'com.victronenergy.generator': {
+    0: 'stopped',
+    1: 'running',
+    2: 'warm uo',
+    3: 'cool down',
+    4: 'stopping',
+    10: 'error'
+  },
 }
 
 const systemStateMap = {
@@ -1369,6 +1441,23 @@ function convertState (msg, forInverter) {
 
 function convertStateForVEBusInverter (msg) {
   return convertState(msg, true)
+}
+
+const convertRunningByConditionMap = {
+  0: 'stopped',
+  1: 'manual',
+  2: 'test run',
+  3: 'loss of communication',
+  4: 'soc',
+  5: 'acload',
+  6: 'battery current',
+  7: 'battery voltage',
+  8: 'inverter high temp',
+  9: 'inverter overload'
+}
+
+function convertRunningByConditionCode(msg) {
+  return convertRunningByConditionMap[msg.value] || String(msg.value)
 }
 
 const servicesWithCustomNames = [
