@@ -402,6 +402,31 @@ module.exports = function (app, options, state, putRegistrar) {
       },
       units: 'g'
     },
+    '/BatteryVoltage': {
+      path: m => {
+        return typeof m.temperatureType === 'undefined' ? undefined : (
+          getTemperaturePath(m, options, 'voltage')
+        )
+      },
+      units: 'V'
+    },
+    '/Status': [
+      {
+        path: m => {
+          return typeof m.temperatureType === 'undefined' ? undefined : (
+            getTemperaturePath(m, options, 'status')
+          )
+        },
+        conversion: convertRuuivStatus
+      },
+      {
+        path: m => {
+          return typeof m.temperatureType === 'undefined' ? undefined : (
+            getTemperaturePath(m, options, 'statusNumber')
+          )
+        }
+      },
+    ],
     '/Ac/Current': {
       path: m => {
         return makePath(m, `${m.instanceName}.current`, true)
@@ -1458,6 +1483,19 @@ const convertRunningByConditionMap = {
 
 function convertRunningByConditionCode(msg) {
   return convertRunningByConditionMap[msg.value] || String(msg.value)
+}
+
+
+const convertRuuivStatusMap = {
+  0: 'ok',
+  1: 'disconnected',
+  2: 'short circuited',
+  3: 'reverse polarity',
+  4: 'unknown'
+}
+
+function convertRuuivStatus(msg) {
+  return convertRuuivStatusMap[msg.value] || String(msg.value)
 }
 
 const servicesWithCustomNames = [
