@@ -21,9 +21,10 @@ Installing is simple. The plugin is available in the signalk app store. Simply c
 
 Then there are two settings. The first is how to connect to Venus OS. Choose between these:
 
-- A. Connect to localhost
+- A. Connect to localhost via dbus
 - B. Connect to a GX-device over tcp using MQTT (Plain text)
 - C. Connect to a GX-device over tcp using MQTT (SSL)
+- D. Connect via VRM 
 
 Use option A when signalk-server is installed on the GX-device itself. 
 
@@ -34,3 +35,5 @@ on the ethernet/wifi network. You should use SSL if GX-device is not on the loca
 When using option B or C go enter the hostname or ipaddress of the Venus device in the plugin configuration.
 
 Also ensure that MQTT is turned on in the GX-devices Services Settings.
+
+Option D is mostly usefull for developer testing/debugging with other peoples systems, but could also be used if running signalk in a different location or network that the GC device
