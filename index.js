@@ -303,9 +303,11 @@ module.exports = function (app) {
 
     if ( options.relayDisplayName0 && options.relayDisplayName0.length ) {
       sendMeta(options.relayPath0, { displayName: options.relayDisplayName0 })
+      sendMeta(options.relayPath0 + ".state", { displayName: options.relayDisplayName0 })
     }
     if ( options.relayDisplayName1 && options.relayDisplayName1.length ) {
       sendMeta(options.relayPath1, { displayName: options.relayDisplayName1 })
+      sendMeta(options.relayPath1 + ".state", { displayName: options.relayDisplayName1 })
     }
     
     if ( options.installType === 'mqtt' || options.installType === 'mqtts' || options.installType === 'vrm' ) {

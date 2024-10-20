@@ -316,6 +316,9 @@ module.exports = function (app, options, state, putRegistrar) {
           return {
             conversion: value => { return value === 1 || value === 'on' ? 1 : 0 }
           }
+        },
+        meta: {
+          displayName: 'Solar Enabled'
         }
       }
     ],
@@ -744,7 +747,7 @@ module.exports = function (app, options, state, putRegistrar) {
       },
       putSupport: (m) => {
         return {
-          conversion: value => { return value === 1 || value === 'on' ? 1 : 0 }
+          conversion: value => { return value === 1 || value == true || value === 'on' ? 1 : 0 }
         }
       },
       requiresInstance: false
@@ -753,7 +756,7 @@ module.exports = function (app, options, state, putRegistrar) {
       path: (options.relayPath1 || 'electrical.switches.venus-1') + '.state',
       putSupport: (m) => {
         return {
-          conversion: value => { return value === 1 || value === 'on' ? 1 : 0 }
+          conversion: value => { return value === 1 || value == true || value === 'on' ? 1 : 0 }
         }
       },
       requiresInstance: false
@@ -1709,7 +1712,7 @@ function makeDelta (app, m, path, value) {
 }
 
 const modeNumberMeta = {
-  displayName: 'Inverter Mode',
+  displayName: 'Inverter Mode Number',
   type: 'multiple',
   possibleValues: [
     {
