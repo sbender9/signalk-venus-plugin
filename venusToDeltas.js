@@ -870,11 +870,21 @@ module.exports = function (app, options, state, putRegistrar) {
     '/Bms/AllowToCharge': {
       path: m => {
         return makePath(m, `${m.instanceName}.bms.allowToCharge`)
+      },
+      putSupport: (m) => {
+        return {
+          conversion: value => { return value === 1 || value === true ? 1 : 0 }
+        }
       }
     },
     '/Bms/AllowToDischarge': {
       path: m => {
         return makePath(m, `${m.instanceName}.bms.allowToDischarge`)
+      },
+      putSupport: (m) => {
+        return {
+          conversion: value => { return value === 1 || value === true ? 1 : 0 }
+        }
       }
     },
     '/Bms/BmsExpected': {
@@ -900,17 +910,32 @@ module.exports = function (app, options, state, putRegistrar) {
     '/Bms/AllowToChargeRate': {
       path: m => {
         return makePath(m, `${m.instanceName}.bms.allowToChargeRate`)
+      },
+      putSupport: (m) => {
+        return {
+          conversion: value => { return value === 1 || value === true ? 1 : 0 }
+        }
       }
     },
     '/Io/AllowToCharge': {
       path: m => {
         return makePath(m, `${m.instanceName}.bms.allowToCharge`)
+      },
+      putSupport: (m) => {
+        return {
+          conversion: value => { return value === 1 || value === true ? 1 : 0 }
+        }
       }
     },
     '/Io/AllowToDischarge': {
       path: m => {
         return makePath(m, `${m.instanceName}.bms.allowToDischarge`)
       },
+      putSupport: (m) => {
+        return {
+          conversion: value => { return value === 1 || value === true ? 1 : 0 }
+        }
+      }
     },
     '/Io/ExternalRelay': {
       path: m => {
