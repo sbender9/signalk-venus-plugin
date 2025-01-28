@@ -1010,6 +1010,22 @@ module.exports = function (app, options, state, putRegistrar) {
       },
       units: 'bool'
     },
+    '/Buzzer/State': {
+      path: m => {
+        if (m.senderName.startsWith('com.victronenergy.system')) {
+          return `electrical.${m.venusName}.buzzer.state`
+        } else {
+          return makePath(m, `${m.instanceName}.buzzer.state`)
+        }
+      },
+      conversion: msg => { return msg.value == 1 ? true : false },
+      putSupport: (m) => {
+        return {
+          conversion: value => { return value === 1 || value === true ? 1 : 0 }
+        }
+      },
+      units: 'bool'
+    },
     /*
     '/SystemState/BatteryLife': {
       path: m => {
