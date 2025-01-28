@@ -131,9 +131,17 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
             )
           } else {
             var data = {}
-            res[1][0].forEach(kp => {
-              data[kp[0]] = kp[1][1][0]
-            })
+
+            if ( res[0][0].type == 'a' ) {
+              res[1][0].forEach(kp => {
+                data[kp[0]] = kp[1][1][0]
+              })
+            } else {
+              //for some reason virtual devices come in this way
+              res.forEach(kp => {
+                data[kp[0]] = kp[1][1][0]
+              })
+            }
 
             service.deviceInstance = data.DeviceInstance
 
