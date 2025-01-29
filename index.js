@@ -33,6 +33,7 @@ module.exports = function (app) {
 
   plugin.schema = () => {
     let knowPaths
+    let knownSenders = plugin.getKnownSenders()
     if ( plugin.getKnownPaths ) {
       knowPaths = plugin.getKnownPaths().sort()
       if ( !knowPaths || knowPaths.length === 0 ) {
@@ -191,6 +192,15 @@ module.exports = function (app) {
             type: 'string',
             enum: knowPaths
           }
+        },
+        ignoredSenders: {
+          title: 'Ingored Senders',
+          description: 'These senders will be ignored',
+          type: 'array',
+          items: {
+            type: 'string',
+            enum: knownSenders
+          }
         }
         /*,
           sendPosistion: {
@@ -285,7 +295,7 @@ module.exports = function (app) {
     or the plugin is enabled from ui on a running server).
   */
   plugin.start = function (options) {
-    var { toDelta, getKnownPaths, hasCustomName } =
+    var { toDelta, getKnownPaths, hasCustomName, getKnownSenders } =
         venusToDeltas(app, options, {},
                       (path, m, converter, confirmChange, putPath) => {
                         app.registerActionHandler('vessels.self',
@@ -300,6 +310,7 @@ module.exports = function (app) {
     plugin.onError = () => {}
     plugin.getKnownPaths = getKnownPaths
     plugin.hasCustomName = hasCustomName
+    plugin.getKnownSenders = getKnownSenders
 
     if ( options.relayDisplayName0 && options.relayDisplayName0.length ) {
       sendMeta(options.relayPath0, { displayName: options.relayDisplayName0 })
