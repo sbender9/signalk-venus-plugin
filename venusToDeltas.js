@@ -5,6 +5,7 @@ module.exports = function (app, options, state, putRegistrar) {
   const debug = app && app.debug ? app.debug.extend('venusToDeltas') : () => {}
 
   state.knownPaths = []
+  state.knownSenders = []
   state.sentModeMeta = false
   state.loggedUnknowns = []
   
@@ -1116,6 +1117,13 @@ module.exports = function (app, options, state, putRegistrar) {
         return
       }
 
+      if ( m.senderName && state.knownSenders.indexOf(m.senderName) == -1 ) {
+        state.knownSenders.push(m.senderName)
+      }
+
+      if ( options.ignoredSenders && options.ignoredSenders.indexOf(m.senderName) != -1 ) {
+        return
+      }
 
       let mappings
 
@@ -1224,6 +1232,10 @@ module.exports = function (app, options, state, putRegistrar) {
 
   function getKnownPaths() {
     return state.knownPaths
+  }
+
+  function getKnownSenders() {
+    return state.knownSenders
   }
 
   function hasCustomName(service) {
@@ -1354,7 +1366,7 @@ module.exports = function (app, options, state, putRegistrar) {
     return value
   }
   
-  return { toDelta, getKnownPaths, hasCustomName }
+  return { toDelta, getKnownPaths, hasCustomName, getKnownSenders }
 }
 
 function percentToRatio (msg) {
