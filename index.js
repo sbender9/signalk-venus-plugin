@@ -33,7 +33,13 @@ module.exports = function (app) {
 
   plugin.schema = () => {
     let knowPaths
-    let knownSenders = plugin.getKnownSenders()
+    let knownSenders = [ 'no known senders yet' ]
+    if ( plugin.getKnownSenders ) {
+      const ks = plugin.getKnownSenders()
+      if ( ks && ks.length > 0 ) {
+        knownSenders = ks
+      }
+    }
     if ( plugin.getKnownPaths ) {
       knowPaths = plugin.getKnownPaths().sort()
       if ( !knowPaths || knowPaths.length === 0 ) {
