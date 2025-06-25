@@ -64,51 +64,69 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
 
       app.debug(`${name} is sender ${owner}`)
 
+      // Check if this is a virtual device from Signal K Virtual BMV plugin
       bus.invoke(
         {
-          path: '/DeviceInstance',
+          path: '/Mgmt/ProcessName',
           destination: name,
           interface: 'com.victronenergy.BusItem',
           member: 'GetValue'
         },
         function (err, res) {
-          if (err) {
-            // There are several dbus services that don't have the /DeviceInstance
-            // path. They are services that are not interesting for signalk, like
-            // a process to manage settings on the dbus, the logger to VRM Portal
-            // and others. All services that send out data for connected devices do
-            // have the /DeviceInstance path.
-            if ( services[owner] ) {
-              app.debug(`warning: error getting device instance for ${name}`)
-              services[owner].deviceInstance = 99
-            }
-          } else {
-            services[owner].deviceInstance = res[1][0]
+          if (!err && res[1][0] === 'signalk-virtual-device') {
+            app.debug(`Ignoring virtual device ${name} created by Signal K`)
+            delete services[owner]
+            return
           }
 
-          if ( plugin.options.useDeviceNames !== undefined &&
-               plugin.options.useDeviceNames ) {
-            app.debug('requesting custom name for %s', name)
-            bus.invoke(
-              {
-                path: '/CustomName',
-                destination: name,
-                interface: 'com.victronenergy.BusItem',
-                member: 'GetValue'
-              },
-              function (err, res) {
-                if (!err) {
-                  let customName = res[1][0]
-                  app.debug('got custom name %s for %s', customName, name)
-                  services[owner].customName = camelcase(customName)
-                } else {
-                  services[owner].customName = ''
+          // Continue with normal service initialization
+          bus.invoke(
+            {
+              path: '/DeviceInstance',
+              destination: name,
+              interface: 'com.victronenergy.BusItem',
+              member: 'GetValue'
+            },
+            function (err, res) {
+              if (err) {
+                // There are several dbus services that don't have the /DeviceInstance
+                // path. They are services that are not interesting for signalk, like
+                // a process to manage settings on the dbus, the logger to VRM Portal
+                // and others. All services that send out data for connected devices do
+                // have the /DeviceInstance path.
+                if ( services[owner] ) {
+                  app.debug(`warning: error getting device instance for ${name}`)
+                  services[owner].deviceInstance = 99
                 }
+              } else {
+                services[owner].deviceInstance = res[1][0]
+              }
+
+              if ( plugin.options.useDeviceNames !== undefined &&
+                   plugin.options.useDeviceNames ) {
+                app.debug('requesting custom name for %s', name)
+                bus.invoke(
+                  {
+                    path: '/CustomName',
+                    destination: name,
+                    interface: 'com.victronenergy.BusItem',
+                    member: 'GetValue'
+                  },
+                  function (err, res) {
+                    if (!err) {
+                      let customName = res[1][0]
+                      app.debug('got custom name %s for %s', customName, name)
+                      services[owner].customName = camelcase(customName)
+                    } else {
+                      services[owner].customName = ''
+                    }
+                    requestRoot(service)
+                  })
+              } else {
                 requestRoot(service)
-              })
-          } else {
-            requestRoot(service)
-          }
+              }
+            }
+          )
         }
       )
     }
