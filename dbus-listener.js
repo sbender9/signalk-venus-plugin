@@ -73,7 +73,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
           member: 'GetValue'
         },
         function (err, res) {
-          if (!err && res[1][0] === 'signalk-to-venus') {
+          if (!err && res[1][0] === 'signalk-virtual-device') {
             app.debug(`Ignoring virtual device ${name} created by Signal K`)
             delete services[owner]
             return
