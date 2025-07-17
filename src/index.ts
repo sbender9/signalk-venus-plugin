@@ -7,6 +7,8 @@ const _ = require('lodash')
 import mqtt, { MqttClient } from 'mqtt'
 const createDbusListener = require('./dbus-listener')
 const venusToDeltas = require('./venusToDeltas')
+import { Message } from './venusToDeltas'
+
 const vrmApiUrl = 'https://vrmapi.victronenergy.com'
 const gpsDestination = 'com.victronenergy.gps'
 
@@ -17,8 +19,8 @@ module.exports = function (app:any) {
   let onStop:any[] = []
   let dbusSetValue :any
   let pluginStarted = false
-  const fluidTypes:{[key:string]: string} = {}
-  const temperatureTypes:{[key:string]: string} = {}
+  const fluidTypes:{[key:string]: number|null} = {}
+  const temperatureTypes:{[key:string]: number|null} = {}
   let customNames:{[key:string]: string} = {}
   let customNameTimeouts:{[key:string]: number} = {}
   let sentDeltas:{[key:string]: any} = {}
@@ -242,7 +244,7 @@ module.exports = function (app:any) {
     dbusSetValue(msg.destination, msg.path, msg.value)
   }
 
-  function actionHandler(context:string, skpath:string, input:any, dest:string, vpath:string, mqttTopic:string, converter:(input:any) => any, confirmChange:(oldValue:any, newValue:any) => boolean, putPath:string, cb:(result:any) => void  ) {
+  function actionHandler(context:string, skpath:string, input:any, dest:string, vpath:string, mqttTopic:string|undefined, converter:(input:any) => any, confirmChange:(oldValue:any, newValue:any) => boolean, putPath:string, cb:(result:any) => void  ) {
     const realPath = putPath ? putPath : vpath
     app.debug(`setting mode ${dest} ${realPath} to ${input}`)
 
@@ -259,10 +261,10 @@ module.exports = function (app:any) {
       let wtopic
       if ( putPath ) {
         // N/985dadcb01dd/system/0/Dc/System/Power
-        const parts = mqttTopic.split('/')
+        const parts = mqttTopic!.split('/')
         wtopic = `W/${parts[1]}/${parts[2]}/${parts[3]}${putPath}`
       } else {
-        wtopic = 'W' + mqttTopic.slice(1)
+        wtopic = 'W' + mqttTopic!.slice(1)
       }
       plugin.client.publish(wtopic, JSON.stringify({ value }))
     } else {
@@ -290,7 +292,7 @@ module.exports = function (app:any) {
     return { state: 'PENDING' }
   }
 
-  function getActionHandler(m:any, converter:(input:any) => any, confirmChange:(oldValue:any, newValue:any) => boolean, putPath:string) {
+  function getActionHandler(m:Message, converter:(input:any) => any, confirmChange:(oldValue:any, newValue:any) => boolean, putPath:string) {
     return (context:string, path:string, value:any, cb:(result:any) => void) => {
       return actionHandler(context, path, value, m.senderName, m.path, m.topic, converter, confirmChange, putPath, cb)
     }
@@ -303,7 +305,7 @@ module.exports = function (app:any) {
   plugin.start = function (options:any) {
     const { toDelta, getKnownPaths, hasCustomName, getKnownSenders } =
         venusToDeltas(app, options, {},
-                      (path:string, m:any, converter:(input:any) => any, confirmChange:(oldValue:any, newValue:any) => boolean, putPath:string) => {
+                      (path:string, m:Message, converter:(input:any) => any, confirmChange:(oldValue:any, newValue:any) => boolean, putPath:string) => {
                         app.registerActionHandler('vessels.self',
                                                   path,
                                                   getActionHandler(m,converter,
@@ -343,7 +345,7 @@ module.exports = function (app:any) {
         app.debug(`Dbus connection attempt ${number}`)
         return createDbusListener(
           app,
-          (venusMessages:any[]) => {
+          (venusMessages:Message[]) => {
             toDelta(venusMessages).forEach((delta:any) => {
               app.handleMessage(PLUGIN_ID, delta)
             })
@@ -643,12 +645,12 @@ module.exports = function (app:any) {
           return
         }
         fluidType = fluidTypes[instance]
-        if ( fluidType == 'unknown' ) {
+        if ( fluidType == null ) {
           return
         } else if ( _.isUndefined(fluidType) ) {
           client.publish(`R/${parts[1]}/${type}/${instance}/FluidType`, '')
           client.publish(`R/${parts[1]}/${type}/${instance}/Capacity`, '')
-          fluidTypes[instance] = 'unknown'
+          fluidTypes[instance] = null
           return
         }
       } else if ( type === 'temperature' ) {
@@ -657,11 +659,11 @@ module.exports = function (app:any) {
           return
         }
         temperatureType = temperatureTypes[instance]
-        if ( temperatureType == 'unknown' ) {
+        if ( temperatureType == null ) {
           return
  } else if ( _.isUndefined(temperatureType) ) {
           client.publish(`R/${parts[1]}/${type}/${instance}/TemperatureType`, '')
-          temperatureTypes[instance] = 'unknown'
+          temperatureTypes[instance] = null
           return
         }
       }
@@ -688,7 +690,7 @@ module.exports = function (app:any) {
           instanceName = instance
       }
       
-      const m = {
+      const m: Message = {
         path: '/' + parts.slice(4).join('/'),
         instanceName: instanceName,
         senderName,

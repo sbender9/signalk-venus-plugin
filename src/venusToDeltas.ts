@@ -3,9 +3,10 @@ const _ = require('lodash')
 
 export type Message = {
   path: string
-  venusName: string
+  venusName?: string
   instanceName: string
-  senderName: string
+  senderName: string,
+  topic?: string
   value: any
   text?: string
   fluidType?: number
@@ -26,7 +27,7 @@ type VenusToSignalKMappings = {
   [key: string]: VenusToSignalKMapping | VenusToSignalKMapping[]
 }
 
-module.exports = function (app: any, options: any, state: any, putRegistrar: any) {
+export default function (app: any, options: any, state: any, putRegistrar: any) {
   const debug = app && app.debug ? app.debug.extend('venusToDeltas') : () => {}
 
   state.knownPaths = []
@@ -1165,7 +1166,7 @@ module.exports = function (app: any, options: any, state: any, putRegistrar: any
         }
       */
 
-      if ( _.isUndefined(m.venusName) ) {
+      if ( m.venusName === undefined ) {
         m.venusName = 'venus'
       }
 
