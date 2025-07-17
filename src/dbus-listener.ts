@@ -1,19 +1,27 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-require-imports */
+
 const dbus = require('dbus-native')
 const _ = require('lodash')
 const camelcase = require('camelcase')
 
-module.exports = function (app:any, messageCallback:any, address:string, plugin:any, pollInterval:number) {
+export default function (
+  app: any,
+  messageCallback: any,
+  address: string,
+  plugin: any,
+  pollInterval: number
+) {
   return new Promise((resolve, reject) => {
     const setPluginStatus = app.setPluginStatus
-        ? (msg:string) => {
+      ? (msg: string) => {
           app.setPluginStatus(msg)
         }
-          : () => {}
+      : () => {}
     const setPluginError = app.setPluginError
-        ? (msg:string) => {
+      ? (msg: string) => {
           app.setPluginError(msg)
         }
-          : () => {}
+      : () => {}
     const msg = `Connecting ${address}`
     setPluginStatus(msg)
     app.debug(msg)
@@ -39,11 +47,11 @@ module.exports = function (app:any, messageCallback:any, address:string, plugin:
     // name owner (:0132 for example) is the key. Properties:
     // .name            for example: com.victronenergy.battery.ttyO1
     // .deviceInstace   for example: 0
-    const services: {[key: string]: any} = {}
+    const services: { [key: string]: any } = {}
 
     // get info on all existing D-Bus services at startup
     bus.listNames((_props: any, args: string[]) => {
-      args.forEach(name => {
+      args.forEach((name) => {
         if (name.startsWith('com.victronenergy')) {
           bus.getNameOwner(name, (_props: any, args: string) => {
             initService(args, name)
@@ -52,13 +60,13 @@ module.exports = function (app:any, messageCallback:any, address:string, plugin:
       })
     })
 
-    function pollDbus () {
+    function pollDbus() {
       _.values(services).forEach((service: any) => {
         requestRoot(service)
       })
     }
 
-    function initService (owner: string, name: string) {
+    function initService(owner: string, name: string) {
       const service = { name: name }
       services[owner] = service
 
@@ -94,16 +102,20 @@ module.exports = function (app:any, messageCallback:any, address:string, plugin:
                 // a process to manage settings on the dbus, the logger to VRM Portal
                 // and others. All services that send out data for connected devices do
                 // have the /DeviceInstance path.
-                if ( services[owner] ) {
-                  app.debug(`warning: error getting device instance for ${name}`)
+                if (services[owner]) {
+                  app.debug(
+                    `warning: error getting device instance for ${name}`
+                  )
                   services[owner].deviceInstance = 99
                 }
               } else {
                 services[owner].deviceInstance = res[1][0]
               }
 
-              if ( plugin.options.useDeviceNames !== undefined &&
-                   plugin.options.useDeviceNames ) {
+              if (
+                plugin.options.useDeviceNames !== undefined &&
+                plugin.options.useDeviceNames
+              ) {
                 app.debug('requesting custom name for %s', name)
                 bus.invoke(
                   {
@@ -121,7 +133,8 @@ module.exports = function (app:any, messageCallback:any, address:string, plugin:
                       services[owner].customName = ''
                     }
                     requestRoot(service)
-                  })
+                  }
+                )
               } else {
                 requestRoot(service)
               }
@@ -131,7 +144,7 @@ module.exports = function (app:any, messageCallback:any, address:string, plugin:
       )
     }
 
-    function requestRoot (service: any) {
+    function requestRoot(service: any) {
       // app.debug(`getValue / ${service.name}`)
       bus.invoke(
         {
@@ -148,9 +161,9 @@ module.exports = function (app:any, messageCallback:any, address:string, plugin:
               `warning: error during GetValue on / for ${service.name} ${err}`
             )
           } else {
-            const data:any = {}
+            const data: any = {}
 
-            if ( res[0][0].type == 'a' ) {
+            if (res[0][0].type == 'a') {
               res[1][0].forEach((kp: any) => {
                 data[kp[0]] = kp[1][1][0]
               })
@@ -181,25 +194,31 @@ module.exports = function (app:any, messageCallback:any, address:string, plugin:
               return
               }
             */
-            
-            if ( plugin.options.instanceMappings ) {
-              const mapping = plugin.options.instanceMappings.find((mapping: any) => {
-                return service.name.startsWith(mapping.type) && mapping.venusId == service.deviceInstance
-              })
-              if ( !_.isUndefined(mapping) ) {
+
+            if (plugin.options.instanceMappings) {
+              const mapping = plugin.options.instanceMappings.find(
+                (mapping: any) => {
+                  return (
+                    service.name.startsWith(mapping.type) &&
+                    mapping.venusId == service.deviceInstance
+                  )
+                }
+              )
+              if (!_.isUndefined(mapping)) {
                 deviceInstance = mapping.signalkId
               }
             }
 
-            if ( deviceInstance === undefined )
-            {
-              if ( plugin.options.useDeviceNames !== undefined && plugin.options.useDeviceNames && service.customName !== '' ) {
+            if (deviceInstance === undefined) {
+              if (
+                plugin.options.useDeviceNames !== undefined &&
+                plugin.options.useDeviceNames &&
+                service.customName !== ''
+              ) {
                 deviceInstance = service.customName
-              }
-              else
-                deviceInstance = service.deviceInstance
+              } else deviceInstance = service.deviceInstance
             }
-            
+
             const messages: any[] = []
             _.keys(data).forEach((path: string) => {
               messages.push({
@@ -217,10 +236,10 @@ module.exports = function (app:any, messageCallback:any, address:string, plugin:
       )
     }
 
-    function signal_receive (m:any) {
+    function signal_receive(m: any) {
       if (
-        m.interface === 'com.victronenergy.BusItem' 
-          && (m.member === 'PropertiesChanged' || m.member === 'ItemsChanged')
+        m.interface === 'com.victronenergy.BusItem' &&
+        (m.member === 'PropertiesChanged' || m.member === 'ItemsChanged')
       ) {
         properties_changed(m)
       } else if (
@@ -228,35 +247,39 @@ module.exports = function (app:any, messageCallback:any, address:string, plugin:
         m.member == 'NameOwnerChanged'
       ) {
         name_owner_changed(m)
-      } 
+      }
     }
 
-    function name_owner_changed (m:any) {
+    function name_owner_changed(m: any) {
       const name = m.body[0]
       const old_owner = m.body[1]
       const new_owner = m.body[2]
 
       app.debug('name owner change: %j', m)
 
-      if (name.startsWith('com.victronenergy') && new_owner && new_owner.length > 0 ) {
+      if (
+        name.startsWith('com.victronenergy') &&
+        new_owner &&
+        new_owner.length > 0
+      ) {
         initService(new_owner, name)
       } else {
         delete services[old_owner]
       }
     }
 
-    function setValueAndText(data:any, res:any) {
-      data.forEach((entry:any) => {
+    function setValueAndText(data: any, res: any) {
+      data.forEach((entry: any) => {
         if (entry[0] == 'Text') {
-          res.text =  entry[1][1][0]
+          res.text = entry[1][1][0]
         } else if (entry[0] == 'Value') {
           res.value = entry[1][1][0]
-        } 
+        }
       })
       return res
     }
 
-    function properties_changed (m:any) {
+    function properties_changed(m: any) {
       // Message contents:
       // { serial: 5192,
       //   path: '/Dc/0/Power',
@@ -271,7 +294,7 @@ module.exports = function (app:any, messageCallback:any, address:string, plugin:
       const sender = m.sender
       const service = services[sender]
 
-      if (!service || !service.name || service.deviceInstance === undefined ) {
+      if (!service || !service.name || service.deviceInstance === undefined) {
         // See comment above explaining why some services don't have the
         // /DeviceInstance path
         // app.debug(`warning: unknown service; ${m.sender}`)
@@ -279,37 +302,39 @@ module.exports = function (app:any, messageCallback:any, address:string, plugin:
       }
 
       const senderName = service.name
-      let instanceName:string|undefined
+      let instanceName: string | undefined
 
-      if ( plugin.options.instanceMappings ) {
+      if (plugin.options.instanceMappings) {
         const mapping = plugin.options.instanceMappings.find((mapping: any) => {
-          return service.name.startsWith(mapping.type) && mapping.venusId == service.deviceInstance
+          return (
+            service.name.startsWith(mapping.type) &&
+            mapping.venusId == service.deviceInstance
+          )
         })
-        if ( mapping !== undefined ) {
+        if (mapping !== undefined) {
           instanceName = mapping.signalkId
         }
       }
 
-      if ( instanceName === undefined )
-      {
-        if ( plugin.options.useDeviceNames !== undefined && plugin.options.useDeviceNames && service.customName !== '' ) {
+      if (instanceName === undefined) {
+        if (
+          plugin.options.useDeviceNames !== undefined &&
+          plugin.options.useDeviceNames &&
+          service.customName !== ''
+        ) {
           instanceName = service.customName
-        }
-        else
-          instanceName = service.deviceInstance
+        } else instanceName = service.deviceInstance
       }
 
       let entries
 
-      if ( m.member === 'ItemsChanged' ) {
-        entries = m.body[0]
-          .map((item: any) => {
-            return setValueAndText(item[1], { path: item[0] })
-          })
-      } else if ( m.member === 'PropertiesChanged' ) {
-        entries = [ setValueAndText(m.body[0], { path: m.path}) ]
+      if (m.member === 'ItemsChanged') {
+        entries = m.body[0].map((item: any) => {
+          return setValueAndText(item[1], { path: item[0] })
+        })
+      } else if (m.member === 'PropertiesChanged') {
+        entries = [setValueAndText(m.body[0], { path: m.path })]
       }
-
 
       entries.forEach((msg: any) => {
         msg.instanceName = instanceName
@@ -319,7 +344,7 @@ module.exports = function (app:any, messageCallback:any, address:string, plugin:
       messageCallback(entries)
     }
 
-    function setValue (destination:string, path:string, value:number) {
+    function setValue(destination: string, path: string, value: number) {
       app.debug(`setValue: ${destination} ${path} = ${value}`)
       bus.invoke(
         {
@@ -333,7 +358,7 @@ module.exports = function (app:any, messageCallback:any, address:string, plugin:
           ],
           signature: 'v'
         },
-        function (err: any, res: any) {
+        function (err: any, _res: any) {
           if (err) {
             app.error(err)
           }
@@ -343,8 +368,8 @@ module.exports = function (app:any, messageCallback:any, address:string, plugin:
 
     bus.connection.on('connect', () => {
       setPluginStatus(`Connected to ${address ? address : 'session bus'}`)
-      if ( pollInterval > 0 ) {
-        const pollingTimer = setInterval(pollDbus, pollInterval*1000)
+      if (pollInterval > 0) {
+        const pollingTimer = setInterval(pollDbus, pollInterval * 1000)
         resolve({
           setValue,
           onStop: () => {
@@ -375,12 +400,12 @@ module.exports = function (app:any, messageCallback:any, address:string, plugin:
 
     bus.addMatch(
       "type='signal',interface='com.victronenergy.BusItem',member='PropertiesChanged'",
-      (d: any) => {}
+      (_d: any) => {}
     )
     bus.addMatch(
       "type='signal',interface='com.victronenergy.BusItem',member='ItemsChanged'",
-      (d: any) => {}
+      (_d: any) => {}
     )
-    bus.addMatch("type='signal',member='NameOwnerChanged'", (d: any) => {})
+    bus.addMatch("type='signal',member='NameOwnerChanged'", (_d: any) => {})
   })
 }

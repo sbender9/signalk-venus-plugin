@@ -8,7 +8,9 @@
 				"kind": "build",
 				"isDefault": true
 			},
-			"problemMatcher": ["$tsc"],
+			"problemMatcher": [
+				"$tsc"
+			],
 			"label": "npm: build",
 			"detail": "tsc -b --pretty false"
 		},
@@ -19,9 +21,22 @@
 				"kind": "build",
 				"isDefault": true
 			},
-			"problemMatcher": ["$tsc-watch"],
+			"problemMatcher": [
+				"$tsc-watch"
+			],
 			"label": "npm: watch",
 			"detail": "tsc --watch --pretty false"
+		},
+		{
+			"type": "npm",
+			"script": "format",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": ["$eslint-stylish"],
+			"label": "npm: format",
+			"detail": "npm run prettier && npm run lint"
 		}
 	]
 }

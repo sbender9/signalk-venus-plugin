@@ -16,6 +16,7 @@
     "@signalk/github-create-release": "^1.2.1",
     "@signalk/signalk-schema": "0.0.1-12",
     "@tsconfig/node20": "^20.1.6",
+    "@types/promise-retry": "^1.1.6",
     "chai": "^4.1.2",
     "chai-things": "0.2",
     "eslint": "^9.31.0",
