@@ -4,7 +4,7 @@ const PLUGIN_NAME = 'Victron Venus Plugin'
 const camelcase = require('camelcase')
 const promiseRetry = require('promise-retry')
 const _ = require('lodash')
-const mqtt = require('mqtt');
+import mqtt, { MqttClient } from 'mqtt'
 const createDbusListener = require('./dbus-listener')
 const venusToDeltas = require('./venusToDeltas')
 const vrmApiUrl = 'https://vrmapi.victronenergy.com'
@@ -12,19 +12,19 @@ const gpsDestination = 'com.victronenergy.gps'
 
 const supportedMQTTTypes = [ 'battery', 'solarcharger', 'tank', 'vebus', 'inverter', 'temperature' ]
 
-module.exports = function (app) {
-  const plugin = {}
-  let onStop = []
-  let dbusSetValue
+module.exports = function (app:any) {
+  const plugin:any = {}
+  let onStop:any[] = []
+  let dbusSetValue :any
   let pluginStarted = false
-  var fluidTypes = {}
-  var temperatureTypes = {}
-  var customNames = {}
-  var customNameTimeouts = {}
-  let sentDeltas = {}
-  let pollInterval
-  let keepAlive
-  let seenMQTTTopics = []
+  const fluidTypes:{[key:string]: string} = {}
+  const temperatureTypes:{[key:string]: string} = {}
+  let customNames:{[key:string]: string} = {}
+  let customNameTimeouts:{[key:string]: number} = {}
+  let sentDeltas:{[key:string]: any} = {}
+  let pollInterval:NodeJS.Timeout|null = null
+  let keepAlive:NodeJS.Timeout|null = null
+  let seenMQTTTopics:string[] = []
   
   plugin.id = PLUGIN_ID
   plugin.name = PLUGIN_NAME
@@ -46,7 +46,7 @@ module.exports = function (app) {
         knowPaths = [ 'no known paths yet' ]
       }
     } else {
-      let options = app.readPluginOptions()
+      const options = app.readPluginOptions()
       knowPaths = options.configuration && options.configuration.blacklist ? options.configuration.blacklist : [ 'no known paths yet' ]
     }
     return {
@@ -234,19 +234,19 @@ module.exports = function (app) {
   }
 
   
-  function handleMessage (delta) {
+  function handleMessage (delta:any) {
     app.handleMessage(PLUGIN_ID, delta)
   }
 
-  function setValueCallback (msg) {
+  function setValueCallback (msg:any) {
     dbusSetValue(msg.destination, msg.path, msg.value)
   }
 
-  function actionHandler(context, skpath, input, dest, vpath, mqttTopic, converter, confirmChange, putPath, cb) {
-    let realPath = putPath ? putPath : vpath
+  function actionHandler(context:string, skpath:string, input:any, dest:string, vpath:string, mqttTopic:string, converter:(input:any) => any, confirmChange:(oldValue:any, newValue:any) => boolean, putPath:string, cb:(result:any) => void  ) {
+    const realPath = putPath ? putPath : vpath
     app.debug(`setting mode ${dest} ${realPath} to ${input}`)
 
-    let value = converter ? converter(input) : input
+    const value = converter ? converter(input) : input
 
     if ( value === undefined ) {
       return {
@@ -259,7 +259,7 @@ module.exports = function (app) {
       let wtopic
       if ( putPath ) {
         // N/985dadcb01dd/system/0/Dc/System/Power
-        let parts = mqttTopic.split('/')
+        const parts = mqttTopic.split('/')
         wtopic = `W/${parts[1]}/${parts[2]}/${parts[3]}${putPath}`
       } else {
         wtopic = 'W' + mqttTopic.slice(1)
@@ -270,7 +270,7 @@ module.exports = function (app) {
     }
 
     setTimeout(() => {
-      var val = app.getSelfPath(skpath)
+      const val = app.getSelfPath(skpath)
       let match = false
       if ( confirmChange ) {
         match = val && confirmChange(val.value, value)
@@ -290,8 +290,8 @@ module.exports = function (app) {
     return { state: 'PENDING' }
   }
 
-  function getActionHandler(m, converter, confirmChange, putPath) {
-    return (context, path, value, cb) => {
+  function getActionHandler(m:any, converter:(input:any) => any, confirmChange:(oldValue:any, newValue:any) => boolean, putPath:string) {
+    return (context:string, path:string, value:any, cb:(result:any) => void) => {
       return actionHandler(context, path, value, m.senderName, m.path, m.topic, converter, confirmChange, putPath, cb)
     }
   }
@@ -300,10 +300,10 @@ module.exports = function (app) {
     Called when the plugin is started (server is started with plugin enabled
     or the plugin is enabled from ui on a running server).
   */
-  plugin.start = function (options) {
-    var { toDelta, getKnownPaths, hasCustomName, getKnownSenders } =
+  plugin.start = function (options:any) {
+    const { toDelta, getKnownPaths, hasCustomName, getKnownSenders } =
         venusToDeltas(app, options, {},
-                      (path, m, converter, confirmChange, putPath) => {
+                      (path:string, m:any, converter:(input:any) => any, confirmChange:(oldValue:any, newValue:any) => boolean, putPath:string) => {
                         app.registerActionHandler('vessels.self',
                                                   path,
                                                   getActionHandler(m,converter,
@@ -334,17 +334,17 @@ module.exports = function (app) {
     }
   }
 
-  plugin.connect = function(options, toDelta) {
+  plugin.connect = function(options:any, toDelta:any) {
     promiseRetry(
-      (retry, number) => {
+      (retry: any, number: number) => {
         if (!pluginStarted) {
           return null
         }
         app.debug(`Dbus connection attempt ${number}`)
         return createDbusListener(
           app,
-          venusMessages => {
-            toDelta(venusMessages).forEach(delta => {
+          (venusMessages:any[]) => {
+            toDelta(venusMessages).forEach((delta:any) => {
               app.handleMessage(PLUGIN_ID, delta)
             })
           },
@@ -358,7 +358,7 @@ module.exports = function (app) {
         forever: true
       }
     )
-      .then(dbus => {
+      .then((dbus:any) => {
         if (dbus && pluginStarted) {
           plugin.onError = () => {
             app.removeListener('venusSetValue', setValueCallback)
@@ -375,7 +375,7 @@ module.exports = function (app) {
           )
         }
       })
-      .catch(error => {
+      .catch((error:any) => {
         console.error(`error creating dbus listener: ${error}`)
       })
   }
@@ -431,19 +431,19 @@ module.exports = function (app) {
   }
 
 
-  function getVRMBrokerHost(portalId) {
+  function getVRMBrokerHost(portalId:string) {
     let sum = 0;
     
     for ( let idx = 0; idx < portalId.length; idx++ ) {
-      let c = portalId.charCodeAt(idx)
+      const c = portalId.charCodeAt(idx)
       sum += c;
     }
-    let broker_index = sum % 128;
+    const broker_index = sum % 128;
     return `mqtt${broker_index}.victronenergy.com`
   }
 
-  function setupSubscription(options, client) {
-    client.publish(`R/${plugin.portalID}/system/0/Serial`)
+  function setupSubscription(options:any, client:MqttClient) {
+    client.publish(`R/${plugin.portalID}/system/0/Serial`, '')
     client.subscribe(`N/${plugin.portalID}/+/#`)
     if ( options.pollInterval !== -1 ) {
       if ( pollInterval ) {
@@ -458,18 +458,18 @@ module.exports = function (app) {
       }
       keepAlive = setInterval(() => {
         app.debug('sending keep alive')
-        client.publish(`R/${plugin.portalID}/system/0/Serial`)
+        client.publish(`R/${plugin.portalID}/system/0/Serial`, '')
         client.subscribe(`N/${plugin.portalID}/+/#`)
       }, 50*1000)
     }
   }
 
-  function startMQTT(options, toDelta) {
-    var host
-    var port
-    var scheme
-    var username
-    var password
+  function startMQTT(options:any, toDelta:any) {
+    let host
+    let port
+    let scheme
+    let username
+    let password
     const isVRM = options.installType === 'vrm'
     
     if ( isVRM ) {
@@ -495,7 +495,7 @@ module.exports = function (app) {
 
     app.debug('using mqtt url %s', url)
 
-    let connectOptions = {
+    const connectOptions:any = {
       rejectUnauthorized: false,
     }
 
@@ -505,7 +505,7 @@ module.exports = function (app) {
       connectOptions.password = password
     }
     
-    var client = mqtt.connect(url, connectOptions)
+    const client = mqtt.connect(url, connectOptions)
     plugin.client = client
 
     if ( isVRM ) {
@@ -559,11 +559,11 @@ module.exports = function (app) {
         app.debug('offline: %s', topic)
         const info = sentDeltas[topic]
         if ( info ) {
-          info.deltas.forEach(delta => {
+          info.deltas.forEach((delta:any) => {
             if ( delta.updates ) {
-              delta.updates.forEach(update => {
+              delta.updates.forEach((update:any) => {
                 if ( update.values ) {
-                  update.values.forEach(val => {
+                  update.values.forEach((val:any) => {
                     val.value = null
                   })
                 }                   
@@ -576,17 +576,17 @@ module.exports = function (app) {
         return
       }
 
-      var parts = topic.split('/')
-      var type = parts[2]
-      var instance = parts[3]
-      var fluidType
-      var temperatureType
+      const parts = topic.split('/')
+      const type = parts[2]
+      const instance = parts[3]
+      let fluidType
+      let temperatureType
 
-      var message
+      let message
 
       try {
-        message = JSON.parse(json)
-      } catch ( err ) {
+        message = JSON.parse(json.toString())
+      } catch ( err ) { 
         app.debug(err)
         return
       }
@@ -613,7 +613,7 @@ module.exports = function (app) {
         seenMQTTTopics.push(topic)
       }
 
-      let senderName = `com.victronenergy.${type}.${instance}`
+      const senderName = `com.victronenergy.${type}.${instance}`
       
       if ( plugin.options.useDeviceNames !== undefined &&
            plugin.options.useDeviceNames ) {
@@ -623,7 +623,7 @@ module.exports = function (app) {
             app.debug('got CustomName "%s" for %s', message.value, senderName)
             customNames[senderName] = camelcase(message.value)
           } else {
-            let timeout = customNameTimeouts[senderName]
+            const timeout = customNameTimeouts[senderName]
             if ( timeout === undefined ) {
               customNameTimeouts[senderName] = Date.now()
               return
@@ -646,8 +646,8 @@ module.exports = function (app) {
         if ( fluidType == 'unknown' ) {
           return
         } else if ( _.isUndefined(fluidType) ) {
-          client.publish(`R/${parts[1]}/${type}/${instance}/FluidType`)
-          client.publish(`R/${parts[1]}/${type}/${instance}/Capacity`)
+          client.publish(`R/${parts[1]}/${type}/${instance}/FluidType`, '')
+          client.publish(`R/${parts[1]}/${type}/${instance}/Capacity`, '')
           fluidTypes[instance] = 'unknown'
           return
         }
@@ -660,7 +660,7 @@ module.exports = function (app) {
         if ( temperatureType == 'unknown' ) {
           return
  } else if ( _.isUndefined(temperatureType) ) {
-          client.publish(`R/${parts[1]}/${type}/${instance}/TemperatureType`)
+          client.publish(`R/${parts[1]}/${type}/${instance}/TemperatureType`, '')
           temperatureTypes[instance] = 'unknown'
           return
         }
@@ -668,7 +668,7 @@ module.exports = function (app) {
 
       let instanceName
       if ( options.instanceMappings ) {
-        const mapping = plugin.options.instanceMappings.find(mapping => {
+        const mapping = plugin.options.instanceMappings.find((mapping:any) => {
           return senderName.startsWith(mapping.type) && mapping.venusId == instance
         })
         if ( !_.isUndefined(mapping) ) {
@@ -688,7 +688,7 @@ module.exports = function (app) {
           instanceName = instance
       }
       
-      var m = {
+      const m = {
         path: '/' + parts.slice(4).join('/'),
         instanceName: instanceName,
         senderName,
@@ -700,10 +700,10 @@ module.exports = function (app) {
 
       //app.debug(JSON.stringify(m))
 
-      var deltas = toDelta([m])
+      const deltas = toDelta([m])
 
       if ( deltas.length ) {
-        let anyUpdates = (deltas) => deltas.find(delta => delta.updates.find(update => update.values && update.values.length > 0))
+        const anyUpdates = (deltas:any[]) => deltas.find(delta => delta.updates.find((update:any) => update.values && update.values.length > 0))
 
         if ( anyUpdates(deltas) ) {
           sentDeltas[topic] = {
@@ -711,15 +711,15 @@ module.exports = function (app) {
             time: Date.now(),
             topic
           }
-        
-          deltas.forEach(delta => {
+
+          deltas.forEach((delta:any) => {
             app.handleMessage(PLUGIN_ID, delta)
           })
         }
       }
     })
 
-    onStop.push(_ => client.end());
+    onStop.push((_:any) => client.end());
   }
 
   function resendDeltas() {
@@ -728,7 +728,7 @@ module.exports = function (app) {
       if ( now - info.time > ((plugin.options.pollInterval-1)*1000) ) {
         //app.debug('resending %s', info.topic)
         //app.debug('%j', info.delta)
-        info.deltas.forEach((delta) => {
+        info.deltas.forEach((delta:any) => {
           if ( delta.updates[0].values && delta.updates[0].values.length > 0 &&
                !delta.updates[0].values[0].path.startsWith('notifications.') ) {
               app.handleMessage(PLUGIN_ID, JSON.parse(JSON.stringify(delta)))
@@ -738,7 +738,7 @@ module.exports = function (app) {
     })
   }
 
-  function sendMeta(path, value) {
+  function sendMeta(path:string, value:any) {
     app.handleMessage(PLUGIN_ID, {
       updates: [
         {
@@ -755,6 +755,3 @@ module.exports = function (app) {
   return plugin
 }
 
-function radsToDeg (radians) {
-  return radians * 180 / Math.PI
-}

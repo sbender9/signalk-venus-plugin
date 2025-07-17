@@ -1,15 +1,40 @@
 const { isArray, isFunction, isUndefined, values, forIn } = require('lodash')
 const _ = require('lodash')
 
-module.exports = function (app, options, state, putRegistrar) {
+export type Message = {
+  path: string
+  venusName: string
+  instanceName: string
+  senderName: string
+  value: any
+  text?: string
+  fluidType?: number
+  temperatureType?: number
+}
+
+type VenusToSignalKMapping = {
+    path: ((m: Message) => string|undefined) | string
+    requiresInstance?: boolean
+    units?: string
+    conversion?: (value: any, path:string,forInverter?: boolean) => any
+    sendNulls?: boolean,
+    meta?: any | ((m: Message) => any),
+    putSupport?: (m: Message) => any
+}
+
+type VenusToSignalKMappings = {
+  [key: string]: VenusToSignalKMapping | VenusToSignalKMapping[]
+}
+
+module.exports = function (app: any, options: any, state: any, putRegistrar: any) {
   const debug = app && app.debug ? app.debug.extend('venusToDeltas') : () => {}
 
   state.knownPaths = []
   state.knownSenders = []
   state.sentModeMeta = false
   state.loggedUnknowns = []
-  
-  const venusToSignalKMapping = {
+
+  const venusToSignalKMapping: VenusToSignalKMappings = {
     '/CustomName': [
       {
         path: m => {
@@ -232,7 +257,7 @@ module.exports = function (app, options, state, putRegistrar) {
       },
       {
         path: m => {
-          let propName = getStatePropName(m)
+          const propName = getStatePropName(m)
           if ( propName ) {
             return makePath(m, `${m.instanceName}.${propName}Number`)
           }
@@ -278,17 +303,17 @@ module.exports = function (app, options, state, putRegistrar) {
           return makePath(m, `${m.instanceName}.mode`)
         },
         conversion: convertMode,
-        putSupport: (m) => {
+        putSupport: (m: Message) => {
           if ( m.senderName.startsWith('com.victronenergy.vebus') ) {
             return {
               conversion: convertVeBusModeString,
-              confirmChange: (value, input) => {
+              confirmChange: (value: any, input: any) => {
                 return convertVeBusMode(input) === value
               }
             }
           }
         },
-        meta: (m) => {
+        meta: (m:Message) => {
           if ( m.senderName.startsWith('com.victronenergy.vebus') ) {
             return modeMeta
           }
@@ -299,7 +324,7 @@ module.exports = function (app, options, state, putRegistrar) {
           return makePath(m, `${m.instanceName}.modeNumber`)
         },
         putSupport: (m) => { return {} },
-        meta: (m) => {
+        meta: (m:Message) => {
           if ( m.senderName.startsWith('com.victronenergy.vebus') ) {
             return modeNumberMeta
           }
@@ -308,14 +333,14 @@ module.exports = function (app, options, state, putRegistrar) {
       {
         path: m => {
           return m.senderName.startsWith('com.victronenergy.solarcharger') ?
-            makePath(m, `${m.instanceName}.modeSwitch.state`) : null
+            makePath(m, `${m.instanceName}.modeSwitch.state`) : undefined
         },
         conversion: m => {
           return m.value === 1 ? 1 : 0
         },
         putSupport: (m) => {
           return {
-            conversion: value => { return value === 1 || value === 'on' ? 1 : 0 }
+            conversion: (value: any) => { return value === 1 || value === 'on' ? 1 : 0 }
           }
         },
         meta: {
@@ -608,7 +633,7 @@ module.exports = function (app, options, state, putRegistrar) {
       },
       putSupport: (m) => {
         return {
-          putPath: m => '/Ac/Control/IgnoreAcIn1'
+          putPath: (_m:Message) => '/Ac/Control/IgnoreAcIn1'
         }
       }
     },
@@ -748,7 +773,7 @@ module.exports = function (app, options, state, putRegistrar) {
       },
       putSupport: (m) => {
         return {
-          conversion: value => { return value === 1 || value == true || value === 'on' ? 1 : 0 }
+          conversion: (value:any) => { return value === 1 || value == true || value === 'on' ? 1 : 0 }
         }
       },
       requiresInstance: false
@@ -757,7 +782,7 @@ module.exports = function (app, options, state, putRegistrar) {
       path: (options.relayPath1 || 'electrical.switches.venus-1') + '.state',
       putSupport: (m) => {
         return {
-          conversion: value => { return value === 1 || value == true || value === 'on' ? 1 : 0 }
+          conversion: (value:any) => { return value === 1 || value == true || value === 'on' ? 1 : 0 }
         }
       },
       requiresInstance: false
@@ -874,7 +899,7 @@ module.exports = function (app, options, state, putRegistrar) {
       },
       putSupport: (m) => {
         return {
-          conversion: value => { return value === 1 || value === true ? 1 : 0 }
+          conversion: (value:any) => { return value === 1 || value === true ? 1 : 0 }
         }
       }
     },
@@ -884,7 +909,7 @@ module.exports = function (app, options, state, putRegistrar) {
       },
       putSupport: (m) => {
         return {
-          conversion: value => { return value === 1 || value === true ? 1 : 0 }
+          conversion: (value:any) => { return value === 1 || value === true ? 1 : 0 }
         }
       }
     },
@@ -914,7 +939,7 @@ module.exports = function (app, options, state, putRegistrar) {
       },
       putSupport: (m) => {
         return {
-          conversion: value => { return value === 1 || value === true ? 1 : 0 }
+          conversion: (value:any) => { return value === 1 || value === true ? 1 : 0 }
         }
       }
     },
@@ -924,7 +949,7 @@ module.exports = function (app, options, state, putRegistrar) {
       },
       putSupport: (m) => {
         return {
-          conversion: value => { return value === 1 || value === true ? 1 : 0 }
+          conversion: (value:any) => { return value === 1 || value === true ? 1 : 0 }
         }
       }
     },
@@ -934,7 +959,7 @@ module.exports = function (app, options, state, putRegistrar) {
       },
       putSupport: (m) => {
         return {
-          conversion: value => { return value === 1 || value === true ? 1 : 0 }
+          conversion: (value:any) => { return value === 1 || value === true ? 1 : 0 }
         }
       }
     },
@@ -980,7 +1005,7 @@ module.exports = function (app, options, state, putRegistrar) {
       conversion: msg => { return msg.value == 1 ? true : false },
       putSupport: (m) => {
         return {
-          conversion: value => { return value === 1 || value === true ? 1 : 0 }
+          conversion: (value:any) => { return value === 1 || value === true ? 1 : 0 }
         }
       },
       units: 'bool'
@@ -1006,7 +1031,7 @@ module.exports = function (app, options, state, putRegistrar) {
       conversion: msg => { return msg.value == 1 ? true : false },
       putSupport: (m) => {
         return {
-          conversion: value => { return value === 1 || value === true ? 1 : 0 }
+          conversion: (value:any) => { return value === 1 || value === true ? 1 : 0 }
         }
       },
       units: 'bool'
@@ -1057,7 +1082,7 @@ module.exports = function (app, options, state, putRegistrar) {
       */
   }
 
-  const digitalInputsMappings = {
+  const digitalInputsMappings:VenusToSignalKMappings = {
     '/Count': {
       path: m => { return `electrical.venus-input.${m.instanceName}.count` }
     },
@@ -1089,24 +1114,24 @@ module.exports = function (app, options, state, putRegistrar) {
   }
 
   // make all mappings arrays
-  forIn(venusToSignalKMapping, (value, key) => {
-    if (!isArray(value)) {
+  forIn(venusToSignalKMapping, (value:VenusToSignalKMapping|VenusToSignalKMapping[], key:string) => {
+    if (!Array.isArray(value)) {
       venusToSignalKMapping[key] = [value]
     }
   })
-  forIn(digitalInputsMappings, (value, key) => {
-    if (!isArray(value)) {
+  forIn(digitalInputsMappings, (value:VenusToSignalKMapping|VenusToSignalKMapping[], key:string) => {
+    if (!Array.isArray(value)) {
       digitalInputsMappings[key] = [value]
     }
   })
 
-  function toDelta (messages) {
-    var deltas = []
+  function toDelta (messages:Message[]) {
+    const deltas:any[] = []
 
     messages.forEach(m => {
       debug('%j', m)
       if (m.path.startsWith('/Alarms')) {
-        let delta  = getAlarmDelta(app, m)
+        const delta  = getAlarmDelta(app, m)
         if ( delta ) {
           deltas.push(delta)
         }
@@ -1125,12 +1150,12 @@ module.exports = function (app, options, state, putRegistrar) {
         return
       }
 
-      let mappings
+      let mappings: VenusToSignalKMapping[]
 
       if ( m.senderName.startsWith('com.victronenergy.digitalinput') ) {
-        mappings = digitalInputsMappings[m.path] ? digitalInputsMappings[m.path] : []
+        mappings = (digitalInputsMappings[m.path] ? digitalInputsMappings[m.path] : []) as VenusToSignalKMapping[]
       } else {
-        mappings = venusToSignalKMapping[m.path] || []
+        mappings = (venusToSignalKMapping[m.path] || []) as VenusToSignalKMapping[]
       }
 
       /*
@@ -1156,14 +1181,14 @@ module.exports = function (app, options, state, putRegistrar) {
           return
         }
 
-        var thePath = isFunction(mapping.path) ? mapping.path(m) : mapping.path
+        const thePath = typeof mapping.path === 'function' ? mapping.path(m) : mapping.path
 
-        if ( thePath === null ) {
+        if ( thePath === undefined ) {
           return
         }
 
         if (mapping.conversion && !isArray(theValue) && theValue != null) {
-          theValue = mapping.conversion(m, thePath)
+          theValue = mapping.conversion(m, thePath, false)
         }
 
         if (isArray(theValue)) {
@@ -1183,13 +1208,13 @@ module.exports = function (app, options, state, putRegistrar) {
           {
             state.knownPaths.push(thePath)
             if ( app && app.supportsMetaDeltas ) {
-              let meta = {}
+              let meta:any = {}
               if ( mapping.units ) {
                 meta.units = mapping.units
               }
               
               if ( mapping.meta ) {
-                let mappingMeta = typeof mapping.meta === 'function' ?
+                const mappingMeta = typeof mapping.meta === 'function' ?
                     mapping.meta(m) : mapping.meta
                 if ( mappingMeta ) {
                   meta = { ...meta, ...mappingMeta }
@@ -1197,7 +1222,7 @@ module.exports = function (app, options, state, putRegistrar) {
               }
               
               if ( Object.keys(meta).length > 0 )  {
-                let delta = {updates: [
+                const delta = {updates: [
                   {
                     meta: [{ path: thePath, value: meta }]
                   }
@@ -1206,7 +1231,7 @@ module.exports = function (app, options, state, putRegistrar) {
               }
             }
 
-            let putSupport = mapping.putSupport && mapping.putSupport(m)
+            const putSupport = mapping.putSupport && mapping.putSupport(m)
             if ( putSupport && putRegistrar ) {
               let putPath
               if ( putSupport.putPath ) {
@@ -1218,7 +1243,7 @@ module.exports = function (app, options, state, putRegistrar) {
             }
           }
           if ( !options.blacklist || options.blacklist.indexOf(thePath) == -1 ) {
-            var delta = makeDelta(app, m, thePath, theValue)
+            const delta = makeDelta(app, m, thePath, theValue)
 
             deltas.push(delta)
           }
@@ -1238,12 +1263,12 @@ module.exports = function (app, options, state, putRegistrar) {
     return state.knownSenders
   }
 
-  function hasCustomName(service) {
+  function hasCustomName(service:string) {
     return servicesWithCustomNames.indexOf(service) != -1
   }
 
-  function makePath (msg, path, vebusIsInverterValue) {
-    var type
+  function makePath (msg:Message, path?:string, vebusIsInverterValue?:boolean) {
+    let type
 
     if (msg.senderName.startsWith('com.victronenergy.battery')) {
       type = 'batteries'
@@ -1256,46 +1281,46 @@ module.exports = function (app, options, state, putRegistrar) {
     } else if (msg.senderName.startsWith('com.victronenergy.inverter')) {
       type = 'inverters'
     } else if (msg.senderName.startsWith('com.victronenergy.vebus')) {
-      type = isUndefined(vebusIsInverterValue) ? 'chargers' : 'inverters'
+      type = vebusIsInverterValue === undefined || vebusIsInverterValue === false ? 'chargers' : 'inverters'
     } else if (msg.senderName.startsWith('com.victronenergy.tank')) {
       type = 'tanks'
     } else if ( msg.senderName.startsWith('com.victronenergy.system') ||
                 msg.senderName.startsWith('com.victronenergy.settings') ) {
       type = msg.venusName
     } else {
-      let parts = msg.senderName.split('.')
+      const parts = msg.senderName.split('.')
       if ( parts.length > 2 ) {
         type = parts[2]
       } else {
         debug('no path for %s', msg.senderName)
-        return null
+        return undefined
       }
     }
     return 'electrical.' + type + '.' + (path || '')
   }
 
-  function getAlarmDelta (app, msg) {
+  function getAlarmDelta (app:any, msg:Message) {
     if ( msg.senderName.startsWith('com.victronenergy.tank') ) {
       //ignore for now
       return
     }
     
-    var name = msg.path.substring(1).replace(/\//g, '.') // alarms.LowVoltage
+    let name = msg.path.substring(1).replace(/\//g, '.') // alarms.LowVoltage
     name = name.substring(name.indexOf('.') + 1) // LowVoltate
     name = name.charAt(0).toLowerCase() + name.substring(1) // lowVoltate
 
 
-    var path = makePath(msg, `${msg.instanceName}.${name}`)
+    let path = makePath(msg, `${msg.instanceName}.${name}`)
     if ( !path ) {
       path = `electrical.venus.${msg.instanceName}.${name}`
     }
-    var npath = 'notifications.' + path
-    var value = convertAlarmToNotification(msg, npath)
+    const npath = 'notifications.' + path
+    const value = convertAlarmToNotification(msg, npath)
     return value ? makeDelta(app, msg, npath, value) : null
   }
 
-  function convertErrorToNotification (m, path) {
-    var value
+  function convertErrorToNotification (m:Message, path:string) {
+    let value
 
     if ( !app || !app.getSelfPath ) {
       return
@@ -1308,7 +1333,7 @@ module.exports = function (app, options, state, putRegistrar) {
         value = { state: 'normal', message: 'No Error' }
       }
     } else {
-      var msg
+      let msg
       if (m.senderName.startsWith('com.victronenergy.solarcharger')) {
         msg = solarErrorCodeMap[m.value]
       }
@@ -1332,9 +1357,9 @@ module.exports = function (app, options, state, putRegistrar) {
     return value
   }
 
-  function convertAlarmToNotification (m, path) {
-    var value
-    var message
+  function convertAlarmToNotification (m:Message, path:string) {
+    let value
+    let message
 
     if ( !app || !app.getSelfPath ) {
       return
@@ -1369,11 +1394,11 @@ module.exports = function (app, options, state, putRegistrar) {
   return { toDelta, getKnownPaths, hasCustomName, getKnownSenders }
 }
 
-function percentToRatio (msg) {
+function percentToRatio (msg:Message) {
   return msg.value / 100.0
 }
 
-const stateMaps = {
+const stateMaps: {[key: string]: {[key: number]: string}} = {
   'com.victronenergy.solarcharger': {
     0: 'not charging',
     2: 'other',
@@ -1457,7 +1482,7 @@ const stateMaps = {
   },
 }
 
-const systemStateMap = {
+const systemStateMap: {[key: number]: string} = {
   0: 'off',
   1: 'low power',
   2: 'fault',
@@ -1477,38 +1502,38 @@ const systemStateMap = {
   259: 'scheduled recharge'
 }
 
-const mppOperationModeMap = {
+const mppOperationModeMap: {[key: number]: string} = {
   0: 'off',
   1: 'voltage/current limited',
   2: 'mppt active',
   255: 'not available'
 }
 
-function senderNamePrefix (senderName) {
+function senderNamePrefix (senderName:string) {
   return senderName.substring(0, senderName.lastIndexOf('.'))
 }
 
-function isVEBus (msg) {
+function isVEBus (msg:Message) {
   return senderNamePrefix(msg.senderName) === 'com.victronenergy.vebus'
 }
 
-function convertSystemState(msg) {
+function convertSystemState(msg:Message) {
   return systemStateMap[Number(msg.value)] || String(msg.value)
 }
-function convertMppOperationMode (msg) {
+function convertMppOperationMode (msg:Message) {
   return mppOperationModeMap[Number(msg.value)] || String(msg.value)
 }
 
-function convertState (msg, forInverter) {
-  var map = stateMaps[senderNamePrefix(msg.senderName)]
+function convertState (msg:Message, path?:string, forInverter?: boolean) {
+  const map = stateMaps[senderNamePrefix(msg.senderName)]
   return (map && map[Number(msg.value)]) || String(msg.value)
 }
 
-function convertStateForVEBusInverter (msg) {
-  return convertState(msg, true)
+function convertStateForVEBusInverter (msg:Message) {
+  return convertState(msg, undefined, true)
 }
 
-const convertRunningByConditionMap = {
+const convertRunningByConditionMap: {[key: number]: string} = {
   0: 'stopped',
   1: 'manual',
   2: 'test run',
@@ -1521,12 +1546,12 @@ const convertRunningByConditionMap = {
   9: 'inverter overload'
 }
 
-function convertRunningByConditionCode(msg) {
+function convertRunningByConditionCode(msg:Message) {
   return convertRunningByConditionMap[msg.value] || String(msg.value)
 }
 
 
-const convertRuuivStatusMap = {
+const convertRuuivStatusMap: {[key: number]: string} = {
   0: 'ok',
   1: 'disconnected',
   2: 'short circuited',
@@ -1534,11 +1559,11 @@ const convertRuuivStatusMap = {
   4: 'unknown'
 }
 
-function convertRuuivStatus(msg) {
+function convertRuuivStatus(msg:Message) {
   return convertRuuivStatusMap[msg.value] || String(msg.value)
 }
 
-const servicesWithCustomNames = [
+const servicesWithCustomNames: string[] = [
   'com.victronenergy.battery',
   'com.victronenergy.dcload',
   'com.victronenergy.solarcharger',
@@ -1547,7 +1572,7 @@ const servicesWithCustomNames = [
   'com.victronenergy.digitalinput'
 ]
 
-const modeMaps = {
+const modeMaps: {[key: string]: {[key: number]: string}} = {
   'com.victronenergy.vebus': {
     1: 'charger only',
     2: 'inverter only',
@@ -1587,7 +1612,7 @@ const modeMaps = {
   }
 }
 
-const statePropName = {
+const statePropName: {[key: string]: string} = {
   'com.victronenergy.vebus': 'chargingMode',
   'com.victronenergy.charger': 'chargingMode',
   'com.victronenergy.solarcharger': 'controllerMode',
@@ -1598,39 +1623,39 @@ const statePropName = {
   'com.victronenergy.system': 'state'
 }
 
-function getStatePropName (msg) {
+function getStatePropName (msg:Message) {
   return statePropName[senderNamePrefix(msg.senderName)] || 'state'
 }
 
-function convertVeBusModeString(value) {
-  var map = modeMaps['com.victronenergy.vebus']
-  let entry = Object.entries(map).find(entry => { return entry[1] === value })
+function convertVeBusModeString(value:string) {
+  const map = modeMaps['com.victronenergy.vebus']
+  const entry = Object.entries(map).find(entry => { return entry[1] === value })
   return entry !== undefined ? Number(entry[0]) : undefined
 }
 
-function convertVeBusMode(value) {
-  var modeMap = modeMaps['com.victronenergy.vebus']
+function convertVeBusMode(value:any) {
+  const modeMap = modeMaps['com.victronenergy.vebus']
   return (modeMap && modeMap[Number(value)]) || 'unknown'
 }
 
 
-function convertMode (msg) {
-  var modeMap = modeMaps[senderNamePrefix(msg.senderName)]
+function convertMode (msg:Message) {
+  const modeMap = modeMaps[senderNamePrefix(msg.senderName)]
   return (modeMap && modeMap[Number(msg.value)]) || 'unknown'
 }
 
-const acinSourceMap = {
+const acinSourceMap: {[key: number]: string} = {
   1: 'grid',
   2: 'genset',
   3: 'shore',
   240: 'battery'
 }
 
-function convertSource(msg) {
+function convertSource(msg:Message) {
   return acinSourceMap[Number(msg.value)] || 'unknown'
 }
 
-const solarErrorCodeMap = {
+const solarErrorCodeMap: {[key: number]: string} = {
   0: 'No error',
   1: 'Battery temperature too high',
   2: 'Battery voltage too high',
@@ -1650,23 +1675,23 @@ const solarErrorCodeMap = {
   34: 'Input current too high'
 }
 
-function kWhToJoules (m) {
+function kWhToJoules (m:Message) {
   return Number(m.value) * 3600000
 }
 
-function ahToCoulomb (m) {
+function ahToCoulomb (m:Message) {
   return Number(m.value) * 3600
 }
 
-function celsiusToKelvin (m) {
+function celsiusToKelvin (m:Message) {
   return Number(m.value) + 273.15
 }
 
-function degsToRad (m) {
+function degsToRad (m:Message) {
   return Number(m.value) * (Math.PI / 180.0)
 }
 
-const fluidTypeMapping = {
+const fluidTypeMapping: {[key: number]: string} = {
   0: 'fuel',
   1: 'freshWater',
   2: 'wasteWater',
@@ -1675,17 +1700,17 @@ const fluidTypeMapping = {
   5: 'blackWater'
 }
 
-function getFluidType (typeId) {
+function getFluidType (typeId:number) {
   return fluidTypeMapping[typeId] || 'unknown'
 }
 
-function getTemperaturePath (m, options, name='temperature') {
+function getTemperaturePath (m:Message, options: any, name='temperature') {
   if ( options.temperatureMappings ) {
-    const mapping = options.temperatureMappings.find(mapping => mapping.venusId == m.instanceName)
+    const mapping = options.temperatureMappings.find((mapping:any) => mapping.venusId == m.instanceName)
     if ( mapping ) {
       let path = mapping.signalkPath
       if ( name !== 'temperature' ) {
-        let parts = path.split('.')
+        const parts = path.split('.')
         path = parts.slice(0, parts.length-1).join('.') + `.${name}`
       }
       return path
@@ -1699,7 +1724,7 @@ function getTemperaturePath (m, options, name='temperature') {
   }
 }
 
-const inputStateMapping = {
+const inputStateMapping: {[key: number]: string} = {
   0: 'Low',
   1: 'High',
   2: 'Off',
@@ -1714,12 +1739,12 @@ const inputStateMapping = {
   11: 'Stopped'
 }
 
-function mapInputState(msg) {
-  return inputStateMapping[msg.value] || 'unknown'
+function mapInputState(msg:Message) {
+  return inputStateMapping[Number(msg.value)] || 'unknown'
 }
 
 
-function makeDelta (app, m, path, value) {
+function makeDelta (app: any, m: Message, path: string, value: any) {
   const delta = {
     updates: [
       {

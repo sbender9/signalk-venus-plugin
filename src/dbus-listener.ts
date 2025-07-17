@@ -2,22 +2,22 @@ const dbus = require('dbus-native')
 const _ = require('lodash')
 const camelcase = require('camelcase')
 
-module.exports = function (app, messageCallback, address, plugin, pollInterval) {
+module.exports = function (app:any, messageCallback:any, address:string, plugin:any, pollInterval:number) {
   return new Promise((resolve, reject) => {
     const setPluginStatus = app.setPluginStatus
-        ? (msg) => {
+        ? (msg:string) => {
           app.setPluginStatus(msg)
         }
           : () => {}
     const setPluginError = app.setPluginError
-        ? (msg) => {
+        ? (msg:string) => {
           app.setPluginError(msg)
         }
           : () => {}
-    let msg = `Connecting ${address}`
+    const msg = `Connecting ${address}`
     setPluginStatus(msg)
     app.debug(msg)
-    var bus
+    let bus: any
     if (address) {
       bus = dbus.createClient({
         busAddress: address,
@@ -30,7 +30,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
     }
 
     if (!bus) {
-      let msg = 'Could not connect to the D-Bus'
+      const msg = 'Could not connect to the D-Bus'
       setPluginError(msg)
       throw new Error(msg)
     }
@@ -39,13 +39,13 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
     // name owner (:0132 for example) is the key. Properties:
     // .name            for example: com.victronenergy.battery.ttyO1
     // .deviceInstace   for example: 0
-    var services = {}
+    const services: {[key: string]: any} = {}
 
     // get info on all existing D-Bus services at startup
-    bus.listNames((props, args) => {
+    bus.listNames((_props: any, args: string[]) => {
       args.forEach(name => {
         if (name.startsWith('com.victronenergy')) {
-          bus.getNameOwner(name, (props, args) => {
+          bus.getNameOwner(name, (_props: any, args: string) => {
             initService(args, name)
           })
         }
@@ -53,13 +53,13 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
     })
 
     function pollDbus () {
-      _.values(services).forEach(service => {
+      _.values(services).forEach((service: any) => {
         requestRoot(service)
       })
     }
 
-    function initService (owner, name) {
-      var service = { name: name }
+    function initService (owner: string, name: string) {
+      const service = { name: name }
       services[owner] = service
 
       app.debug(`${name} is sender ${owner}`)
@@ -72,7 +72,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
           interface: 'com.victronenergy.BusItem',
           member: 'GetValue'
         },
-        function (err, res) {
+        function (err: any, res: any) {
           if (!err && res[1][0] === 'signalk-virtual-device') {
             app.debug(`Ignoring virtual device ${name} created by Signal K`)
             delete services[owner]
@@ -87,7 +87,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
               interface: 'com.victronenergy.BusItem',
               member: 'GetValue'
             },
-            function (err, res) {
+            function (err: any, res: any) {
               if (err) {
                 // There are several dbus services that don't have the /DeviceInstance
                 // path. They are services that are not interesting for signalk, like
@@ -112,9 +112,9 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
                     interface: 'com.victronenergy.BusItem',
                     member: 'GetValue'
                   },
-                  function (err, res) {
+                  function (err: any, res: any) {
                     if (!err) {
-                      let customName = res[1][0]
+                      const customName = res[1][0]
                       app.debug('got custom name %s for %s', customName, name)
                       services[owner].customName = camelcase(customName)
                     } else {
@@ -131,7 +131,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       )
     }
 
-    function requestRoot (service) {
+    function requestRoot (service: any) {
       // app.debug(`getValue / ${service.name}`)
       bus.invoke(
         {
@@ -140,7 +140,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
           interface: 'com.victronenergy.BusItem',
           member: 'GetValue'
         },
-        function (err, res) {
+        function (err: any, res: any) {
           if (err) {
             // Some services don't support requesting the root path. They are not
             // interesting to signalk, see above in the comments on /DeviceInstance
@@ -148,15 +148,15 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
               `warning: error during GetValue on / for ${service.name} ${err}`
             )
           } else {
-            var data = {}
+            const data:any = {}
 
             if ( res[0][0].type == 'a' ) {
-              res[1][0].forEach(kp => {
+              res[1][0].forEach((kp: any) => {
                 data[kp[0]] = kp[1][1][0]
               })
             } else {
               //for some reason virtual devices come in this way
-              res.forEach(kp => {
+              res.forEach((kp: any) => {
                 data[kp[0]] = kp[1][1][0]
               })
             }
@@ -173,7 +173,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
 
             // app.debug(`${service.name} ${JSON.stringify(data)}`)
 
-            let deviceInstance
+            let deviceInstance: number | undefined
 
             /*
             //FIXME: paths that don't require instance??
@@ -183,7 +183,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
             */
             
             if ( plugin.options.instanceMappings ) {
-              const mapping = plugin.options.instanceMappings.find(mapping => {
+              const mapping = plugin.options.instanceMappings.find((mapping: any) => {
                 return service.name.startsWith(mapping.type) && mapping.venusId == service.deviceInstance
               })
               if ( !_.isUndefined(mapping) ) {
@@ -200,8 +200,8 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
                 deviceInstance = service.deviceInstance
             }
             
-            var messages = []
-            _.keys(data).forEach(path => {
+            const messages: any[] = []
+            _.keys(data).forEach((path: string) => {
               messages.push({
                 path: '/' + path,
                 senderName: service.name,
@@ -217,7 +217,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       )
     }
 
-    function signal_receive (m) {
+    function signal_receive (m:any) {
       if (
         m.interface === 'com.victronenergy.BusItem' 
           && (m.member === 'PropertiesChanged' || m.member === 'ItemsChanged')
@@ -230,11 +230,11 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
         name_owner_changed(m)
       } 
     }
-    
-    function name_owner_changed (m) {
-      name = m.body[0]
-      old_owner = m.body[1]
-      new_owner = m.body[2]
+
+    function name_owner_changed (m:any) {
+      const name = m.body[0]
+      const old_owner = m.body[1]
+      const new_owner = m.body[2]
 
       app.debug('name owner change: %j', m)
 
@@ -245,8 +245,8 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       }
     }
 
-    function setValueAndText(data, res) {
-      data.forEach(entry => {
+    function setValueAndText(data:any, res:any) {
+      data.forEach((entry:any) => {
         if (entry[0] == 'Text') {
           res.text =  entry[1][1][0]
         } else if (entry[0] == 'Value') {
@@ -256,7 +256,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       return res
     }
 
-    function properties_changed (m) {
+    function properties_changed (m:any) {
       // Message contents:
       // { serial: 5192,
       //   path: '/Dc/0/Power',
@@ -269,9 +269,9 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       //   body: [ [ [Object], [Object] ] ]}
 
       const sender = m.sender
-      var service = services[sender]
+      const service = services[sender]
 
-      if (!service || !service.name || typeof service.deviceInstance === 'undefinded' ) {
+      if (!service || !service.name || service.deviceInstance === undefined ) {
         // See comment above explaining why some services don't have the
         // /DeviceInstance path
         // app.debug(`warning: unknown service; ${m.sender}`)
@@ -279,13 +279,13 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       }
 
       const senderName = service.name
-      let instanceName
+      let instanceName:string|undefined
 
       if ( plugin.options.instanceMappings ) {
-        const mapping = plugin.options.instanceMappings.find(mapping => {
+        const mapping = plugin.options.instanceMappings.find((mapping: any) => {
           return service.name.startsWith(mapping.type) && mapping.venusId == service.deviceInstance
         })
-        if ( !_.isUndefined(mapping) ) {
+        if ( mapping !== undefined ) {
           instanceName = mapping.signalkId
         }
       }
@@ -303,7 +303,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
 
       if ( m.member === 'ItemsChanged' ) {
         entries = m.body[0]
-          .map(item => {
+          .map((item: any) => {
             return setValueAndText(item[1], { path: item[0] })
           })
       } else if ( m.member === 'PropertiesChanged' ) {
@@ -311,7 +311,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       }
 
 
-      entries.forEach(msg => {
+      entries.forEach((msg: any) => {
         msg.instanceName = instanceName
         msg.senderName = senderName
       })
@@ -319,7 +319,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       messageCallback(entries)
     }
 
-    function setValue (destination, path, value) {
+    function setValue (destination:string, path:string, value:number) {
       app.debug(`setValue: ${destination} ${path} = ${value}`)
       bus.invoke(
         {
@@ -333,7 +333,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
           ],
           signature: 'v'
         },
-        function (err, res) {
+        function (err: any, res: any) {
           if (err) {
             app.error(err)
           }
@@ -359,7 +359,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
 
     bus.connection.on('message', signal_receive)
 
-    bus.connection.on('error', error => {
+    bus.connection.on('error', (error: any) => {
       setPluginError(error.message)
       app.error(error.message)
       reject(error)
@@ -375,12 +375,12 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
 
     bus.addMatch(
       "type='signal',interface='com.victronenergy.BusItem',member='PropertiesChanged'",
-      d => {}
+      (d: any) => {}
     )
     bus.addMatch(
       "type='signal',interface='com.victronenergy.BusItem',member='ItemsChanged'",
-      d => {}
+      (d: any) => {}
     )
-    bus.addMatch("type='signal',member='NameOwnerChanged'", d => {})
+    bus.addMatch("type='signal',member='NameOwnerChanged'", (d: any) => {})
   })
 }
