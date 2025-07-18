@@ -1,17 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-const PLUGIN_ID = 'venus'
-const PLUGIN_NAME = 'Victron Venus Plugin'
 
+import { ServerAPI, Plugin, Delta, Update, PathValue, SourceRef, Path, hasValues} from '@signalk/server-api'
 import camelcase from 'camelcase'
 import promiseRetry from 'promise-retry'
 import mqtt, { MqttClient } from 'mqtt'
 import createDbusListener from './dbus-listener'
-import venusToDeltas from './venusToDeltas'
+import { VenusToSignalK } from './venusToDeltas'
 import { Message } from './venusToDeltas'
 
-//const vrmApiUrl = 'https://vrmapi.victronenergy.com'
-//const gpsDestination = 'com.victronenergy.gps'
+const PLUGIN_ID = 'venus'
+const PLUGIN_NAME = 'Victron Venus Plugin'
 
 module.exports = function (app: any) {
   const plugin: any = {}
@@ -26,6 +25,7 @@ module.exports = function (app: any) {
   let pollInterval: NodeJS.Timeout | null = null
   let keepAlive: NodeJS.Timeout | null = null
   let seenMQTTTopics: string[] = []
+  let venusToSignalK: VenusToSignalK | undefined
 
   plugin.id = PLUGIN_ID
   plugin.name = PLUGIN_NAME
@@ -35,19 +35,19 @@ module.exports = function (app: any) {
   plugin.schema = () => {
     let knowPaths
     let knownSenders = ['no known senders yet']
-    if (plugin.getKnownSenders) {
-      const ks = plugin.getKnownSenders()
+    if (venusToSignalK) {
+      const ks = venusToSignalK.getKnownSenders()
       if (ks && ks.length > 0) {
         knownSenders = ks
       }
     }
-    if (plugin.getKnownPaths) {
-      knowPaths = plugin.getKnownPaths().sort()
+    if (venusToSignalK) {
+      knowPaths = venusToSignalK.getKnownPaths().sort()
       if (!knowPaths || knowPaths.length === 0) {
         knowPaths = ['no known paths yet']
       }
     } else {
-      const options = app.readPluginOptions()
+      const options = app.readPluginOptions() as any
       knowPaths =
         options.configuration && options.configuration.blacklist
           ? options.configuration.blacklist
@@ -328,32 +328,28 @@ module.exports = function (app: any) {
     or the plugin is enabled from ui on a running server).
   */
   plugin.start = function (options: any) {
-    const { toDelta, getKnownPaths, hasCustomName, getKnownSenders } =
-      venusToDeltas(
-        app,
-        options,
-        {},
-        (
-          path: string,
-          m: Message,
-          converter: (input: any) => any,
-          confirmChange: (oldValue: any, newValue: any) => boolean,
-          putPath: string
-        ) => {
-          app.registerActionHandler(
-            'vessels.self',
-            path,
-            getActionHandler(m, converter, confirmChange, putPath)
-          )
-        }
-      )
+    venusToSignalK = new VenusToSignalK(
+      app,
+      options,
+      {},
+      (
+        path: string,
+        m: Message,
+        converter: (input: any) => any,
+        confirmChange: (oldValue: any, newValue: any) => boolean,
+        putPath: string
+      ) => {
+        app.registerActionHandler(
+          'vessels.self',
+          path,
+          getActionHandler(m, converter, confirmChange, putPath)
+        )
+      }
+    )
 
     pluginStarted = true
     plugin.options = options
     plugin.onError = () => {}
-    plugin.getKnownPaths = getKnownPaths
-    plugin.hasCustomName = hasCustomName
-    plugin.getKnownSenders = getKnownSenders
 
     if (options.relayDisplayName0 && options.relayDisplayName0.length) {
       sendMeta(options.relayPath0, { displayName: options.relayDisplayName0 })
@@ -373,9 +369,9 @@ module.exports = function (app: any) {
       options.installType === 'mqtts' ||
       options.installType === 'vrm'
     ) {
-      startMQTT(options, toDelta)
+      startMQTT(options, venusToSignalK.toDelta.bind(venusToSignalK))
     } else {
-      this.connect(options, toDelta)
+      this.connect(options, venusToSignalK.toDelta.bind(venusToSignalK))
     }
   }
 
@@ -663,7 +659,8 @@ module.exports = function (app: any) {
       ) {
         if (
           customNames[senderName] === undefined &&
-          plugin.hasCustomName(`com.victronenergy.${type}`)
+          venusToSignalK !== undefined &&
+          venusToSignalK.hasCustomName(`com.victronenergy.${type}`)
         ) {
           if (parts[parts.length - 1] === 'CustomName') {
             app.debug('got CustomName "%s" for %s', message.value, senderName)

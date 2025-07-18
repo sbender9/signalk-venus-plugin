@@ -2,7 +2,7 @@
   "name": "signalk-venus-plugin",
   "version": "1.43.1",
   "description": "Victron Venus-SignalK Integration",
-  "main": "index.js",
+  "main": "dist/index.js",
   "dependencies": {
     "camelcase": "^6.3.0",
     "dbus-native": "^0.2.5",
@@ -14,8 +14,10 @@
   },
   "devDependencies": {
     "@signalk/github-create-release": "^1.2.1",
+    "@signalk/server-api": "^2.7.1",
     "@signalk/signalk-schema": "0.0.1-12",
     "@tsconfig/node20": "^20.1.6",
+    "@types/debug": "^4.1.12",
     "@types/promise-retry": "^1.1.6",
     "chai": "^4.1.2",
     "chai-things": "0.2",
