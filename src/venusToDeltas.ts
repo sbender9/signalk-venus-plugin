@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import Debug from 'debug'
-import { ServerAPI, Delta, SourceRef, Path, hasValues} from '@signalk/server-api'
+import { ServerAPI, Delta, SourceRef, Path } from '@signalk/server-api'
 
 import {
   getMappings,
@@ -272,7 +272,11 @@ export class VenusToSignalK {
   }
 }
 
-export function convertErrorToNotification(app: ServerAPI, m: Message, path: string) {
+export function convertErrorToNotification(
+  app: ServerAPI,
+  m: Message,
+  path: string
+) {
   let value
 
   const existing = app.getSelfPath(path)
@@ -667,7 +671,12 @@ export function mapInputState(msg: Message) {
   return inputStateMapping[Number(msg.value)] || 'unknown'
 }
 
-function makeDelta(app: ServerAPI, m: Message, path: string, value: any): Delta {
+function makeDelta(
+  app: ServerAPI,
+  m: Message,
+  path: string,
+  value: any
+): Delta {
   const delta: Delta = {
     updates: [
       {

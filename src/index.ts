@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-
-import { ServerAPI, Plugin, Delta, Update, PathValue, SourceRef, Path, hasValues} from '@signalk/server-api'
+//import { ServerAPI, Plugin, Delta, Update, PathValue, SourceRef, Path, hasValues} from '@signalk/server-api'
 import camelcase from 'camelcase'
 import promiseRetry from 'promise-retry'
 import mqtt, { MqttClient } from 'mqtt'
