@@ -3,3 +3,4 @@ npm-debug.log
 ios_venus.js/
 dist/
 tsconfig.tsbuildinfo
+test/*.report

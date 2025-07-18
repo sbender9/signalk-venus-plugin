@@ -270,7 +270,6 @@ export class VenusToSignalK {
   private logTestMessage(message: Message, deltas: any[]) {
     if (
       this.makeTestLog &&
-      deltas.length &&
       this.logged.indexOf(message.senderName + message.path) === -1
     ) {
       this.logged.push(message.senderName + message.path)

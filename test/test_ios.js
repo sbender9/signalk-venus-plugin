@@ -22,10 +22,18 @@ let input = [
   }
 ]
 
-require('../ios')
+require('../dist/ios')
 
 let toDelta = global.getToDelta((path) => {
-  console.log(`putRegistrar ${path}`)
+  //console.log(`putRegistrar ${path}`)
 })
 
-console.log(JSON.stringify(toDelta(input), null, 2))
+describe(`ios tests`, () => {
+
+  input.forEach((item) => {
+    it(`${item.path} works`, (done) => {
+      toDelta(item)
+      done()
+    })
+  })
+})

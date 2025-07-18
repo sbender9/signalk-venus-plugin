@@ -35,8 +35,6 @@
   },
   "scripts": {
     "test": "mocha --require ts-node/register",
-    "create-release": "github-create-release --owner sbender9 --repository signalk-venus-plugin",
-    "release": "git tag -d v$npm_package_version ; git tag v$npm_package_version && git push --tags && git push && npm run create-release",
     "build_ios": "webpack --mode development ./ios.js -o ios_venus.js",
     "build_prod_ios": "webpack --mode production ./ios.js -o ios_venus.js",
     "lint": "eslint --fix",
