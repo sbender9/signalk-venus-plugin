@@ -1,3 +1,5 @@
+/* eslint-env mocha */
+
 let input = [
   {
     instanceName: 0,
@@ -24,12 +26,11 @@ let input = [
 
 require('../dist/ios')
 
-let toDelta = global.getToDelta((path) => {
+let toDelta = global.getToDelta((_path) => {
   //console.log(`putRegistrar ${path}`)
 })
 
 describe(`ios tests`, () => {
-
   input.forEach((item) => {
     it(`${item.path} works`, (done) => {
       toDelta(item)

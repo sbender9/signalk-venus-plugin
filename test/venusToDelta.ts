@@ -91,10 +91,7 @@ files.forEach((item) => {
       const data = JSON.parse(line)
 
       if (data.deltas.length === 0) {
-        fs.appendFileSync(
-          reportFile,
-          `${JSON.stringify(data.message)}\n`
-        )
+        fs.appendFileSync(reportFile, `${JSON.stringify(data.message)}\n`)
       }
 
       it(`${data.message.senderName}:${data.message.path}`, (done) => {
