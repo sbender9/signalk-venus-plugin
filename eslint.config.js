@@ -5,7 +5,14 @@ const tseslint = require('typescript-eslint')
 const prettier = require('eslint-config-prettier/flat')
 
 module.exports = defineConfig([
-  globalIgnores(['**/public', '**/dist', '**/test', '**/docs', 'src/test.ts', 'ios_venus.js/']),
+  globalIgnores([
+    '**/public',
+    '**/dist',
+    '**/test',
+    '**/docs',
+    'src/test.ts',
+    'ios_venus.js/'
+  ]),
 
   // TypeScript options
   {

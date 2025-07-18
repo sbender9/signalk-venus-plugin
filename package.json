@@ -36,7 +36,7 @@
     "build_ios": "webpack --mode development ./ios.js -o ios_venus.js",
     "build_prod_ios": "webpack --mode production ./ios.js -o ios_venus.js",
     "lint": "eslint --fix",
-    "prettier": "prettier --write ./src/* ./test/*",
+    "prettier": "prettier --write .",
     "ci-lint": "eslint && prettier --check .",
     "format": "npm run prettier && npm run lint",
     "build": "tsc -b --pretty false",

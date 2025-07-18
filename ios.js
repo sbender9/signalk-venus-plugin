@@ -1,5 +1,3 @@
-
-
 const venusToDeltas = require('./venusToDeltas')
 
 //var vd = venusToDeltas({}, {usePosition:true})
@@ -7,5 +5,10 @@ const venusToDeltas = require('./venusToDeltas')
 //global.toDelta = vd.toDelta
 
 global.getToDelta = (putRegistrar) => {
-  return venusToDeltas({ supportsMetaDeltas: true }, {usePosition:true}, {}, putRegistrar).toDelta
+  return venusToDeltas(
+    { supportsMetaDeltas: true },
+    { usePosition: true },
+    {},
+    putRegistrar
+  ).toDelta
 }
