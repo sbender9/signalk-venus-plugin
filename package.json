@@ -17,20 +17,24 @@
     "@signalk/server-api": "^2.7.1",
     "@signalk/signalk-schema": "0.0.1-12",
     "@tsconfig/node20": "^20.1.6",
+    "@types/chai": "^5.2.2",
     "@types/debug": "^4.1.12",
+    "@types/mocha": "^10.0.10",
     "@types/promise-retry": "^1.1.6",
-    "chai": "^4.1.2",
+    "chai": "^4.5.0",
     "chai-things": "0.2",
     "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.1",
-    "mocha": "^4.0.1",
+    "mocha": "^11.7.1",
     "prettier-standard": "^16.4.1",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.37.0"
   },
   "scripts": {
-    "test": "mocha",
+    "test": "mocha --require ts-node/register",
     "create-release": "github-create-release --owner sbender9 --repository signalk-venus-plugin",
     "release": "git tag -d v$npm_package_version ; git tag v$npm_package_version && git push --tags && git push && npm run create-release",
     "build_ios": "webpack --mode development ./ios.js -o ios_venus.js",
@@ -41,7 +45,7 @@
     "format": "npm run prettier && npm run lint",
     "build": "tsc -b --pretty false",
     "watch": "tsc --watch --pretty false",
-    "ci-test": "npm run build && npm run ci-lint"
+    "ci-test": "npm run build && npm run ci-lint && npm test"
   },
   "keywords": [
     "signalk-node-server-plugin"

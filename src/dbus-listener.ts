@@ -3,6 +3,7 @@
 const dbus = require('dbus-native')
 const _ = require('lodash')
 const camelcase = require('camelcase')
+import { Message } from './venusToDeltas'
 
 export default function (
   app: any,
@@ -186,7 +187,7 @@ export default function (
 
             // app.debug(`${service.name} ${JSON.stringify(data)}`)
 
-            let deviceInstance: number | undefined
+            let deviceInstance: string|undefined = undefined
 
             /*
             //FIXME: paths that don't require instance??
@@ -219,18 +220,17 @@ export default function (
               } else deviceInstance = service.deviceInstance
             }
 
-            const messages: any[] = []
             _.keys(data).forEach((path: string) => {
-              messages.push({
+              const msg: Message = {
                 path: '/' + path,
                 senderName: service.name,
                 value: data[path],
-                instanceName: deviceInstance,
+                instanceName: deviceInstance!,
                 fluidType: service.fluidType,
                 temperatureType: service.temperatureType
-              })
+              }
+              messageCallback(msg)
             })
-            messageCallback(messages)
           }
         }
       )
@@ -341,7 +341,7 @@ export default function (
         msg.senderName = senderName
       })
 
-      messageCallback(entries)
+      entries.forEach(messageCallback)
     }
 
     function setValue(destination: string, path: string, value: number) {

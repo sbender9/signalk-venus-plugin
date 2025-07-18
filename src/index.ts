@@ -383,8 +383,8 @@ module.exports = function (app: any) {
         app.debug(`Dbus connection attempt ${number}`)
         return createDbusListener(
           app,
-          (venusMessages: Message[]) => {
-            toDelta(venusMessages).forEach((delta: any) => {
+          (venusMessage: Message) => {
+            toDelta(venusMessage).forEach((delta: any) => {
               app.handleMessage(PLUGIN_ID, delta)
             })
           },
@@ -746,7 +746,7 @@ module.exports = function (app: any) {
 
       //app.debug(JSON.stringify(m))
 
-      const deltas = toDelta([m])
+      const deltas = toDelta(m)
 
       if (deltas.length) {
         const anyUpdates = (deltas: any[]) =>

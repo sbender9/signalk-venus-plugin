@@ -2,6 +2,7 @@
 
 import Debug from 'debug'
 import { ServerAPI, Delta, SourceRef, Path } from '@signalk/server-api'
+import fs from 'fs'
 
 import {
   getMappings,
@@ -27,6 +28,8 @@ export type Message = {
 export class VenusToSignalK {
   private venusToSignalKMapping: VenusToSignalKMappings = {}
   private digitalInputsMappings: VenusToSignalKMappings = {}
+  private makeTestLog: boolean = false
+  private logged: string[] = []
 
   constructor(
     private app: ServerAPI,
@@ -49,160 +52,153 @@ export class VenusToSignalK {
     }
   }
 
-  toDelta(messages: Message[]) {
+  toDelta(m: Message) {
     const deltas: Delta[] = []
 
-    messages.forEach((m) => {
-      debug('%j', m)
-      if (m.path.startsWith('/Alarms')) {
-        const delta = this.getAlarmDelta(m)
-        if (delta) {
-          deltas.push(delta)
-        }
-        return deltas
+    debug('%j', m)
+    if (m.path.startsWith('/Alarms')) {
+      const delta = this.getAlarmDelta(m)
+      if (delta) {
+        deltas.push(delta)
       }
+      this.logTestMessage(m, deltas)
+      return deltas
+    }
 
-      if (!m.senderName) {
-        return
-      }
+    if (!m.senderName) {
+      return
+    }
 
-      if (m.senderName && this.state.knownSenders.indexOf(m.senderName) == -1) {
-        this.state.knownSenders.push(m.senderName)
-      }
+    if (m.senderName && this.state.knownSenders.indexOf(m.senderName) == -1) {
+      this.state.knownSenders.push(m.senderName)
+    }
 
-      if (
-        this.options.ignoredSenders &&
-        this.options.ignoredSenders.indexOf(m.senderName) != -1
-      ) {
-        return
-      }
+    if (
+      this.options.ignoredSenders &&
+      this.options.ignoredSenders.indexOf(m.senderName) != -1
+    ) {
+      return
+    }
 
-      let mappings: VenusToSignalKMapping[]
+    let mappings: VenusToSignalKMapping[]
 
-      if (m.senderName.startsWith('com.victronenergy.digitalinput')) {
-        mappings = (
-          this.digitalInputsMappings[m.path]
-            ? this.digitalInputsMappings[m.path]
-            : []
-        ) as VenusToSignalKMapping[]
-      } else {
-        mappings = (this.venusToSignalKMapping[m.path] ||
-          []) as VenusToSignalKMapping[]
-      }
+    if (m.senderName.startsWith('com.victronenergy.digitalinput')) {
+      mappings = (
+        this.digitalInputsMappings[m.path]
+          ? this.digitalInputsMappings[m.path]
+          : []
+      ) as VenusToSignalKMapping[]
+    } else {
+      mappings = (this.venusToSignalKMapping[m.path] ||
+        []) as VenusToSignalKMapping[]
+    }
 
-      /*
+    /*
       if ( mappings.length === 0 && state.loggedUnknowns.indexOf(m.path) == -1) {
         console.log(JSON.stringify(m))
         state.loggedUnknowns.push(m.path)
         }
       */
 
-      if (m.venusName === undefined) {
-        m.venusName = 'venus'
+    if (m.venusName === undefined) {
+      m.venusName = 'venus'
+    }
+
+    mappings.forEach((mapping) => {
+      let theValue = m.value
+
+      if (
+        (mapping.requiresInstance === undefined || mapping.requiresInstance) &&
+        m.instanceName === undefined
+      ) {
+        debug(`mapping: skipping: ${m.senderName} ${mapping.requiresInstance}`)
+        return
       }
 
-      mappings.forEach((mapping) => {
-        let theValue = m.value
+      const thePath =
+        typeof mapping.path === 'function' ? mapping.path(m) : mapping.path
 
-        if (
-          (mapping.requiresInstance === undefined ||
-            mapping.requiresInstance) &&
-          m.instanceName === undefined
-        ) {
-          debug(
-            `mapping: skipping: ${m.senderName} ${mapping.requiresInstance}`
-          )
-          return
-        }
+      if (thePath === undefined) {
+        return
+      }
 
-        const thePath =
-          typeof mapping.path === 'function' ? mapping.path(m) : mapping.path
+      if (mapping.conversion && !Array.isArray(theValue) && theValue != null) {
+        theValue = mapping.conversion(m, thePath, false)
+      }
 
-        if (thePath === undefined) {
-          return
-        }
+      if (Array.isArray(theValue)) {
+        // seem to get this for unknown values
+        theValue = null
+      }
 
-        if (
-          mapping.conversion &&
-          !Array.isArray(theValue) &&
-          theValue != null
-        ) {
-          theValue = mapping.conversion(m, thePath, false)
-        }
+      if (
+        !mapping.sendNulls &&
+        (theValue === undefined || theValue === null) &&
+        this.state.knownPaths.indexOf(thePath) === -1
+      ) {
+        debug('mapping: no value')
+        return
+      }
 
-        if (Array.isArray(theValue)) {
-          // seem to get this for unknown values
-          theValue = null
-        }
+      if (thePath !== undefined && theValue !== undefined) {
+        if (this.state.knownPaths.indexOf(thePath) == -1) {
+          this.state.knownPaths.push(thePath)
+          if (this.app) {
+            let meta: any = {}
+            if (mapping.units) {
+              meta.units = mapping.units
+            }
 
-        if (
-          !mapping.sendNulls &&
-          (theValue === undefined || theValue === null) &&
-          this.state.knownPaths.indexOf(thePath) === -1
-        ) {
-          debug('mapping: no value')
-          return
-        }
-
-        if (thePath !== undefined && theValue !== undefined) {
-          if (this.state.knownPaths.indexOf(thePath) == -1) {
-            this.state.knownPaths.push(thePath)
-            if (this.app) {
-              let meta: any = {}
-              if (mapping.units) {
-                meta.units = mapping.units
-              }
-
-              if (mapping.meta) {
-                const mappingMeta =
-                  typeof mapping.meta === 'function'
-                    ? mapping.meta(m)
-                    : mapping.meta
-                if (mappingMeta) {
-                  meta = { ...meta, ...mappingMeta }
-                }
-              }
-
-              if (Object.keys(meta).length > 0) {
-                const delta: Delta = {
-                  updates: [
-                    {
-                      meta: [{ path: thePath as Path, value: meta }]
-                    }
-                  ]
-                }
-                deltas.push(delta)
+            if (mapping.meta) {
+              const mappingMeta =
+                typeof mapping.meta === 'function'
+                  ? mapping.meta(m)
+                  : mapping.meta
+              if (mappingMeta) {
+                meta = { ...meta, ...mappingMeta }
               }
             }
 
-            const putSupport = mapping.putSupport && mapping.putSupport(m)
-            if (putSupport && this.putRegistrar) {
-              let putPath
-              if (putSupport.putPath) {
-                putPath = putSupport.putPath(m)
+            if (Object.keys(meta).length > 0) {
+              const delta: Delta = {
+                updates: [
+                  {
+                    meta: [{ path: thePath as Path, value: meta }]
+                  }
+                ]
               }
-              this.putRegistrar(
-                thePath,
-                m,
-                putSupport.conversion,
-                putSupport.confirmChange,
-                putPath
-              )
+              deltas.push(delta)
             }
           }
-          if (
-            !this.options.blacklist ||
-            this.options.blacklist.indexOf(thePath) == -1
-          ) {
-            const delta = makeDelta(this.app, m, thePath, theValue)
 
-            deltas.push(delta)
+          const putSupport = mapping.putSupport && mapping.putSupport(m)
+          if (putSupport && this.putRegistrar) {
+            let putPath
+            if (putSupport.putPath) {
+              putPath = putSupport.putPath(m)
+            }
+            this.putRegistrar(
+              thePath,
+              m,
+              putSupport.conversion,
+              putSupport.confirmChange,
+              putPath
+            )
           }
         }
-      })
+        if (
+          !this.options.blacklist ||
+          this.options.blacklist.indexOf(thePath) == -1
+        ) {
+          const delta = makeDelta(this.app, m, thePath, theValue)
+
+          deltas.push(delta)
+        }
+      }
     })
 
     debug(`produced ${deltas.length} deltas`)
+    this.logTestMessage(m, deltas)
     return deltas
   }
 
@@ -269,6 +265,20 @@ export class VenusToSignalK {
     }
 
     return value
+  }
+
+  private logTestMessage(message: Message, deltas: any[]) {
+    if (this.makeTestLog && deltas.length && this.logged.indexOf(message.senderName+message.path) === -1) {
+      this.logged.push(message.senderName+message.path)
+      const log = {
+        message: message,
+        deltas: deltas
+      }
+      fs.appendFileSync(
+        '/tmp/signalk-venus-test.log',
+        JSON.stringify(log) + '\n'
+      )
+    }
   }
 }
 
