@@ -187,7 +187,7 @@ export default function (
 
             // app.debug(`${service.name} ${JSON.stringify(data)}`)
 
-            let deviceInstance: string|undefined = undefined
+            let deviceInstance: string | undefined = undefined
 
             /*
             //FIXME: paths that don't require instance??
