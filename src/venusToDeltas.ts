@@ -42,14 +42,10 @@ export class VenusToSignalK {
     for (const [key, value] of Object.entries(
       getMappings(app, options, state)
     )) {
-      if (!Array.isArray(value)) {
-        this.venusToSignalKMapping[key] = [value]
-      }
+      this.venusToSignalKMapping[key] = !Array.isArray(value) ? [value] : value
     }
     for (const [key, value] of Object.entries(getDIMappings(app, options))) {
-      if (!Array.isArray(value)) {
-        this.digitalInputsMappings[key] = [value]
-      }
+      this.digitalInputsMappings[key] = !Array.isArray(value) ? [value] : value
     }
   }
 
@@ -686,18 +682,6 @@ function makeDelta(app: ServerAPI, m: Message, path: string, value: any): Delta 
     ]
   }
 
-  if (
-    m.senderName.startsWith('com.victronenergy.vebus') &&
-    m.path === '/Mode' &&
-    path.endsWith('modeNumber')
-  ) {
-    if (hasValues(delta.updates[0])) {
-      delta.updates[0].values.push({
-        path: path + '.meta' as Path,
-        value: modeMeta
-      })
-    }
-  }
   return delta
 }
 
