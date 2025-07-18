@@ -41,7 +41,7 @@
     "format": "npm run prettier && npm run lint",
     "build": "tsc -b --pretty false",
     "watch": "tsc --watch --pretty false",
-    "test": "npm run build && npm run ci-lint"
+    "ci-test": "npm run build && npm run ci-lint"
   },
   "keywords": [
     "signalk-node-server-plugin"
