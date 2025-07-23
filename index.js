@@ -144,13 +144,17 @@ module.exports = function (app) {
             properties: {
               type: {
                 enum: [
+                  'com.victronenergy.alternator',
                   'com.victronenergy.battery',
+                  'com.victronenergy.dcsource',
                   'com.victronenergy.tank',
                   'com.victronenergy.solarcharger',
                   'com.victronenergy.vebus'
                 ],
                 enumNames: [
+                  'Alternator',
                   'Battery',
+                  'DC Source',
                   'Tank',
                   'Solar Charger',
                   'VE.Bus'
