@@ -111,12 +111,12 @@ export class DbusListener {
     this.app.setPluginStatus('D-Bus connection stopped')
   }
 
-  connectionLost(err:any) {
+  connectionLost(err: any) {
     const msg = `no connection to D-Bus ${err ? err.message : ''}`
     this.app.setPluginError(msg)
     this.app.error(msg)
     if (this.pollingTimer) {
-      clearInterval(this.pollingTimer) 
+      clearInterval(this.pollingTimer)
       this.pollingTimer = null
     }
     this.bus = null
