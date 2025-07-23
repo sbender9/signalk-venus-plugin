@@ -2,9 +2,8 @@
 
 //import { ServerAPI, Plugin, Delta, Update, PathValue, SourceRef, Path, hasValues} from '@signalk/server-api'
 import camelcase from 'camelcase'
-import promiseRetry from 'promise-retry'
 import mqtt, { MqttClient } from 'mqtt'
-import createDbusListener from './dbus-listener'
+import { DbusListener } from './dbus-listener'
 import { VenusToSignalK } from './venusToDeltas'
 import { Message } from './venusToDeltas'
 
@@ -14,8 +13,7 @@ const PLUGIN_NAME = 'Victron Venus Plugin'
 module.exports = function (app: any) {
   const plugin: any = {}
   let onStop: any[] = []
-  let dbusSetValue: any
-  let pluginStarted = false
+  //let dbusSetValue: any
   const fluidTypes: { [key: string]: number | null } = {}
   const temperatureTypes: { [key: string]: number | null } = {}
   let customNames: { [key: string]: string } = {}
@@ -25,6 +23,7 @@ module.exports = function (app: any) {
   let keepAlive: NodeJS.Timeout | null = null
   let seenMQTTTopics: string[] = []
   let venusToSignalK: VenusToSignalK | undefined
+  let dbusListener: DbusListener | undefined
 
   plugin.id = PLUGIN_ID
   plugin.name = PLUGIN_NAME
@@ -232,9 +231,11 @@ module.exports = function (app: any) {
     }
   }
 
+  /*
   function setValueCallback(msg: any) {
     dbusSetValue(msg.destination, msg.path, msg.value)
   }
+    */
 
   function actionHandler(
     context: string,
@@ -271,7 +272,7 @@ module.exports = function (app: any) {
       }
       plugin.client.publish(wtopic, JSON.stringify({ value }))
     } else {
-      dbusSetValue(dest, realPath, value)
+      dbusListener!.setValue(dest, realPath, value)
     }
 
     setTimeout(() => {
@@ -346,7 +347,6 @@ module.exports = function (app: any) {
       }
     )
 
-    pluginStarted = true
     plugin.options = options
     plugin.onError = () => {}
 
@@ -375,49 +375,24 @@ module.exports = function (app: any) {
   }
 
   plugin.connect = function (options: any, toDelta: any) {
-    promiseRetry(
-      (retry: any, number: number) => {
-        if (!pluginStarted) {
-          return Promise.reject(new Error('plugin stopped'))
-        }
-        app.debug(`Dbus connection attempt ${number}`)
-        return createDbusListener(
-          app,
-          (venusMessage: Message) => {
-            toDelta(venusMessage).forEach((delta: any) => {
-              app.handleMessage(PLUGIN_ID, delta)
-            })
-          },
-          options.installType == 'remote' ? options.dbusAddress : null,
-          plugin,
-          options.pollInterval === undefined ? 20 : options.pollInterval
-        ).catch(retry)
+    dbusListener = new DbusListener(
+      app,
+      (venusMessage: Message) => {
+        toDelta(venusMessage).forEach((delta: any) => {
+          app.handleMessage(PLUGIN_ID, delta)
+        })
       },
-      {
-        maxTimeout: 30 * 1000,
-        forever: true
-      }
+      options.installType == 'remote' ? options.dbusAddress : null,
+      plugin,
+      options.pollInterval === undefined ? 20 : options.pollInterval
     )
-      .then((dbus: any) => {
-        if (dbus && pluginStarted) {
-          plugin.onError = () => {
-            app.removeListener('venusSetValue', setValueCallback)
-            dbus.onStop()
-            onStop = []
-            plugin.onError = () => {}
-            plugin.connect(options, toDelta)
-          }
-          dbusSetValue = dbus.setValue
-          onStop.push(dbus.onStop)
-          app.on('venusSetValue', setValueCallback)
-          onStop.push(() =>
-            app.removeListener('venusSetValue', setValueCallback)
-          )
-        }
-      })
-      .catch((error: any) => {
-        console.error(`error creating dbus listener: ${error}`)
-      })
+
+    onStop.push(dbusListener.stop.bind(dbusListener))
+    /*
+    app.on('venusSetValue', setValueCallback)
+    onStop.push(() =>
+      app.removeListener('venusSetValue', setValueCallback)
+    )*/
   }
 
   /*
@@ -451,13 +426,13 @@ module.exports = function (app: any) {
   */
   plugin.stop = function () {
     app.debug('stop')
-    pluginStarted = false
     onStop.forEach((f) => f())
     onStop = []
     sentDeltas = {}
     seenMQTTTopics = []
     customNames = {}
     customNameTimeouts = {}
+    dbusListener = undefined
     plugin.needsID = true
     plugin.portalID = null
     if (pollInterval) {
