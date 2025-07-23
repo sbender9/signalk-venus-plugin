@@ -21,6 +21,7 @@ module.exports = function (app) {
   var temperatureTypes = {}
   var customNames = {}
   var customNameTimeouts = {}
+  var virtualDevices = {}  // Track virtual devices to ignore
   let sentDeltas = {}
   let pollInterval
   let keepAlive
@@ -418,6 +419,7 @@ module.exports = function (app) {
     seenMQTTTopics = []
     customNames = {}
     customNameTimeouts = {}
+    virtualDevices = {}  // Clear virtual device tracking on stop
     plugin.needsID = true
     plugin.portalID = null
     if ( pollInterval ) {
@@ -543,6 +545,7 @@ module.exports = function (app) {
       sentDeltas = {}
       customNames = {}
       customNameTimeouts = {}
+      virtualDevices = {}  // Clear virtual device tracking on reconnect
       if ( isVRM === false ) {
         plugin.needsID = true
         plugin.portalID = null
@@ -592,6 +595,48 @@ module.exports = function (app) {
       }
 
       //app.debug(topic)
+      
+      // Check for virtual device ProcessName and track it
+      if ( topic.endsWith('/Mgmt/ProcessName') && message.value === 'signalk-virtual-device' ) {
+        let deviceKey = `${type}.${instance}`
+        if ( !virtualDevices[deviceKey] ) {
+          virtualDevices[deviceKey] = true
+          app.debug(`Ignoring virtual device ${deviceKey} (com.victronenergy.${type}.${instance}) created by Signal K`)
+          // Clean up any already processed data for this virtual device
+          cleanupVirtualDeviceData(type, instance)
+        }
+        return
+      }
+      
+      // Early detection of virtual devices by Serial number pattern
+      if ( topic.endsWith('/Serial') && message.value && typeof message.value === 'string' && message.value.startsWith('SK') && message.value.includes('SIGNALK') ) {
+        let deviceKey = `${type}.${instance}`
+        if ( !virtualDevices[deviceKey] ) {
+          virtualDevices[deviceKey] = true
+          app.debug(`Ignoring virtual device ${deviceKey} (detected by Serial: ${message.value}) created by Signal K`)
+          // Clean up any already processed data for this virtual device
+          cleanupVirtualDeviceData(type, instance)
+        }
+        return
+      }
+      
+      // Early detection of virtual devices by ProductName
+      if ( topic.endsWith('/ProductName') && message.value && typeof message.value === 'string' && message.value.includes('SignalK Virtual') ) {
+        let deviceKey = `${type}.${instance}`
+        if ( !virtualDevices[deviceKey] ) {
+          virtualDevices[deviceKey] = true
+          app.debug(`Ignoring virtual device ${deviceKey} (detected by ProductName: ${message.value}) created by Signal K`)
+          // Clean up any already processed data for this virtual device
+          cleanupVirtualDeviceData(type, instance)
+        }
+        return
+      }
+      
+      // Skip processing messages from known virtual devices
+      let deviceKey = `${type}.${instance}`
+      if ( virtualDevices[deviceKey] ) {
+        return
+      }
       
       if ( plugin.needsID ) {
         if ( topic.endsWith('system/0/Serial') ) {
@@ -706,10 +751,14 @@ module.exports = function (app) {
         let anyUpdates = (deltas) => deltas.find(delta => delta.updates.find(update => update.values && update.values.length > 0))
 
         if ( anyUpdates(deltas) ) {
-          sentDeltas[topic] = {
-            deltas: JSON.parse(JSON.stringify(deltas)),
-            time: Date.now(),
-            topic
+          // Double-check that this isn't a virtual device before caching
+          let deviceKey = `${type}.${instance}`
+          if ( !virtualDevices[deviceKey] ) {
+            sentDeltas[topic] = {
+              deltas: JSON.parse(JSON.stringify(deltas)),
+              time: Date.now(),
+              topic
+            }
           }
         
           deltas.forEach(delta => {
@@ -722,10 +771,63 @@ module.exports = function (app) {
     onStop.push(_ => client.end());
   }
 
+  function cleanupVirtualDeviceData(type, instance) {
+    // Remove any cached deltas for this virtual device
+    const topicsToRemove = []
+    Object.keys(sentDeltas).forEach(topic => {
+      if (topic.includes(`/${type}/${instance}/`)) {
+        topicsToRemove.push(topic)
+      }
+    })
+    
+    topicsToRemove.forEach(topic => {
+      // Send null values to clear the data in SignalK
+      const info = sentDeltas[topic]
+      if (info && info.deltas) {
+        info.deltas.forEach(delta => {
+          if (delta.updates) {
+            delta.updates.forEach(update => {
+              if (update.values) {
+                update.values.forEach(val => {
+                  val.value = null
+                })
+              }
+            })
+            app.handleMessage(PLUGIN_ID, delta)
+          }
+        })
+      }
+      // Remove from cache immediately to prevent resending
+      delete sentDeltas[topic]
+    })
+    
+    // Also clear any fluid/temperature type tracking for this instance
+    if (type === 'tank') {
+      delete fluidTypes[instance]
+    } else if (type === 'temperature') {
+      delete temperatureTypes[instance]
+    }
+    
+    // Clear custom name tracking
+    const senderName = `com.victronenergy.${type}.${instance}`
+    delete customNames[senderName]
+    delete customNameTimeouts[senderName]
+  }
+
   function resendDeltas() {
     const now = Date.now()
     Object.values(sentDeltas).forEach((info) => {
       if ( now - info.time > ((plugin.options.pollInterval-1)*1000) ) {
+        // Extract device info from topic to check if it's a virtual device
+        const topicParts = info.topic.split('/')
+        const deviceKey = `${topicParts[2]}.${topicParts[3]}`
+        
+        // Don't resend deltas for virtual devices
+        if ( virtualDevices[deviceKey] ) {
+          delete sentDeltas[info.topic]
+          return
+        }
+        
         //app.debug('resending %s', info.topic)
         //app.debug('%j', info.delta)
         info.deltas.forEach((delta) => {
