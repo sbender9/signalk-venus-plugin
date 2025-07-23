@@ -2,6 +2,8 @@ const dbus = require('dbus-native')
 const _ = require('lodash')
 const camelcase = require('camelcase')
 
+const DBUS_RECONNECT_DELAY_MS = 5000
+
 module.exports = function (app, messageCallback, address, plugin, pollInterval) {
   return new Promise((resolve, reject) => {
     const setPluginStatus = app.setPluginStatus
@@ -343,6 +345,7 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
 
     bus.connection.on('connect', () => {
       setPluginStatus(`Connected to ${address ? address : 'session bus'}`)
+      app.debug(`Connected to ${address ? address : 'session bus'}`)
       if ( pollInterval > 0 ) {
         const pollingTimer = setInterval(pollDbus, pollInterval*1000)
         resolve({
@@ -366,11 +369,53 @@ module.exports = function (app, messageCallback, address, plugin, pollInterval) 
       plugin.onError()
     })
 
+    let reconnectTimer
+
     bus.connection.on('end', () => {
       setPluginError('lost connection to D-Bus')
-      app.error(`lost connection to D-Bus`)
+      app.error('lost connection to D-Bus - attempting reconnect in 5s')
       // here we could (should?) also clear the polling timer. But decided not to do that;
       // to be looked at when properly fixing the dbus-connection lost issue.
+
+      if (reconnectTimer) {
+        clearTimeout(reconnectTimer)
+        app.error('Cleared previous reconnect timer')
+      }
+
+      reconnectTimer = setTimeout(() => {
+        setPluginStatus('Restarting D-Bus connection')
+        app.error('Restarting D-Bus connection')
+
+        closeConnection(); // Clean up the existing connection before reconnecting
+
+        module.exports(app, messageCallback, address, plugin, pollInterval)
+          .then(() => {
+            app.error('D-Bus reconnected successfully')
+          })
+          .catch((err) => {
+            setPluginError(`Reconnect failed`)
+            app.error(`Reconnect failed: ${err.message || err}`)
+          })
+      }, DBUS_RECONNECT_DELAY_MS)
+
+    })
+
+    bus.connection.on('close', () => {
+      setPluginError('D-Bus connection closed')
+      app.error('D-Bus connection closed — attempting reconnect in 5s')
+
+      // Clean up existing timers or subscriptions
+      if (reconnectTimer) {
+         clearTimeout(reconnectTimer)
+      }
+
+      // Optional: prevent writes to closed bus
+      bus = null
+
+      reconnectTimer = setTimeout(() => {
+        app.info('Restarting D-Bus connection')
+        module.exports(app, messageCallback, address, plugin, pollInterval)
+      }, DBUS_RECONNECT_DELAY_MS)
     })
 
     bus.addMatch(
