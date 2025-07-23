@@ -547,8 +547,8 @@ module.exports = function (app: any) {
     })
 
     client.on('error', (error) => {
-      app.error(`error connecting to mqtt ${error}`)
-      app.setPluginError(`connecting to mqtt: ${error}`)
+      app.error(`error connecting to mqtt ${error.message}`)
+      app.setPluginError(`connecting to mqtt: ${error.message}`)
     })
 
     client.on('close', () => {
