@@ -4,3 +4,4 @@ ios_venus.js/
 dist/
 tsconfig.tsbuildinfo
 test/*.report
+*.tgz

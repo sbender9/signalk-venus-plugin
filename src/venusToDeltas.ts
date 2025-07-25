@@ -56,17 +56,9 @@ export class VenusToSignalK {
     const deltas: Delta[] = []
 
     debug('%j', m)
-    if (m.path.startsWith('/Alarms')) {
-      const delta = this.getAlarmDelta(m)
-      if (delta) {
-        deltas.push(delta)
-      }
-      this.logTestMessage(m, deltas)
-      return deltas
-    }
 
     if (!m.senderName) {
-      return
+      return deltas
     }
 
     if (m.senderName && this.state.knownSenders.indexOf(m.senderName) == -1) {
@@ -77,7 +69,16 @@ export class VenusToSignalK {
       this.options.ignoredSenders &&
       this.options.ignoredSenders.indexOf(m.senderName) != -1
     ) {
-      return
+      return deltas
+    }
+
+    if (m.path.startsWith('/Alarms')) {
+      const delta = this.getAlarmDelta(m)
+      if (delta) {
+        deltas.push(delta)
+      }
+      this.logTestMessage(m, deltas)
+      return deltas
     }
 
     let mappings: VenusToSignalKMapping[]
