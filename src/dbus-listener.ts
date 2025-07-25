@@ -70,7 +70,10 @@ export class DbusListener {
         `Connected to ${this.address ? this.address : 'session bus'}`
       )
       if (this.pollInterval > 0) {
-        this.pollingTimer = setInterval(this.pollDbus.bind(this), this.pollInterval * 1000)
+        this.pollingTimer = setInterval(
+          this.pollDbus.bind(this),
+          this.pollInterval * 1000
+        )
       }
     })
 

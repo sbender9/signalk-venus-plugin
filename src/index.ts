@@ -45,23 +45,23 @@ module.exports = function (app: any) {
 
     let options = plugin.options
 
-    if ( !options ) {
+    if (!options) {
       const settings = app.readPluginOptions() as any
-      if ( settings ) {
+      if (settings) {
         options = settings.configuration || {}
       }
     }
 
-    if ( options.blacklist && options.blacklist.length > 0 ) {
+    if (options.blacklist && options.blacklist.length > 0) {
       options.blacklist.forEach((path: string) => {
-        if ( knowPaths.indexOf(path) === -1 ) {
+        if (knowPaths.indexOf(path) === -1) {
           knowPaths.push(path)
         }
       })
     }
-    if ( options.ignoredSenders && options.ignoredSenders.length > 0 ) {
+    if (options.ignoredSenders && options.ignoredSenders.length > 0) {
       options.ignoredSenders.forEach((sender: string) => {
-        if ( knownSenders.indexOf(sender) === -1 ) {
+        if (knownSenders.indexOf(sender) === -1) {
           knownSenders.push(sender)
         }
       })
@@ -74,7 +74,6 @@ module.exports = function (app: any) {
     if (!knownSenders || knownSenders.length === 0) {
       knownSenders = ['no known senders yet']
     }
-
 
     return {
       title: PLUGIN_NAME,
