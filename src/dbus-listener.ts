@@ -15,7 +15,7 @@ export class DbusListener {
   private services: { [key: string]: any } = {}
   private pollingTimer: NodeJS.Timeout | null = null
   private reconnectTimer: NodeJS.Timeout | null = null
-  private recconnectDelay: number = 5000
+  private reconnectDelay: number = 5000
 
   constructor(
     app: any,
@@ -128,7 +128,7 @@ export class DbusListener {
       this.app.setPluginStatus('retrying D-Bus connection')
       this.app.error('retrying D-Bus connection')
       this.connect()
-    }, this.recconnectDelay)
+    }, this.reconnectDelay)
   }
 
   private pollDbus() {
