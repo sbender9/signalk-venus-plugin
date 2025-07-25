@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { expect } from 'chai'
 import fs from 'fs'
 //import readline from 'readline'
 import { VenusToSignalK } from '../src/venusToDeltas'
 import { ServerAPI } from '@signalk/server-api'
 import { Message } from '../src/venusToDeltas'
+import { PutConfirmChange, PutConversion } from '../src/mappings'
 
 const files = [
   {
@@ -76,8 +76,9 @@ files.forEach((item) => {
       (
         path: string,
         _m: Message,
-        _confirmChange: (oldValue: any, newValue: any) => boolean,
-        _putPath: string
+        _converter: PutConversion | undefined,
+        _confirmChange: PutConfirmChange | undefined,
+        _putPath: string | undefined
       ) => {
         putRegistrations.push(path)
       }

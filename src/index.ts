@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { ServerAPI, Plugin, Delta, Update, PathValue, SourceRef, Path, hasValues} from '@signalk/server-api'
+import { ServerAPI, Plugin, Delta, Path } from '@signalk/server-api'
 import camelcase from 'camelcase'
 import mqtt, { MqttClient } from 'mqtt'
 import { DbusListener } from './dbus-listener'
 import { VenusToSignalK } from './venusToDeltas'
 import { Message } from './venusToDeltas'
+import { PutConversion, PutConfirmChange } from './mappings'
 
 const PLUGIN_ID = 'venus'
 const PLUGIN_NAME = 'Victron Venus Plugin'
@@ -17,324 +18,324 @@ module.exports = function (app: ServerAPI) {
   const temperatureTypes: { [key: string]: number | null } = {}
   let customNames: { [key: string]: string } = {}
   let customNameTimeouts: { [key: string]: number } = {}
-  let sentDeltas: { [key: string]: any } = {}
+  let sentDeltas: {
+    [key: string]: { deltas: Delta[]; time: number; topic: string }
+  } = {}
   let pollInterval: NodeJS.Timeout | null = null
   let keepAlive: NodeJS.Timeout | null = null
   let seenMQTTTopics: string[] = []
   let venusToSignalK: VenusToSignalK | undefined
   let dbusListener: DbusListener | undefined
-  let pluginOptions: any = {}
+  const pluginOptions: any = {}
   let needsID = true
   let portalID: string | null = null
   let client: MqttClient | undefined
-  
+
   const plugin: Plugin = {
     id: PLUGIN_ID,
     name: PLUGIN_NAME,
     description: 'Victron Venus-SignalK Integration',
 
-  schema: () => {
-    let knowPaths: string[] = []
-    let knownSenders: string[] = []
+    schema: () => {
+      let knowPaths: string[] = []
+      let knownSenders: string[] = []
 
-    if (venusToSignalK) {
-      const ks = venusToSignalK.getKnownSenders()
-      if (ks && ks.length > 0) {
-        knownSenders = ks
+      if (venusToSignalK) {
+        const ks = venusToSignalK.getKnownSenders()
+        if (ks && ks.length > 0) {
+          knownSenders = ks
+        }
+
+        knowPaths = venusToSignalK.getKnownPaths().sort()
       }
 
-      knowPaths = venusToSignalK.getKnownPaths().sort()
-    }
+      let options = pluginOptions
 
-    let options = pluginOptions
-
-    if (!options) {
-      const settings = app.readPluginOptions() as any
-      if (settings) {
-        options = settings.configuration || {}
+      if (!options) {
+        const settings = app.readPluginOptions() as any
+        if (settings) {
+          options = settings.configuration || {}
+        }
       }
-    }
 
-    if (options.blacklist && options.blacklist.length > 0) {
-      options.blacklist.forEach((path: string) => {
-        if (knowPaths.indexOf(path) === -1) {
-          knowPaths.push(path)
-        }
-      })
-    }
-    if (options.ignoredSenders && options.ignoredSenders.length > 0) {
-      options.ignoredSenders.forEach((sender: string) => {
-        if (knownSenders.indexOf(sender) === -1) {
-          knownSenders.push(sender)
-        }
-      })
-    }
-
-    if (!knowPaths || knowPaths.length === 0) {
-      knowPaths = ['no known paths yet']
-    }
-
-    if (!knownSenders || knownSenders.length === 0) {
-      knownSenders = ['no known senders yet']
-    }
-
-    return {
-      title: PLUGIN_NAME,
-      type: 'object',
-      properties: {
-        installType: {
-          type: 'string',
-          title: 'How to connect to Venus D-Bus',
-          enum: ['mqtt', 'mqtts', 'local', 'remote', 'vrm'],
-          enumNames: [
-            'Connect to remote Venus installation via MQTT (Plain text)',
-            'Connect to remote Venus installation via MQTT (SSL)',
-            'Connect to localhost via dbus (signalk-server is running on a Venus device)',
-            'Connect to remote Venus installation via dbus',
-            'Connect to remote Venus installation via VRM'
-          ],
-          default: 'mqtt'
-        },
-        dbusAddress: {
-          type: 'string',
-          title: 'Address for remote Venus device (D-Bus address notation)',
-          default: 'tcp:host=192.168.1.57,port=78'
-        },
-        MQTT: {
-          type: 'object',
-          properties: {
-            host: {
-              type: 'string',
-              title: 'Venus MQTT Host',
-              default: 'venus.local'
-            },
-            password: {
-              type: 'string',
-              title: 'Venus MQTT Password'
-            }
+      if (options.blacklist && options.blacklist.length > 0) {
+        options.blacklist.forEach((path: string) => {
+          if (knowPaths.indexOf(path) === -1) {
+            knowPaths.push(path)
           }
-        },
-        VRM: {
-          type: 'object',
-          properties: {
-            portalId: {
-              type: 'string',
-              title: 'VRM Portal Id'
-            },
-            userName: {
-              type: 'string',
-              title: 'VRM Email'
-            },
-            password: {
-              type: 'string',
-              title: 'VRM Password'
-            }
+        })
+      }
+      if (options.ignoredSenders && options.ignoredSenders.length > 0) {
+        options.ignoredSenders.forEach((sender: string) => {
+          if (knownSenders.indexOf(sender) === -1) {
+            knownSenders.push(sender)
           }
-        },
-        pollInterval: {
-          type: 'number',
-          title: 'Interval (in seconds) to poll venus for current values',
-          default: 20
-        },
-        useDeviceNames: {
-          type: 'boolean',
-          title: 'Use the device names for paths',
-          default: false
-        },
-        usePosition: {
-          type: 'boolean',
-          title: 'Use the position from Venus OS',
-          default: true
-        },
-        relayPath0: {
-          type: 'string',
-          title: 'The Signal K path for relay 1',
-          default: 'electrical.switches.venus-0'
-        },
-        relayDisplayName0: {
-          type: 'string',
-          title: 'The Display Name for relay 1 (meta)'
-        },
-        relayPath1: {
-          type: 'string',
-          title: 'The Signal K path for relay 2',
-          default: 'electrical.switches.venus-1'
-        },
-        relayDisplayName1: {
-          type: 'string',
-          title: 'The Display Name for relay 2 (meta)'
-        },
-        instanceMappings: {
-          title: 'Instance Mappings',
-          description:
-            'Map venus device instance numbers to Signal K instances',
-          type: 'array',
-          items: {
+        })
+      }
+
+      if (!knowPaths || knowPaths.length === 0) {
+        knowPaths = ['no known paths yet']
+      }
+
+      if (!knownSenders || knownSenders.length === 0) {
+        knownSenders = ['no known senders yet']
+      }
+
+      return {
+        title: PLUGIN_NAME,
+        type: 'object',
+        properties: {
+          installType: {
+            type: 'string',
+            title: 'How to connect to Venus D-Bus',
+            enum: ['mqtt', 'mqtts', 'local', 'remote', 'vrm'],
+            enumNames: [
+              'Connect to remote Venus installation via MQTT (Plain text)',
+              'Connect to remote Venus installation via MQTT (SSL)',
+              'Connect to localhost via dbus (signalk-server is running on a Venus device)',
+              'Connect to remote Venus installation via dbus',
+              'Connect to remote Venus installation via VRM'
+            ],
+            default: 'mqtt'
+          },
+          dbusAddress: {
+            type: 'string',
+            title: 'Address for remote Venus device (D-Bus address notation)',
+            default: 'tcp:host=192.168.1.57,port=78'
+          },
+          MQTT: {
             type: 'object',
             properties: {
-              type: {
-                enum: [
-                  'com.victronenergy.battery',
-                  'com.victronenergy.tank',
-                  'com.victronenergy.solarcharger',
-                  'com.victronenergy.vebus'
-                ],
-                enumNames: ['Battery', 'Tank', 'Solar Charger', 'VE.Bus']
-              },
-
-              venusId: {
-                title: 'Venus Device Instance',
-                description: '(Example: 257)',
-                type: 'number'
-              },
-              signalkId: {
-                title: 'Signal K Instance',
+              host: {
                 type: 'string',
-                description: '(Example: house)'
+                title: 'Venus MQTT Host',
+                default: 'venus.local'
+              },
+              password: {
+                type: 'string',
+                title: 'Venus MQTT Password'
               }
             }
-          }
-        },
-        temperatureMappings: {
-          title: 'Temperature Mappings',
-          description: 'Map temperature inputs to Signal K paths',
-          type: 'array',
-          items: {
+          },
+          VRM: {
             type: 'object',
             properties: {
-              venusId: {
-                title: 'Venus Device Instance',
-                type: 'number',
-                default: 23
-              },
-              signalkPath: {
-                title: 'Signal K Path',
+              portalId: {
                 type: 'string',
-                default: 'environment.inside.refrigerator.temperature'
+                title: 'VRM Portal Id'
+              },
+              userName: {
+                type: 'string',
+                title: 'VRM Email'
+              },
+              password: {
+                type: 'string',
+                title: 'VRM Password'
               }
             }
-          }
-        },
-        blacklist: {
-          title: 'Block List',
-          description: 'These paths will be ignored',
-          type: 'array',
-          items: {
+          },
+          pollInterval: {
+            type: 'number',
+            title: 'Interval (in seconds) to poll venus for current values',
+            default: 20
+          },
+          useDeviceNames: {
+            type: 'boolean',
+            title: 'Use the device names for paths',
+            default: false
+          },
+          usePosition: {
+            type: 'boolean',
+            title: 'Use the position from Venus OS',
+            default: true
+          },
+          relayPath0: {
             type: 'string',
-            enum: knowPaths
-          }
-        },
-        ignoredSenders: {
-          title: 'Ingored Senders',
-          description: 'These senders will be ignored',
-          type: 'array',
-          items: {
+            title: 'The Signal K path for relay 1',
+            default: 'electrical.switches.venus-0'
+          },
+          relayDisplayName0: {
             type: 'string',
-            enum: knownSenders
+            title: 'The Display Name for relay 1 (meta)'
+          },
+          relayPath1: {
+            type: 'string',
+            title: 'The Signal K path for relay 2',
+            default: 'electrical.switches.venus-1'
+          },
+          relayDisplayName1: {
+            type: 'string',
+            title: 'The Display Name for relay 2 (meta)'
+          },
+          instanceMappings: {
+            title: 'Instance Mappings',
+            description:
+              'Map venus device instance numbers to Signal K instances',
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                type: {
+                  enum: [
+                    'com.victronenergy.battery',
+                    'com.victronenergy.tank',
+                    'com.victronenergy.solarcharger',
+                    'com.victronenergy.vebus'
+                  ],
+                  enumNames: ['Battery', 'Tank', 'Solar Charger', 'VE.Bus']
+                },
+
+                venusId: {
+                  title: 'Venus Device Instance',
+                  description: '(Example: 257)',
+                  type: 'number'
+                },
+                signalkId: {
+                  title: 'Signal K Instance',
+                  type: 'string',
+                  description: '(Example: house)'
+                }
+              }
+            }
+          },
+          temperatureMappings: {
+            title: 'Temperature Mappings',
+            description: 'Map temperature inputs to Signal K paths',
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                venusId: {
+                  title: 'Venus Device Instance',
+                  type: 'number',
+                  default: 23
+                },
+                signalkPath: {
+                  title: 'Signal K Path',
+                  type: 'string',
+                  default: 'environment.inside.refrigerator.temperature'
+                }
+              }
+            }
+          },
+          blacklist: {
+            title: 'Block List',
+            description: 'These paths will be ignored',
+            type: 'array',
+            items: {
+              type: 'string',
+              enum: knowPaths
+            }
+          },
+          ignoredSenders: {
+            title: 'Ingored Senders',
+            description: 'These senders will be ignored',
+            type: 'array',
+            items: {
+              type: 'string',
+              enum: knownSenders
+            }
           }
-        }
-        /*,
+          /*,
           sendPosistion: {
           type: 'boolean',
           title: 'Send Signal K position, course and speed to venus',
           default: false
           } */
-      }
-    }
-  },
-
-  uiSchema: () => {
-    return {
-      MQTT: {
-        password: {
-          'ui:widget': 'password'
-        }
-      },
-      VRM: {
-        password: {
-          'ui:widget': 'password'
         }
       }
-    }
-  },
+    },
 
-        /*
+    uiSchema: () => {
+      return {
+        MQTT: {
+          password: {
+            'ui:widget': 'password'
+          }
+        },
+        VRM: {
+          password: {
+            'ui:widget': 'password'
+          }
+        }
+      }
+    },
+
+    /*
     Called when the plugin is disabled on a running server with the plugin enabled.
   */
-  stop: () => {
-    app.debug('stop')
-    onStop.forEach((f) => f())
-    onStop = []
-    sentDeltas = {}
-    seenMQTTTopics = []
-    customNames = {}
-    customNameTimeouts = {}
-    dbusListener = undefined
-    needsID = true
-    portalID = null
-    if (pollInterval) {
-      clearInterval(pollInterval)
-      pollInterval = null
-    }
-    if (keepAlive) {
-      clearInterval(keepAlive)
-      keepAlive = null
-    }
-  },
+    stop: () => {
+      app.debug('stop')
+      onStop.forEach((f) => f())
+      onStop = []
+      sentDeltas = {}
+      seenMQTTTopics = []
+      customNames = {}
+      customNameTimeouts = {}
+      dbusListener = undefined
+      needsID = true
+      portalID = null
+      if (pollInterval) {
+        clearInterval(pollInterval)
+        pollInterval = null
+      }
+      if (keepAlive) {
+        clearInterval(keepAlive)
+        keepAlive = null
+      }
+    },
 
-  /*
+    /*
     Called when the plugin is started (server is started with plugin enabled
     or the plugin is enabled from ui on a running server).
   */
-  start: (options: any) => {
-    venusToSignalK = new VenusToSignalK(
-      app,
-      options,
-      {},
-      (
-        path: string,
-        m: Message,
-        converter: (input: any) => any,
-        confirmChange: (oldValue: any, newValue: any) => boolean,
-        putPath: string
-      ) => {
-        (app as any).registerActionHandler(
-          'vessels.self',
-          path,
-          getActionHandler(m, converter, confirmChange, putPath),
-          undefined
-        )
+    start: (options: any) => {
+      venusToSignalK = new VenusToSignalK(
+        app,
+        options,
+        {},
+        (
+          path: string,
+          m: Message,
+          converter: PutConversion | undefined,
+          confirmChange: PutConfirmChange | undefined,
+          putPath: string | undefined
+        ) => {
+          ;(app as any).registerActionHandler(
+            'vessels.self',
+            path,
+            getActionHandler(m, converter, confirmChange, putPath),
+            undefined
+          )
+        }
+      )
+
+      options = options
+
+      if (options.relayDisplayName0 && options.relayDisplayName0.length) {
+        sendMeta(options.relayPath0, { displayName: options.relayDisplayName0 })
+        sendMeta(options.relayPath0 + '.state', {
+          displayName: options.relayDisplayName0
+        })
       }
-    )
+      if (options.relayDisplayName1 && options.relayDisplayName1.length) {
+        sendMeta(options.relayPath1, { displayName: options.relayDisplayName1 })
+        sendMeta(options.relayPath1 + '.state', {
+          displayName: options.relayDisplayName1
+        })
+      }
 
-    options = options
-
-    if (options.relayDisplayName0 && options.relayDisplayName0.length) {
-      sendMeta(options.relayPath0, { displayName: options.relayDisplayName0 })
-      sendMeta(options.relayPath0 + '.state', {
-        displayName: options.relayDisplayName0
-      })
-    }
-    if (options.relayDisplayName1 && options.relayDisplayName1.length) {
-      sendMeta(options.relayPath1, { displayName: options.relayDisplayName1 })
-      sendMeta(options.relayPath1 + '.state', {
-        displayName: options.relayDisplayName1
-      })
-    }
-
-    if (
-      options.installType === 'mqtt' ||
-      options.installType === 'mqtts' ||
-      options.installType === 'vrm'
-    ) {
-      startMQTT(options, venusToSignalK.toDelta.bind(venusToSignalK))
-    } else {
-      connect(options, venusToSignalK.toDelta.bind(venusToSignalK))
+      if (
+        options.installType === 'mqtt' ||
+        options.installType === 'mqtts' ||
+        options.installType === 'vrm'
+      ) {
+        startMQTT(options, venusToSignalK.toDelta.bind(venusToSignalK))
+      } else {
+        connectToDbus(options, venusToSignalK.toDelta.bind(venusToSignalK))
+      }
     }
   }
-
-  }
-
 
   /*
   function setValueCallback(msg: any) {
@@ -349,15 +350,15 @@ module.exports = function (app: ServerAPI) {
     dest: string,
     vpath: string,
     mqttTopic: string | undefined,
-    converter: (input: any) => any,
-    confirmChange: (oldValue: any, newValue: any) => boolean,
-    putPath: string,
+    converter: PutConversion | undefined,
+    confirmChange: PutConfirmChange | undefined,
+    putPath: string | undefined,
     cb: (result: any) => void
   ) {
     const realPath = putPath ? putPath : vpath
     app.debug(`setting mode ${dest} ${realPath} to ${input}`)
 
-    const value = converter ? converter(input) : input
+    const value = converter ? converter(input, skpath) : input
 
     if (value === undefined) {
       return {
@@ -403,9 +404,9 @@ module.exports = function (app: ServerAPI) {
 
   function getActionHandler(
     m: Message,
-    converter: (input: any) => any,
-    confirmChange: (oldValue: any, newValue: any) => boolean,
-    putPath: string
+    converter: PutConversion | undefined,
+    confirmChange: PutConfirmChange | undefined,
+    putPath: string | undefined
   ) {
     return (
       context: string,
@@ -426,20 +427,22 @@ module.exports = function (app: ServerAPI) {
         cb
       )
     }
-
   }
 
-  const connect = function (options: any, toDelta: any) {
+  const connectToDbus = function (
+    options: any,
+    toDelta: (m: Message) => Delta[]
+  ) {
     dbusListener = new DbusListener(
       app,
       (venusMessage: Message) => {
-        toDelta(venusMessage).forEach((delta: any) => {
+        toDelta(venusMessage).forEach((delta: Delta) => {
           app.handleMessage(PLUGIN_ID, delta)
         })
       },
       options.installType == 'remote' ? options.dbusAddress : null,
       plugin,
-      options.pollInterval === undefined ? 20 : options.pollInterval
+      options
     )
 
     onStop.push(dbusListener.stop.bind(dbusListener))
@@ -509,7 +512,7 @@ module.exports = function (app: ServerAPI) {
     }
   }
 
-  function startMQTT(options: any, toDelta: any) {
+  function startMQTT(options: any, toDelta: (m: Message) => Delta[]) {
     let host
     let port
     let scheme
@@ -814,7 +817,7 @@ module.exports = function (app: ServerAPI) {
 
   function debug(...args: any[]) {
     //FIXME: romove when ServerAPI is fixed
-    (app as any).debug(`[${PLUGIN_ID}]`, ...args)
+    ;(app as any).debug(`[${PLUGIN_ID}]`, ...args)
   }
   return plugin
 }

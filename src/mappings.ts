@@ -28,17 +28,27 @@ import {
   mapInputState
 } from './venusToDeltas'
 
+export type PutConversion = (value: any, input: any) => any
+export type PutPath = (m: Message) => string
+export type PutConfirmChange = (value: any, input: any) => boolean
+
 export type PutSupport = {
-  conversion?: (value: any, input: any) => any
-  putPath?: (m: Message) => string
-  confirmChange?: (value: any, input: any) => boolean
+  conversion?: PutConversion
+  putPath?: PutPath
+  confirmChange?: PutConfirmChange
 }
+
+export type MappingConversion = (
+  value: any,
+  path: string,
+  forInverter?: boolean
+) => any
 
 export type VenusToSignalKMapping = {
   path: ((m: Message) => string | undefined) | string
   requiresInstance?: boolean
   units?: string
-  conversion?: (value: any, path: string, forInverter?: boolean) => any
+  conversion?: MappingConversion
   sendNulls?: boolean
   meta?: any | ((m: Message) => any)
   putSupport?: (m: Message) => PutSupport | undefined

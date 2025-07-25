@@ -4,31 +4,33 @@ const dbus = require('dbus-native')
 const _ = require('lodash')
 const camelcase = require('camelcase')
 import { Message } from './venusToDeltas'
+import { ServerAPI, Plugin } from '@signalk/server-api'
 
 export class DbusListener {
-  private app: any
-  private messageCallback: any
+  private app: ServerAPI
+  private messageCallback: (m: Message) => void
   private address: string
-  private plugin: any
+  private plugin: Plugin
   private pollInterval: number
   private bus: any
   private services: { [key: string]: any } = {}
   private pollingTimer: NodeJS.Timeout | null = null
   private reconnectTimer: NodeJS.Timeout | null = null
   private reconnectDelay: number = 5000
+  private options: any
 
   constructor(
-    app: any,
-    messageCallback: any,
+    app: ServerAPI,
+    messageCallback: (m: Message) => void,
     address: string,
-    plugin: any,
-    pollInterval: number
+    plugin: Plugin,
+    options: any
   ) {
     this.app = app
     this.messageCallback = messageCallback
     this.address = address
     this.plugin = plugin
-    this.pollInterval = pollInterval
+    this.pollInterval = options.pollInterval || 20
     this.connect()
   }
 
@@ -184,10 +186,10 @@ export class DbusListener {
             }
 
             if (
-              this.plugin.options.useDeviceNames !== undefined &&
-              this.plugin.options.useDeviceNames
+              this.options.useDeviceNames !== undefined &&
+              this.options.useDeviceNames
             ) {
-              this.app.debug('requesting custom name for %s', name)
+              ;(this.app as any).debug('requesting custom name for %s', name)
               this.bus.invoke(
                 {
                   path: '/CustomName',
@@ -197,8 +199,8 @@ export class DbusListener {
                 },
                 (err: any, res: any) => {
                   if (!err) {
-                    const customName = res[1][0]
-                    this.app.debug(
+                    const customName: string = res[1][0]
+                    ;(this.app as any).debug(
                       'got custom name %s for %s',
                       customName,
                       name
@@ -270,8 +272,8 @@ export class DbusListener {
           }
         */
 
-          if (this.plugin.options.instanceMappings) {
-            const mapping = this.plugin.options.instanceMappings.find(
+          if (this.options.instanceMappings) {
+            const mapping = this.options.instanceMappings.find(
               (mapping: any) => {
                 return (
                   service.name.startsWith(mapping.type) &&
@@ -286,8 +288,8 @@ export class DbusListener {
 
           if (deviceInstance === undefined) {
             if (
-              this.plugin.options.useDeviceNames !== undefined &&
-              this.plugin.options.useDeviceNames &&
+              this.options.useDeviceNames !== undefined &&
+              this.options.useDeviceNames &&
               service.customName !== ''
             ) {
               deviceInstance = service.customName
@@ -329,7 +331,7 @@ export class DbusListener {
     const old_owner = m.body[1]
     const new_owner = m.body[2]
 
-    this.app.debug('name owner change: %j', m)
+    ;(this.app as any).debug('name owner change: %j', m)
 
     if (
       name.startsWith('com.victronenergy') &&
@@ -378,15 +380,13 @@ export class DbusListener {
     const senderName = service.name
     let instanceName: string | undefined
 
-    if (this.plugin.options.instanceMappings) {
-      const mapping = this.plugin.options.instanceMappings.find(
-        (mapping: any) => {
-          return (
-            service.name.startsWith(mapping.type) &&
-            mapping.venusId == service.deviceInstance
-          )
-        }
-      )
+    if (this.options.instanceMappings) {
+      const mapping = this.options.instanceMappings.find((mapping: any) => {
+        return (
+          service.name.startsWith(mapping.type) &&
+          mapping.venusId == service.deviceInstance
+        )
+      })
       if (mapping !== undefined) {
         instanceName = mapping.signalkId
       }
@@ -394,8 +394,8 @@ export class DbusListener {
 
     if (instanceName === undefined) {
       if (
-        this.plugin.options.useDeviceNames !== undefined &&
-        this.plugin.options.useDeviceNames &&
+        this.options.useDeviceNames !== undefined &&
+        this.options.useDeviceNames &&
         service.customName !== ''
       ) {
         instanceName = service.customName

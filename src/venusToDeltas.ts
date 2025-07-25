@@ -8,7 +8,9 @@ import {
   getMappings,
   getDIMappings,
   VenusToSignalKMappings,
-  VenusToSignalKMapping
+  VenusToSignalKMapping,
+  PutConversion,
+  PutConfirmChange
 } from './mappings'
 
 const debug = Debug('signalk-venus-plugin:venusToDeltas')
@@ -35,7 +37,13 @@ export class VenusToSignalK {
     private app: ServerAPI,
     private options: any,
     private state: any,
-    private putRegistrar: any
+    private putRegistrar: (
+      path: string,
+      m: Message,
+      converter: PutConversion | undefined,
+      confirmChange: PutConfirmChange | undefined,
+      putPath: string | undefined
+    ) => void
   ) {
     state.knownPaths = []
     state.knownSenders = []
@@ -52,7 +60,7 @@ export class VenusToSignalK {
     }
   }
 
-  toDelta(m: Message) {
+  toDelta(m: Message): Delta[] {
     const deltas: Delta[] = []
 
     debug('%j', m)
