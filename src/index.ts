@@ -31,26 +31,51 @@ module.exports = function (app: any) {
     'Plugin taking Battery, and other, from the D-Bus in Venus'
 
   plugin.schema = () => {
-    let knowPaths
-    let knownSenders = ['no known senders yet']
+    let knowPaths: string[] = []
+    let knownSenders: string[] = []
+
     if (venusToSignalK) {
       const ks = venusToSignalK.getKnownSenders()
       if (ks && ks.length > 0) {
         knownSenders = ks
       }
-    }
-    if (venusToSignalK) {
+
       knowPaths = venusToSignalK.getKnownPaths().sort()
-      if (!knowPaths || knowPaths.length === 0) {
-        knowPaths = ['no known paths yet']
-      }
-    } else {
-      const options = app.readPluginOptions() as any
-      knowPaths =
-        options.configuration && options.configuration.blacklist
-          ? options.configuration.blacklist
-          : ['no known paths yet']
     }
+
+    let options = plugin.options
+
+    if ( !options ) {
+      const settings = app.readPluginOptions() as any
+      if ( settings ) {
+        options = settings.configuration || {}
+      }
+    }
+
+    if ( options.blacklist && options.blacklist.length > 0 ) {
+      options.blacklist.forEach((path: string) => {
+        if ( knowPaths.indexOf(path) === -1 ) {
+          knowPaths.push(path)
+        }
+      })
+    }
+    if ( options.ignoredSenders && options.ignoredSenders.length > 0 ) {
+      options.ignoredSenders.forEach((sender: string) => {
+        if ( knownSenders.indexOf(sender) === -1 ) {
+          knownSenders.push(sender)
+        }
+      })
+    }
+
+    if (!knowPaths || knowPaths.length === 0) {
+      knowPaths = ['no known paths yet']
+    }
+
+    if (!knownSenders || knownSenders.length === 0) {
+      knownSenders = ['no known senders yet']
+    }
+
+
     return {
       title: PLUGIN_NAME,
       type: 'object',
