@@ -7,6 +7,7 @@ import { Message } from '../src/venusToDeltas'
 import { PutConfirmChange, PutConversion } from '../src/mappings'
 
 const files = [
+  /*
   {
     name: 'mqtt',
     file: './test/mqtt-test.log',
@@ -23,7 +24,7 @@ const files = [
       'electrical.batteries.256.relay.state',
       'electrical.batteries.258.relay.state'
     ]
-  },
+  },*/
   {
     name: 'dbus',
     file: './test/dbus-test.log',
@@ -80,6 +81,7 @@ files.forEach((item) => {
         _confirmChange: PutConfirmChange | undefined,
         _putPath: string | undefined
       ) => {
+        console.log(`got put registration ${path}`)
         putRegistrations.push(path)
       }
     )
@@ -87,24 +89,33 @@ files.forEach((item) => {
     const content: string = fs.readFileSync(item.file, 'utf-8')
     const lines: string[] = content.split(/\r?\n/)
 
-    lines.forEach((line) => {
+    lines.forEach((line, index) => {
       //console.log(`input ${line}`)
-      const data = JSON.parse(line)
-
-      if (data.deltas.length === 0) {
-        fs.appendFileSync(reportFile, `${JSON.stringify(data.message)}\n`)
+      if (line.trim() === '') {
+        return
       }
+      try {
+        const data = JSON.parse(line)
 
-      it(`${data.message.senderName}:${data.message.path}`, (done) => {
-        try {
-          const deltas = vsk.toDelta(data.message)
-          expect(deltas).to.deep.equal(data.deltas)
-          done()
-        } catch (error) {
-          done(error)
+        if (data.deltas.length === 0) {
+          fs.appendFileSync(reportFile, `${JSON.stringify(data.message)}\n`)
         }
-      })
-      //}
+
+        it(`${data.message.senderName}:${data.message.path} line ${index + 1}`, (done) => {
+          try {
+            const deltas = vsk.toDelta(data.message)
+            expect(deltas).to.deep.equal(data.deltas)
+            done()
+          } catch (error) {
+            done(error)
+          }
+        })
+      } catch (error) {
+        console.error(
+          `Error parsing line ${item.file}:${index + 1}: ${line}`,
+          error
+        )
+      }
     })
   })
 

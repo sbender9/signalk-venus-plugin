@@ -79,7 +79,7 @@
 {"message":{"path":"/RawUnit","senderName":"com.victronenergy.tank.adc_builtin0_3","value":"Ω","instanceName":21,"fluidType":1,"venusName":"venus"},"deltas":[]}
 {"message":{"path":"/RawValue","senderName":"com.victronenergy.tank.adc_builtin0_3","value":374.89263916015625,"instanceName":21,"fluidType":1,"venusName":"venus"},"deltas":[]}
 {"message":{"path":"/FilterLength","senderName":"com.victronenergy.tank.adc_builtin0_3","value":4,"instanceName":21,"fluidType":1,"venusName":"venus"},"deltas":[]}
-{"message":{"path":"/CustomName","senderName":"com.victronenergy.tank.adc_builtin0_3","value":"","instanceName":21,"fluidType":1,"venusName":"venus"},"deltas":[{"updates":[{"$source":"venus.com.victronenergy.tank.adc_builtin0_3","values":[{"path":"","value":""}]}]}]}
+{"message":{"path":"/CustomName","senderName":"com.victronenergy.tank.adc_builtin0_3","value":"","instanceName":21,"fluidType":1,"venusName":"venus"},"deltas":[]}
 {"message":{"path":"/Status","senderName":"com.victronenergy.tank.adc_builtin0_3","value":1,"instanceName":21,"fluidType":1,"venusName":"venus"},"deltas":[]}
 {"message":{"path":"/DeviceInstance","senderName":"com.victronenergy.tank.adc_builtin0_3","value":21,"instanceName":21,"fluidType":1,"venusName":"venus"},"deltas":[]}
 {"message":{"path":"/Connected","senderName":"com.victronenergy.tank.adc_builtin0_3","value":1,"instanceName":21,"fluidType":1,"venusName":"venus"},"deltas":[]}
@@ -118,7 +118,7 @@
 {"message":{"path":"/RawUnit","senderName":"com.victronenergy.tank.adc_builtin0_4","value":"Ω","instanceName":20,"fluidType":0,"venusName":"venus"},"deltas":[]}
 {"message":{"path":"/RawValue","senderName":"com.victronenergy.tank.adc_builtin0_4","value":375.222412109375,"instanceName":20,"fluidType":0,"venusName":"venus"},"deltas":[]}
 {"message":{"path":"/FilterLength","senderName":"com.victronenergy.tank.adc_builtin0_4","value":1,"instanceName":20,"fluidType":0,"venusName":"venus"},"deltas":[]}
-{"message":{"path":"/CustomName","senderName":"com.victronenergy.tank.adc_builtin0_4","value":"","instanceName":20,"fluidType":0,"venusName":"venus"},"deltas":[{"updates":[{"$source":"venus.com.victronenergy.tank.adc_builtin0_4","values":[{"path":"","value":""}]}]}]}
+{"message":{"path":"/CustomName","senderName":"com.victronenergy.tank.adc_builtin0_4","value":"","instanceName":20,"fluidType":0,"venusName":"venus"},"deltas":[]}
 {"message":{"path":"/Status","senderName":"com.victronenergy.tank.adc_builtin0_4","value":1,"instanceName":20,"fluidType":0,"venusName":"venus"},"deltas":[]}
 {"message":{"path":"/DeviceInstance","senderName":"com.victronenergy.tank.adc_builtin0_4","value":20,"instanceName":20,"fluidType":0,"venusName":"venus"},"deltas":[]}
 {"message":{"path":"/Connected","senderName":"com.victronenergy.tank.adc_builtin0_4","value":1,"instanceName":20,"fluidType":0,"venusName":"venus"},"deltas":[]}
@@ -148,7 +148,7 @@
 {"message":{"path":"/RawUnit","senderName":"com.victronenergy.tank.adc_builtin0_2","value":"Ω","instanceName":22,"fluidType":5,"venusName":"venus"},"deltas":[]}
 {"message":{"path":"/RawValue","senderName":"com.victronenergy.tank.adc_builtin0_2","value":374.89263916015625,"instanceName":22,"fluidType":5,"venusName":"venus"},"deltas":[]}
 {"message":{"path":"/FilterLength","senderName":"com.victronenergy.tank.adc_builtin0_2","value":10,"instanceName":22,"fluidType":5,"venusName":"venus"},"deltas":[]}
-{"message":{"path":"/CustomName","senderName":"com.victronenergy.tank.adc_builtin0_2","value":"","instanceName":22,"fluidType":5,"venusName":"venus"},"deltas":[{"updates":[{"$source":"venus.com.victronenergy.tank.adc_builtin0_2","values":[{"path":"","value":""}]}]}]}
+{"message":{"path":"/CustomName","senderName":"com.victronenergy.tank.adc_builtin0_2","value":"","instanceName":22,"fluidType":5,"venusName":"venus"},"deltas":[]}
 {"message":{"path":"/Status","senderName":"com.victronenergy.tank.adc_builtin0_2","value":1,"instanceName":22,"fluidType":5,"venusName":"venus"},"deltas":[]}
 {"message":{"path":"/DeviceInstance","senderName":"com.victronenergy.tank.adc_builtin0_2","value":22,"instanceName":22,"fluidType":5,"venusName":"venus"},"deltas":[]}
 {"message":{"path":"/Connected","senderName":"com.victronenergy.tank.adc_builtin0_2","value":1,"instanceName":22,"fluidType":5,"venusName":"venus"},"deltas":[]}
@@ -1317,7 +1317,7 @@
 {"message":{"path":"/ProductId","senderName":"com.victronenergy.battery.ttyO2","value":516,"instanceName":258,"venusName":"venus"},"deltas":[]}
 {"message":{"path":"/ProductName","senderName":"com.victronenergy.battery.ttyO2","value":"BMV-702","instanceName":258,"venusName":"venus"},"deltas":[]}
 {"message":{"path":"/TemperatureType","senderName":"com.victronenergy.temperature.ruuvi_f00f00d00001","value":1,"instanceName":28,"temperatureType":1,"venusName":"venus"},"deltas":[]}
-{"message":{"path":"/CustomName","senderName":"com.victronenergy.temperature.ruuvi_f00f00d00001","value":"Refrigerator","instanceName":28,"temperatureType":1,"venusName":"venus"},"deltas":[{"updates":[{"$source":"venus.com.victronenergy.temperature.ruuvi_f00f00d00001","values":[{"path":"electrical.temperature.28.name","value":"Refrigerator"}]}]}]}
+{"message":{"path":"/CustomName","senderName":"com.victronenergy.temperature.ruuvi_f00f00d00001","value":"Refrigerator","instanceName":28,"temperatureType":1,"venusName":"venus"},"deltas":[{"updates":[{"$source":"venus.com.victronenergy.temperature.ruuvi_f00f00d00001","values":[{"path":"environment.inside.refrigerator.name","value":"Refrigerator","value": "Refrigerator"}]}]}]}
 {"message":{"path":"/ProductId","senderName":"com.victronenergy.temperature.ruuvi_f00f00d00001","value":49193,"instanceName":28,"temperatureType":1,"venusName":"venus"},"deltas":[]}
 {"message":{"path":"/ProductName","senderName":"com.victronenergy.temperature.ruuvi_f00f00d00001","value":"RuuviTag","instanceName":28,"temperatureType":1,"venusName":"venus"},"deltas":[]}
 {"message":{"path":"/DeviceInstance","senderName":"com.victronenergy.temperature.ruuvi_f00f00d00001","value":28,"instanceName":28,"temperatureType":1,"venusName":"venus"},"deltas":[]}

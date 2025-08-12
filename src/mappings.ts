@@ -67,11 +67,11 @@ export const getMappings = (
     '/CustomName': [
       {
         path: (m) => {
-          return (
-            m.value &&
-            m.value.length > 0 &&
-            makePath(m, `${m.instanceName}.name`)
-          )
+          return m.value && m.value.length > 0
+            ? m.senderName.startsWith('com.victronenergy.temperature')
+              ? getTemperaturePath(m, options, 'name')
+              : makePath(m, `${m.instanceName}.name`)
+            : undefined
         }
       },
       {

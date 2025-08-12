@@ -26,7 +26,7 @@ module.exports = function (app: ServerAPI) {
   let seenMQTTTopics: string[] = []
   let venusToSignalK: VenusToSignalK | undefined
   let dbusListener: DbusListener | undefined
-  const pluginOptions: any = {}
+  let pluginOptions: any
   let needsID = true
   let portalID: string | null = null
   let client: MqttClient | undefined
@@ -310,7 +310,7 @@ module.exports = function (app: ServerAPI) {
         }
       )
 
-      options = options
+      pluginOptions = options
 
       if (options.relayDisplayName0 && options.relayDisplayName0.length) {
         sendMeta(options.relayPath0, { displayName: options.relayDisplayName0 })
@@ -660,10 +660,7 @@ module.exports = function (app: ServerAPI) {
 
       const senderName = `com.victronenergy.${type}.${instance}`
 
-      if (
-        pluginOptions.useDeviceNames !== undefined &&
-        pluginOptions.useDeviceNames
-      ) {
+      if (options.useDeviceNames !== undefined && options.useDeviceNames) {
         if (
           customNames[senderName] === undefined &&
           venusToSignalK !== undefined &&
@@ -721,7 +718,7 @@ module.exports = function (app: ServerAPI) {
 
       let instanceName
       if (options.instanceMappings) {
-        const mapping = pluginOptions.instanceMappings.find((mapping: any) => {
+        const mapping = options.instanceMappings.find((mapping: any) => {
           return (
             senderName.startsWith(mapping.type) && mapping.venusId == instance
           )
@@ -733,8 +730,8 @@ module.exports = function (app: ServerAPI) {
 
       if (instanceName === undefined) {
         if (
-          pluginOptions.useDeviceNames !== undefined &&
-          pluginOptions.useDeviceNames &&
+          options.useDeviceNames !== undefined &&
+          options.useDeviceNames &&
           customNames[senderName] !== undefined &&
           customNames[senderName] !== ''
         ) {
