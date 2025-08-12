@@ -1746,7 +1746,7 @@
 {"message":{"path":"/RawUnit","instanceName":"21","senderName":"com.victronenergy.tank.21","value":"Ω","fluidType":1,"topic":"N/c0847dba509e/tank/21/RawUnit","venusName":"venus"},"deltas":[]}
 {"message":{"path":"/ProductId","instanceName":"21","senderName":"com.victronenergy.tank.21","value":41313,"fluidType":1,"topic":"N/c0847dba509e/tank/21/ProductId","venusName":"venus"},"deltas":[]}
 {"message":{"path":"/FilterLength","instanceName":"21","senderName":"com.victronenergy.tank.21","value":4,"fluidType":1,"topic":"N/c0847dba509e/tank/21/FilterLength","venusName":"venus"},"deltas":[]}
-{"message":{"path":"/CustomName","instanceName":"21","senderName":"com.victronenergy.tank.21","value":"","fluidType":1,"topic":"N/c0847dba509e/tank/21/CustomName","venusName":"venus"},"deltas":[{"updates":[{"$source":"venus.com.victronenergy.tank.21","values":[{"path":"","value":""}]}]}]}
+{"message":{"path":"/CustomName","instanceName":"21","senderName":"com.victronenergy.tank.21","value":"","fluidType":1,"topic":"N/c0847dba509e/tank/21/CustomName","venusName":"venus"},"deltas":[]}
 {"message":{"path":"/Connected","instanceName":"21","senderName":"com.victronenergy.tank.21","value":1,"fluidType":1,"topic":"N/c0847dba509e/tank/21/Connected","venusName":"venus"},"deltas":[]}
 {"message":{"path":"/ProductName","instanceName":"21","senderName":"com.victronenergy.tank.21","value":"Generic Tank Input","fluidType":1,"topic":"N/c0847dba509e/tank/21/ProductName","venusName":"venus"},"deltas":[]}
 {"message":{"path":"/Mgmt/ProcessVersion","instanceName":"21","senderName":"com.victronenergy.tank.21","value":"1.47","fluidType":1,"topic":"N/c0847dba509e/tank/21/Mgmt/ProcessVersion","venusName":"venus"},"deltas":[]}
@@ -2050,7 +2050,7 @@
 {"message":{"path":"/RawUnit","instanceName":"20","senderName":"com.victronenergy.tank.20","value":"Ω","fluidType":0,"topic":"N/c0847dba509e/tank/20/RawUnit","venusName":"venus"},"deltas":[]}
 {"message":{"path":"/ProductId","instanceName":"20","senderName":"com.victronenergy.tank.20","value":41313,"fluidType":0,"topic":"N/c0847dba509e/tank/20/ProductId","venusName":"venus"},"deltas":[]}
 {"message":{"path":"/FilterLength","instanceName":"20","senderName":"com.victronenergy.tank.20","value":1,"fluidType":0,"topic":"N/c0847dba509e/tank/20/FilterLength","venusName":"venus"},"deltas":[]}
-{"message":{"path":"/CustomName","instanceName":"20","senderName":"com.victronenergy.tank.20","value":"","fluidType":0,"topic":"N/c0847dba509e/tank/20/CustomName","venusName":"venus"},"deltas":[{"updates":[{"$source":"venus.com.victronenergy.tank.20","values":[{"path":"","value":""}]}]}]}
+{"message":{"path":"/CustomName","instanceName":"20","senderName":"com.victronenergy.tank.20","value":"","fluidType":0,"topic":"N/c0847dba509e/tank/20/CustomName","venusName":"venus"},"deltas":[]}
 {"message":{"path":"/Connected","instanceName":"20","senderName":"com.victronenergy.tank.20","value":1,"fluidType":0,"topic":"N/c0847dba509e/tank/20/Connected","venusName":"venus"},"deltas":[]}
 {"message":{"path":"/ProductName","instanceName":"20","senderName":"com.victronenergy.tank.20","value":"Generic Tank Input","fluidType":0,"topic":"N/c0847dba509e/tank/20/ProductName","venusName":"venus"},"deltas":[]}
 {"message":{"path":"/Mgmt/ProcessVersion","instanceName":"20","senderName":"com.victronenergy.tank.20","value":"1.47","fluidType":0,"topic":"N/c0847dba509e/tank/20/Mgmt/ProcessVersion","venusName":"venus"},"deltas":[]}
@@ -2071,7 +2071,7 @@
 {"message":{"path":"/RawUnit","instanceName":"22","senderName":"com.victronenergy.tank.22","value":"Ω","fluidType":5,"topic":"N/c0847dba509e/tank/22/RawUnit","venusName":"venus"},"deltas":[]}
 {"message":{"path":"/ProductId","instanceName":"22","senderName":"com.victronenergy.tank.22","value":41313,"fluidType":5,"topic":"N/c0847dba509e/tank/22/ProductId","venusName":"venus"},"deltas":[]}
 {"message":{"path":"/FilterLength","instanceName":"22","senderName":"com.victronenergy.tank.22","value":10,"fluidType":5,"topic":"N/c0847dba509e/tank/22/FilterLength","venusName":"venus"},"deltas":[]}
-{"message":{"path":"/CustomName","instanceName":"22","senderName":"com.victronenergy.tank.22","value":"","fluidType":5,"topic":"N/c0847dba509e/tank/22/CustomName","venusName":"venus"},"deltas":[{"updates":[{"$source":"venus.com.victronenergy.tank.22","values":[{"path":"","value":""}]}]}]}
+{"message":{"path":"/CustomName","instanceName":"22","senderName":"com.victronenergy.tank.22","value":"","fluidType":5,"topic":"N/c0847dba509e/tank/22/CustomName","venusName":"venus"},"deltas":[]}
 {"message":{"path":"/Connected","instanceName":"22","senderName":"com.victronenergy.tank.22","value":1,"fluidType":5,"topic":"N/c0847dba509e/tank/22/Connected","venusName":"venus"},"deltas":[]}
 {"message":{"path":"/ProductName","instanceName":"22","senderName":"com.victronenergy.tank.22","value":"Generic Tank Input","fluidType":5,"topic":"N/c0847dba509e/tank/22/ProductName","venusName":"venus"},"deltas":[]}
 {"message":{"path":"/Mgmt/ProcessVersion","instanceName":"22","senderName":"com.victronenergy.tank.22","value":"1.47","fluidType":5,"topic":"N/c0847dba509e/tank/22/Mgmt/ProcessVersion","venusName":"venus"},"deltas":[]}
