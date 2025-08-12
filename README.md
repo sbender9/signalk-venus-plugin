@@ -14,9 +14,11 @@ In which case you don't need to self install or configure this plugin. See
 [Venus OS large](https://www.victronenergy.com/live/venus-os:large).
 
 ## Support
+
 Use the #victron channel on [Discord](https://discord.gg/uuZrwz4dCS).
 
 ## Plugin installation & configuration
+
 Installing is simple. The plugin is available in the signalk app store. Simply click to install.
 
 Then there are two settings. The first is how to connect to Venus OS. Choose between these:
@@ -24,13 +26,13 @@ Then there are two settings. The first is how to connect to Venus OS. Choose bet
 - A. Connect to localhost via dbus
 - B. Connect to a GX-device over tcp using MQTT (Plain text)
 - C. Connect to a GX-device over tcp using MQTT (SSL)
-- D. Connect via VRM 
+- D. Connect via VRM
 
-Use option A when signalk-server is installed on the GX-device itself. 
+Use option A when signalk-server is installed on the GX-device itself.
 
 Use option B or C in case signalk-server is a separate device, for example a raspberrypi running
 Raspbian, in which case the plugin needs to connect to the GX-device
-on the ethernet/wifi network. You should use SSL if GX-device is not on the local network. 
+on the ethernet/wifi network. You should use SSL if GX-device is not on the local network.
 
 When using option B or C go enter the hostname or ipaddress of the Venus device in the plugin configuration.
 
