@@ -31,6 +31,7 @@ export class DbusListener {
     this.address = address
     this.plugin = plugin
     this.pollInterval = options.pollInterval || 20
+    this.options = options
     this.connect()
   }
 
