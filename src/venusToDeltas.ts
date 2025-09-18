@@ -393,11 +393,13 @@ const stateMaps: { [key: string]: { [key: number]: string } } = {
   'com.victronenergy.alternator': {
     0: 'off',
     1: 'bulk',
-    2: 'absorbtion',
+    2: 'fault',
+    3: 'bulk',
+    4: 'absorption',
     5: 'float',
-    7: 'external control',
-    8: 'disabled',
-    9: 'float'
+    6: 'storage',
+    7: 'equalize',
+    252: 'external control'
   },
 
   'com.victronenergy.dcdc': {
