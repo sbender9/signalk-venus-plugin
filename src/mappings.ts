@@ -983,6 +983,21 @@ export const getMappings = (
       units: 'ratio'
     },
 
+    '/Engine/Speed': [{
+      path: (m) => {
+        return makePath(m, `${m.instanceName}.engineSpeed`)
+      },
+      units: 'rpm'
+    },{
+      path: (m) => {
+        return makePath(m, `${m.instanceName}.engineSpeedHz`)
+      },
+      conversion: (msg) => {
+        return msg.value * 0.016666666666667
+      },
+      units: 'Hz'
+    }],
+    
     '/Bms/AllowToCharge': {
       path: (m) => {
         return makePath(m, `${m.instanceName}.bms.allowToCharge`)
