@@ -262,6 +262,13 @@ export class DbusListener {
             service.temperatureType = data.TemperatureType
           }
 
+          if (
+            service.name.startsWith('com.victronenergy.switch') &&
+            !_.isUndefined(data.Type)
+          ) {
+            data.switchType = data.Type
+          }
+
           // app.debug(`${service.name} ${JSON.stringify(data)}`)
 
           let deviceInstance: string | undefined = undefined
@@ -304,7 +311,8 @@ export class DbusListener {
               value: data[path],
               instanceName: deviceInstance!,
               fluidType: service.fluidType,
-              temperatureType: service.temperatureType
+              temperatureType: service.temperatureType,
+              switchType: service.switchType
             }
             this.messageCallback(msg)
           })

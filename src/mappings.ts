@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ServerAPI } from '@signalk/server-api'
+import camelcase from 'camelcase'
 
 import {
   Message,
@@ -56,6 +57,11 @@ export type VenusToSignalKMapping = {
 
 export type VenusToSignalKMappings = {
   [key: string]: VenusToSignalKMapping | VenusToSignalKMapping[]
+}
+
+export type VenusToSignalKRegExMapping = {
+  regex: RegExp
+  mappings: VenusToSignalKMapping[]
 }
 
 export const getMappings = (
@@ -1167,6 +1173,41 @@ export const getMappings = (
       units: 'bool'
     }
     /*
+    '/SwitchableOutput/0/State': getSwitchStateMapping(app, state, 0),
+    '/SwitchableOutput/1/State': getSwitchStateMapping(app, state, 1),
+    '/SwitchableOutput/2/State': getSwitchStateMapping(app, state, 2),
+    '/SwitchableOutput/3/State': getSwitchStateMapping(app, state, 3),
+    '/SwitchableOutput/0/Dimming': getSwitchDimmingMapping(app, state, 0),
+    '/SwitchableOutput/1/Dimming': getSwitchDimmingMapping(app, state, 1),
+    '/SwitchableOutput/2/Dimming': getSwitchDimmingMapping(app, state, 2),
+    '/SwitchableOutput/3/Dimming': getSwitchDimmingMapping(app, state, 3),
+    '/SwitchableOutput/0/Settings/CustomName': getSwitchCustomNameMapping(
+      app,
+      state,
+      0
+    ),
+    '/SwitchableOutput/1/Settings/CustomName': getSwitchCustomNameMapping(
+      app,
+      state,
+      1
+    ),
+    '/SwitchableOutput/2/Settings/CustomName': getSwitchCustomNameMapping(
+      app,
+      state,
+      2
+    ),
+    '/SwitchableOutput/3/Settings/CustomName': getSwitchCustomNameMapping(
+      app,
+      state,
+      3
+    ),
+    '/SwitchableOutput/0/Name': getSwitchNameMapping(app, state, 0),
+    '/SwitchableOutput/1/Name': getSwitchNameMapping(app, state, 1),
+    '/SwitchableOutput/2/Name': getSwitchNameMapping(app, state, 2),
+    '/SwitchableOutput/3/Name': getSwitchNameMapping(app, state, 3)
+    */
+
+    /*
   '/SystemState/BatteryLife': {
     path: m => {
       return `electrical.${m.venusName}.batteryLife`
@@ -1262,4 +1303,169 @@ export const getDIMappings = (
       }
     }
   }
+}
+
+export const getRegExMappings = (
+  app: any,
+  _options: any,
+  state: any
+): VenusToSignalKRegExMapping[] => {
+  return [
+    {
+      regex: /^\/SwitchableOutput\/([^/]+)\/State$/,
+      mappings: getSwitchStateMapping(app, state)
+    },
+    {
+      regex: /^\/SwitchableOutput\/([^/]+)\/Dimming$/,
+      mappings: getSwitchDimmingMapping(app, state)
+    },
+    {
+      regex: /^\/SwitchableOutput\/([^/]+)\/Name$/,
+      mappings: getSwitchNameMapping(app, state)
+    },
+    {
+      regex: /^\/SwitchableOutput\/([^/]+)\/Settings\/(.*)$/,
+      mappings: getSwitchSettingsMapping(app, state)
+    }
+  ]
+}
+
+const getSwitchChannelIndex = (m: Message): string => {
+  return m.path.split('/')[2]
+}
+
+const getSwitchNameMapping = (app: ServerAPI, state: any) => {
+  return [
+    {
+      units: 'string',
+      path: (m: Message) => {
+        const index = getSwitchChannelIndex(m)
+        if (state.switchNames === undefined) {
+          state.switchNames = {}
+        }
+        if (state.switchNames[m.senderName] === undefined) {
+          state.switchNames[m.senderName] = {}
+        }
+        if (state.switchNames[m.senderName][index] === undefined) {
+          state.switchNames[m.senderName][index] = m.value
+        }
+        return undefined
+      }
+    }
+  ]
+}
+
+const getSwitchSettingsMapping = (app: ServerAPI, state: any) => {
+  return [
+    {
+      units: 'string',
+      path: (m: Message) => {
+        const parts = m.path.split('/')
+        const index = parts[2]
+        const setting = parts[4]
+        if (state.switchSettings === undefined) {
+          state.switchSettings = {}
+        }
+        if (state.switchSettings[m.senderName] === undefined) {
+          state.switchSettings[m.senderName] = {}
+        }
+        if (state.switchSettings[m.senderName][index] === undefined) {
+          state.switchSettings[m.senderName][index] = {}
+        }
+
+        state.switchSettings[m.senderName][index][setting] = m.value
+
+        return undefined
+      }
+    }
+  ]
+}
+
+const makeSwitchPath = (
+  app: ServerAPI,
+  state: any,
+  m: Message,
+  prop: string
+) => {
+  const index = getSwitchChannelIndex(m)
+  const name = state.switchNames?.[m.senderName]?.[index]
+  const customName = state.switchSettings?.[m.senderName]?.[index]?.CustomName
+
+  if (
+    customName !== undefined &&
+    (customName.length > 0 || name !== undefined)
+  ) {
+    const bankName = m.senderName.startsWith('com.victronenergy.system')
+      ? 'gx'
+      : m.instanceName
+    return `electrical.switches.${bankName}.${camelcase(customName.length > 0 ? customName : name)}.${prop}`
+  }
+}
+
+const getSwitchMeta = (app: ServerAPI, state: any, m: Message) => {
+  const index = getSwitchChannelIndex(m)
+  const name = state.switchNames?.[m.senderName]?.[index]
+  const customName = state.switchSettings?.[m.senderName]?.[index]?.CustomName
+
+  if (
+    customName !== undefined &&
+    (customName.length > 0 || name !== undefined)
+  ) {
+    return {
+      displayName: customName.length > 0 ? customName : name
+    }
+  }
+}
+
+const getSwitchStateMapping = (app: ServerAPI, state: any) => {
+  return [
+    {
+      units: 'bool',
+      path: (m: Message) => {
+        return makeSwitchPath(app, state, m, 'state')
+      },
+      conversion: (msg: Message) => {
+        return msg.value == 1 ? true : false
+      },
+      meta: (m: Message) => getSwitchMeta(app, state, m),
+      putSupport: (m: Message) => {
+        return {
+          conversion: (value: any) => {
+            return value === 1 || value == true || value === 'on' ? 1 : 0
+          },
+          confirmChange: (value: any, input: any) => {
+            const expected = input === 1
+            return m.switchType === 0 // momentary'
+              ? true
+              : value === expected
+          }
+        }
+      }
+    }
+  ]
+}
+
+const getSwitchDimmingMapping = (app: ServerAPI, state: any) => {
+  return [
+    {
+      units: 'ratio',
+      path: (m: Message) => {
+        return makeSwitchPath(app, state, m, 'dimmingLevel')
+      },
+      conversion: (msg: Message) => {
+        return msg.value / 100
+      },
+      meta: (m: Message) => getSwitchMeta(app, state, m),
+      putSupport: (_m: Message) => {
+        return {
+          conversion: (value: any) => {
+            return Math.round(value * 100)
+          },
+          confirmChange: (value: any, input: any) => {
+            return value === input / 100
+          }
+        }
+      }
+    }
+  ]
 }

@@ -7,10 +7,12 @@ import fs from 'fs'
 import {
   getMappings,
   getDIMappings,
+  getRegExMappings,
   VenusToSignalKMappings,
   VenusToSignalKMapping,
   PutConversion,
-  PutConfirmChange
+  PutConfirmChange,
+  VenusToSignalKRegExMapping
 } from './mappings'
 
 const debug = Debug('signalk-venus-plugin:venusToDeltas')
@@ -25,11 +27,14 @@ export type Message = {
   text?: string
   fluidType?: number
   temperatureType?: number
+  switchType?: number
 }
 
 export class VenusToSignalK {
   private venusToSignalKMapping: VenusToSignalKMappings = {}
   private digitalInputsMappings: VenusToSignalKMappings = {}
+  private regexMappings: VenusToSignalKRegExMapping[] = []
+  private unmatchedPaths: string[] = []
   private makeTestLog: boolean = false
   private logged: string[] = []
 
@@ -58,6 +63,8 @@ export class VenusToSignalK {
     for (const [key, value] of Object.entries(getDIMappings(app, options))) {
       this.digitalInputsMappings[key] = !Array.isArray(value) ? [value] : value
     }
+
+    this.regexMappings = getRegExMappings(app, options, state)
   }
 
   toDelta(m: Message): Delta[] {
@@ -89,17 +96,29 @@ export class VenusToSignalK {
       return deltas
     }
 
-    let mappings: VenusToSignalKMapping[]
+    let mappings: VenusToSignalKMapping[] | undefined = undefined
+
+    if (this.unmatchedPaths.indexOf(m.path) !== -1) {
+      return deltas
+    }
 
     if (m.senderName.startsWith('com.victronenergy.digitalinput')) {
-      mappings = (
-        this.digitalInputsMappings[m.path]
-          ? this.digitalInputsMappings[m.path]
-          : []
-      ) as VenusToSignalKMapping[]
+      mappings = this.digitalInputsMappings[m.path] as VenusToSignalKMapping[]
     } else {
-      mappings = (this.venusToSignalKMapping[m.path] ||
-        []) as VenusToSignalKMapping[]
+      mappings = this.venusToSignalKMapping[m.path] as VenusToSignalKMapping[]
+      if (!mappings) {
+        for (const mapping of this.regexMappings) {
+          if (mapping.regex.test(m.path)) {
+            mappings = mapping.mappings
+            break
+          }
+        }
+      }
+    }
+
+    if (mappings === undefined || mappings.length === 0) {
+      this.unmatchedPaths.push(m.path)
+      return deltas
     }
 
     /*
@@ -514,7 +533,8 @@ const servicesWithCustomNames: string[] = [
   'com.victronenergy.solarcharger',
   'com.victronenergy.inverter',
   'com.victronenergy.vebus',
-  'com.victronenergy.digitalinput'
+  'com.victronenergy.digitalinput',
+  'com.victronenergy.switch'
 ]
 
 const modeMaps: { [key: string]: { [key: number]: string } } = {
@@ -794,6 +814,8 @@ export function makePath(
         : 'inverters'
   } else if (msg.senderName.startsWith('com.victronenergy.tank')) {
     type = 'tanks'
+  } else if (msg.senderName.startsWith('com.victronenergy.switch')) {
+    type = 'switches'
   } else if (
     msg.senderName.startsWith('com.victronenergy.system') ||
     msg.senderName.startsWith('com.victronenergy.settings')
