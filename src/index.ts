@@ -16,6 +16,7 @@ module.exports = function (app: ServerAPI) {
   //let dbusSetValue: any
   const fluidTypes: { [key: string]: number | null } = {}
   const temperatureTypes: { [key: string]: number | null } = {}
+  const switchTypes: { [key: string]: number | null } = {}
   let customNames: { [key: string]: string } = {}
   let customNameTimeouts: { [key: string]: number } = {}
   let sentDeltas: {
@@ -626,6 +627,7 @@ module.exports = function (app: ServerAPI) {
       const instance = parts[3]
       let fluidType
       let temperatureType
+      let switchType
 
       let message
 
@@ -714,6 +716,17 @@ module.exports = function (app: ServerAPI) {
           temperatureTypes[instance] = null
           return
         }
+      } 
+      
+      if (parts.length > 3 && parts[4] === 'SwitchableOutput') {
+        if (parts[parts.length - 1] == 'Type') {
+          switchTypes[instance] = message.value
+          return
+        }
+        switchType = switchTypes[instance]
+        if (switchType == null) {
+          return
+        } 
       }
 
       let instanceName
@@ -746,7 +759,8 @@ module.exports = function (app: ServerAPI) {
         value: message.value,
         fluidType: fluidType,
         topic,
-        temperatureType
+        temperatureType,
+        switchType
       }
 
       //app.debug(JSON.stringify(m))
