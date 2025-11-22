@@ -716,8 +716,8 @@ module.exports = function (app: ServerAPI) {
           temperatureTypes[instance] = null
           return
         }
-      } 
-      
+      }
+
       if (parts.length > 3 && parts[4] === 'SwitchableOutput') {
         if (parts[parts.length - 1] == 'Type') {
           switchTypes[instance] = message.value
@@ -726,7 +726,7 @@ module.exports = function (app: ServerAPI) {
         switchType = switchTypes[instance]
         if (switchType == null) {
           return
-        } 
+        }
       }
 
       let instanceName

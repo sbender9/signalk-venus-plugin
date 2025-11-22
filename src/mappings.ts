@@ -60,7 +60,7 @@ export type VenusToSignalKMappings = {
 }
 
 export type VenusToSignalKRegExMapping = {
-  regex: RegExp,
+  regex: RegExp
   mappings: VenusToSignalKMapping[]
 }
 
@@ -1171,7 +1171,7 @@ export const getMappings = (
         }
       },
       units: 'bool'
-    },
+    }
     /*
     '/SwitchableOutput/0/State': getSwitchStateMapping(app, state, 0),
     '/SwitchableOutput/1/State': getSwitchStateMapping(app, state, 1),
@@ -1310,7 +1310,7 @@ export const getRegExMappings = (
   _options: any,
   state: any
 ): VenusToSignalKRegExMapping[] => {
-  return [  
+  return [
     {
       regex: /^\/SwitchableOutput\/([^/]+)\/State$/,
       mappings: getSwitchStateMapping(app, state)
@@ -1335,49 +1335,50 @@ const getSwitchChannelIndex = (m: Message): string => {
 }
 
 const getSwitchNameMapping = (app: ServerAPI, state: any) => {
-  return [{
-    units: 'string',
-    path: (m: Message) => {
-      const index = getSwitchChannelIndex(m)
-      if (state.switchNames === undefined) {
-        state.switchNames = {}
+  return [
+    {
+      units: 'string',
+      path: (m: Message) => {
+        const index = getSwitchChannelIndex(m)
+        if (state.switchNames === undefined) {
+          state.switchNames = {}
+        }
+        if (state.switchNames[m.senderName] === undefined) {
+          state.switchNames[m.senderName] = {}
+        }
+        if (state.switchNames[m.senderName][index] === undefined) {
+          state.switchNames[m.senderName][index] = m.value
+        }
+        return undefined
       }
-      if (state.switchNames[m.senderName] === undefined) {
-        state.switchNames[m.senderName] = {}
-      }
-      if (state.switchNames[m.senderName][index] === undefined) {
-        state.switchNames[m.senderName][index] = m.value
-      }
-      return undefined
     }
-  }]
+  ]
 }
 
-const getSwitchSettingsMapping = (
-  app: ServerAPI,
-  state: any,
-) => {
-  return [{
-    units: 'string',
-    path: (m: Message) => {
-      const parts = m.path.split('/')
-      const index = parts[2]
-      const setting = parts[4]
-      if (state.switchSettings === undefined) {
-        state.switchSettings = {}
-      }
-      if (state.switchSettings[m.senderName] === undefined) {
-        state.switchSettings[m.senderName] = {}
-      }
-      if (state.switchSettings[m.senderName][index] === undefined) {
-        state.switchSettings[m.senderName][index] = {}
-      }
+const getSwitchSettingsMapping = (app: ServerAPI, state: any) => {
+  return [
+    {
+      units: 'string',
+      path: (m: Message) => {
+        const parts = m.path.split('/')
+        const index = parts[2]
+        const setting = parts[4]
+        if (state.switchSettings === undefined) {
+          state.switchSettings = {}
+        }
+        if (state.switchSettings[m.senderName] === undefined) {
+          state.switchSettings[m.senderName] = {}
+        }
+        if (state.switchSettings[m.senderName][index] === undefined) {
+          state.switchSettings[m.senderName][index] = {}
+        }
 
-      state.switchSettings[m.senderName][index][setting] = m.value
+        state.switchSettings[m.senderName][index][setting] = m.value
 
-      return undefined
+        return undefined
+      }
     }
-  }]
+  ]
 }
 
 const makeSwitchPath = (
@@ -1409,58 +1410,62 @@ const getSwitchMeta = (app: ServerAPI, state: any, m: Message) => {
   if (
     customName !== undefined &&
     (customName.length > 0 || name !== undefined)
-  ) { 
+  ) {
     return {
       displayName: customName.length > 0 ? customName : name
-    } 
+    }
   }
 }
 
 const getSwitchStateMapping = (app: ServerAPI, state: any) => {
-  return [{
-    units: 'bool',
-    path: (m: Message) => {
-      return makeSwitchPath(app, state, m, 'state')
-    },
-    conversion: (msg: Message) => {
-      return msg.value == 1 ? true : false
-    },
-    meta: (m:Message) => getSwitchMeta(app, state, m),
-    putSupport: (m: Message) => {
-      return {
-        conversion: (value: any) => {
-          return value === 1 || value == true || value === 'on' ? 1 : 0
-        },
-        confirmChange: (value: any, input: any) => {
-          const expected = input === 1
-          return m.switchType === 0 // momentary'
-            ? true
-            : value === expected
+  return [
+    {
+      units: 'bool',
+      path: (m: Message) => {
+        return makeSwitchPath(app, state, m, 'state')
+      },
+      conversion: (msg: Message) => {
+        return msg.value == 1 ? true : false
+      },
+      meta: (m: Message) => getSwitchMeta(app, state, m),
+      putSupport: (m: Message) => {
+        return {
+          conversion: (value: any) => {
+            return value === 1 || value == true || value === 'on' ? 1 : 0
+          },
+          confirmChange: (value: any, input: any) => {
+            const expected = input === 1
+            return m.switchType === 0 // momentary'
+              ? true
+              : value === expected
+          }
         }
       }
     }
-  }]
+  ]
 }
 
 const getSwitchDimmingMapping = (app: ServerAPI, state: any) => {
-  return [{
-    units: 'ratio',
-    path: (m: Message) => {
-      return makeSwitchPath(app, state, m, 'dimmingLevel')
-    },
-    conversion: (msg: Message) => {
-      return msg.value / 100
-    },
-    meta: (m:Message) => getSwitchMeta(app, state, m),
-    putSupport: (_m: Message) => {
-      return {
-        conversion: (value: any) => {
-          return Math.round(value * 100)
-        },
-        confirmChange: (value: any, input: any) => {
-          return value === input / 100
+  return [
+    {
+      units: 'ratio',
+      path: (m: Message) => {
+        return makeSwitchPath(app, state, m, 'dimmingLevel')
+      },
+      conversion: (msg: Message) => {
+        return msg.value / 100
+      },
+      meta: (m: Message) => getSwitchMeta(app, state, m),
+      putSupport: (_m: Message) => {
+        return {
+          conversion: (value: any) => {
+            return Math.round(value * 100)
+          },
+          confirmChange: (value: any, input: any) => {
+            return value === input / 100
+          }
         }
       }
     }
-  }]
+  ]
 }

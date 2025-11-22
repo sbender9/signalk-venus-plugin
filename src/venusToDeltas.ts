@@ -98,7 +98,7 @@ export class VenusToSignalK {
 
     let mappings: VenusToSignalKMapping[] | undefined = undefined
 
-    if ( this.unmatchedPaths.indexOf( m.path ) !== -1 ) {
+    if (this.unmatchedPaths.indexOf(m.path) !== -1) {
       return deltas
     }
 
@@ -107,7 +107,7 @@ export class VenusToSignalK {
     } else {
       mappings = this.venusToSignalKMapping[m.path] as VenusToSignalKMapping[]
       if (!mappings) {
-        for ( const mapping of this.regexMappings) {
+        for (const mapping of this.regexMappings) {
           if (mapping.regex.test(m.path)) {
             mappings = mapping.mappings
             break
@@ -116,8 +116,8 @@ export class VenusToSignalK {
       }
     }
 
-    if ( mappings === undefined || mappings.length === 0 ) {
-      this.unmatchedPaths.push( m.path )
+    if (mappings === undefined || mappings.length === 0) {
+      this.unmatchedPaths.push(m.path)
       return deltas
     }
 
