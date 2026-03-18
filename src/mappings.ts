@@ -110,6 +110,12 @@ export const getMappings = (
       },
       units: 'V'
     },
+    '/Dc/2/Voltage': {
+      path: (m) => {
+        return makePath(m, `${m.instanceName}-third.voltage`)
+      },
+      units: 'V'
+    },
     '/Dc/In/V': {
       path: (m) => {
         return makePath(m, `${m.instanceName}.input.voltage`)
@@ -122,6 +128,18 @@ export const getMappings = (
       },
       units: 'A'
     },
+    '/Dc/1/Current': {
+      path: (m) => {
+        return makePath(m, `${m.instanceName}-second.current`)
+      },
+      units: 'A'
+    },
+    '/Dc/2/Current': {
+      path: (m) => {
+        return makePath(m, `${m.instanceName}-third.current`)
+      },
+      units: 'A'
+    },
     '/Dc/In/I': {
       path: (m) => {
         return makePath(m, `${m.instanceName}.input.current`)
@@ -131,6 +149,18 @@ export const getMappings = (
     '/Dc/0/Power': {
       path: (m) => {
         return makePath(m, `${m.instanceName}.power`)
+      },
+      units: 'W'
+    },
+    '/Dc/1/Power': {
+      path: (m) => {
+        return makePath(m, `${m.instanceName}-second.power`)
+      },
+      units: 'W'
+    },
+    '/Dc/2/Power': {
+      path: (m) => {
+        return makePath(m, `${m.instanceName}-third.power`)
       },
       units: 'W'
     },
@@ -158,6 +188,12 @@ export const getMappings = (
         return makePath(m, `${m.instanceName}.midVoltage`)
       },
       units: 'V'
+    },
+    '/Dc/Charger/Power': {
+      path: (m) => {
+        return makePath(m, `${m.instanceName}.power`)
+      },
+      units: 'W'
     },
     '/Soc': {
       path: (m) => {

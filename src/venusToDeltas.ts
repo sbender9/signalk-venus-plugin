@@ -118,15 +118,14 @@ export class VenusToSignalK {
 
     if (mappings === undefined || mappings.length === 0) {
       this.unmatchedPaths.push(m.path)
+      /*
+      if ( this.state.loggedUnknowns.indexOf(m.path) == -1) {
+        console.log(JSON.stringify(m))
+        this.state.loggedUnknowns.push(m.path)
+      }
+      */
       return deltas
     }
-
-    /*
-      if ( mappings.length === 0 && state.loggedUnknowns.indexOf(m.path) == -1) {
-        console.log(JSON.stringify(m))
-        state.loggedUnknowns.push(m.path)
-        }
-      */
 
     if (m.venusName === undefined) {
       m.venusName = 'venus'
