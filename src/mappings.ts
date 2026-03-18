@@ -113,6 +113,9 @@ export const getMappings = (
     '/Dc/2/Voltage': {
       path: (m) => {
         return makePath(m, `${m.instanceName}-third.voltage`)
+        },
+      units: 'V'
+    },
     '/Dc/In/V': {
       path: (m) => {
         return makePath(m, `${m.instanceName}.input.voltage`)
@@ -134,6 +137,9 @@ export const getMappings = (
     '/Dc/2/Current': {
       path: (m) => {
         return makePath(m, `${m.instanceName}-third.current`)
+        },
+      units: 'A'
+    },
     '/Dc/In/I': {
       path: (m) => {
         return makePath(m, `${m.instanceName}.input.current`)
@@ -155,6 +161,9 @@ export const getMappings = (
     '/Dc/2/Power': {
       path: (m) => {
         return makePath(m, `${m.instanceName}-third.power`)
+        },
+      units: 'W'
+    },
     '/Dc/In/P': {
       path: (m) => {
         return makePath(m, `${m.instanceName}.input.power`)
