@@ -241,13 +241,13 @@ module.exports = function (app: ServerAPI) {
                   default: false
                 },
                 dbusService: {
-                  title: 'Only Map Values From D-Bus Service',
+                  title: 'D-Bus Sender Filter',
                   type: 'string',
                   description:
-                    'Optional D-Bus service filter, for example com.victronenergy.vebus. Leave blank for no restriction.'
+                    'Optional D-Bus sender filter, for example com.victronenergy.vebus. Leave blank for no restriction.'
                 },
                 dbusServiceMatchMode: {
-                  title: 'D-Bus Service Match Mode',
+                  title: 'D-Bus Sender Match Mode',
                   type: 'string',
                   enum: ['prefix', 'exact'],
                   enumNames: ['Prefix', 'Exact'],
