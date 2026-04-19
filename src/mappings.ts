@@ -73,13 +73,13 @@ type CustomConversion =
   | 'degsToRad'
   | 'zeroOneToBoolean'
 
-type DbusServiceMatchMode = 'exact' | 'prefix'
+type SenderMatchMode = 'exact' | 'prefix'
 
 export type CustomMappingConfig = {
   venusPath: string
   venusPathIsRegex?: boolean
   senderFilter?: string
-  senderMatchMode?: DbusServiceMatchMode
+  senderMatchMode?: SenderMatchMode
   signalkPath: string
   units?: string
   conversion?: CustomConversion
