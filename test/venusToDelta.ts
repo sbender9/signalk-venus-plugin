@@ -197,8 +197,8 @@ describe('customMappings', () => {
           {
             venusPath: '^/Dc/0/MaxChargeCurrent$',
             venusPathIsRegex: true,
-            dbusService: 'com.victronenergy.vebus',
-            dbusServiceMatchMode: 'prefix',
+            senderFilter: 'com.victronenergy.vebus',
+            senderMatchMode: 'prefix',
             signalkPath: 'electrical.chargers.${instanceName}.maxChargeCurrent',
             units: 'A'
           }
@@ -291,8 +291,8 @@ describe('customMappings', () => {
           {
             venusPath: '^/Dc/0/MaxChargeCurrent$',
             venusPathIsRegex: true,
-            dbusService: 'com.victronenergy.vebus',
-            dbusServiceMatchMode: 'prefix',
+            senderFilter: 'com.victronenergy.vebus',
+            senderMatchMode: 'prefix',
             signalkPath: 'electrical.chargers.${instanceName}.maxChargeCurrent',
             units: 'A'
           }

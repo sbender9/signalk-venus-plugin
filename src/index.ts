@@ -240,13 +240,13 @@ module.exports = function (app: ServerAPI) {
                     'Enable for advanced matching such as ^/Dc/0/MaxChargeCurrent$',
                   default: false
                 },
-                dbusService: {
+                senderFilter: {
                   title: 'D-Bus Sender Filter',
                   type: 'string',
                   description:
                     'Optional D-Bus sender filter, for example com.victronenergy.vebus. Leave blank for no restriction.'
                 },
-                dbusServiceMatchMode: {
+                senderMatchMode: {
                   title: 'D-Bus Sender Match Mode',
                   type: 'string',
                   enum: ['prefix', 'exact'],

@@ -78,8 +78,8 @@ type DbusServiceMatchMode = 'exact' | 'prefix'
 export type CustomMappingConfig = {
   venusPath: string
   venusPathIsRegex?: boolean
-  dbusService?: string
-  dbusServiceMatchMode?: DbusServiceMatchMode
+  senderFilter?: string
+  senderMatchMode?: DbusServiceMatchMode
   signalkPath: string
   units?: string
   conversion?: CustomConversion
@@ -1527,23 +1527,23 @@ const normalizeCustomMapping = (
     normalized.venusPath = mapping.venusPath
   }
 
-  const dbusServiceMatchMode = mapping.dbusServiceMatchMode || 'prefix'
+  const senderMatchMode = mapping.senderMatchMode || 'prefix'
 
-  if (mapping.dbusService && !['exact', 'prefix'].includes(dbusServiceMatchMode)) {
+  if (mapping.senderFilter && !['exact', 'prefix'].includes(senderMatchMode)) {
     app.error(
-      `customMappings[${index}] skipped: invalid dbusServiceMatchMode "${dbusServiceMatchMode}"`
+      `customMappings[${index}] skipped: invalid senderMatchMode "${senderMatchMode}"`
     )
     return
   }
 
-  if (mapping.dbusService && mapping.dbusService.length) {
-    if (dbusServiceMatchMode === 'exact') {
-      normalized.senderNameExact = mapping.dbusService
-    } else if (dbusServiceMatchMode === 'prefix') {
-      normalized.senderNamePrefix = mapping.dbusService
+  if (mapping.senderFilter && mapping.senderFilter.length) {
+    if (senderMatchMode === 'exact') {
+      normalized.senderNameExact = mapping.senderFilter
+    } else if (senderMatchMode === 'prefix') {
+      normalized.senderNamePrefix = mapping.senderFilter
     } else {
       app.error(
-        `customMappings[${index}] skipped: invalid dbusServiceMatchMode "${dbusServiceMatchMode}"`
+        `customMappings[${index}] skipped: invalid senderMatchMode "${senderMatchMode}"`
       )
       return
     }
