@@ -73,7 +73,7 @@ type CustomConversion =
   | 'degsToRad'
   | 'zeroOneToBoolean'
 
-type DbusServiceMatchMode = 'none' | 'exact' | 'prefix'
+type DbusServiceMatchMode = 'exact' | 'prefix'
 
 export type CustomMappingConfig = {
   venusPath: string
@@ -1527,9 +1527,9 @@ const normalizeCustomMapping = (
     normalized.venusPath = mapping.venusPath
   }
 
-  const dbusServiceMatchMode = mapping.dbusServiceMatchMode || 'none'
+  const dbusServiceMatchMode = mapping.dbusServiceMatchMode || 'prefix'
 
-  if (mapping.dbusService && !['none', 'exact', 'prefix'].includes(dbusServiceMatchMode)) {
+  if (mapping.dbusService && !['exact', 'prefix'].includes(dbusServiceMatchMode)) {
     app.error(
       `customMappings[${index}] skipped: invalid dbusServiceMatchMode "${dbusServiceMatchMode}"`
     )
@@ -1541,7 +1541,7 @@ const normalizeCustomMapping = (
       normalized.senderNameExact = mapping.dbusService
     } else if (dbusServiceMatchMode === 'prefix') {
       normalized.senderNamePrefix = mapping.dbusService
-    } else if (dbusServiceMatchMode !== 'none') {
+    } else {
       app.error(
         `customMappings[${index}] skipped: invalid dbusServiceMatchMode "${dbusServiceMatchMode}"`
       )

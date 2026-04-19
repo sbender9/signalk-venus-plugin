@@ -48,8 +48,8 @@ Each custom mapping can define:
 
 - `venusPath` for the Venus path to match
 - `venusPathIsRegex` to interpret `venusPath` as a regex for advanced matching
-- `dbusService` to restrict which D-Bus service the mapping applies to
-- `dbusServiceMatchMode` to interpret `dbusService` as `none`, `prefix`, or `exact`
+- `dbusService` to restrict which D-Bus service the mapping applies to. Leave blank for no restriction.
+- `dbusServiceMatchMode` to interpret `dbusService` as `prefix` or `exact`
 - `signalkPath` as the target Signal K path template
 - `units` for Signal K metadata
 - `conversion` for a small set of built-in value conversions

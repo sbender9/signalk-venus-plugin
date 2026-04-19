@@ -249,10 +249,11 @@ module.exports = function (app: ServerAPI) {
                 dbusServiceMatchMode: {
                   title: 'D-Bus Service Match Mode',
                   type: 'string',
-                  enum: ['none', 'prefix', 'exact'],
-                  enumNames: ['None', 'Prefix', 'Exact'],
-                  default: 'none',
-                  description: 'How to interpret the optional D-Bus service filter'
+                  enum: ['prefix', 'exact'],
+                  enumNames: ['Prefix', 'Exact'],
+                  default: 'prefix',
+                  description:
+                    'How to interpret the optional D-Bus service filter. Leave D-Bus service blank for no restriction.'
                 },
                 signalkPath: {
                   title: 'Signal K Path',
