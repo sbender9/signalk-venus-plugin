@@ -244,7 +244,7 @@ module.exports = function (app: ServerAPI) {
                   title: 'Only Map Values From D-Bus Service',
                   type: 'string',
                   description:
-                    'Optional D-Bus service filter, for example com.victronenergy.vebus'
+                    'Optional D-Bus service filter, for example com.victronenergy.vebus. Leave blank for no restriction.'
                 },
                 dbusServiceMatchMode: {
                   title: 'D-Bus Service Match Mode',
@@ -252,8 +252,7 @@ module.exports = function (app: ServerAPI) {
                   enum: ['prefix', 'exact'],
                   enumNames: ['Prefix', 'Exact'],
                   default: 'prefix',
-                  description:
-                    'How to interpret the optional D-Bus service filter. Leave D-Bus service blank for no restriction.'
+                  description: 'How to interpret the optional D-Bus service filter'
                 },
                 signalkPath: {
                   title: 'Signal K Path',
