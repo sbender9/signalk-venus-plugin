@@ -64,12 +64,33 @@ export type VenusToSignalKRegExMapping = {
   mappings: VenusToSignalKMapping[]
 }
 
+type CustomConversion =
+  | 'none'
+  | 'celsiusToKelvin'
+  | 'percentToRatio'
+  | 'ahToCoulomb'
+  | 'kWhToJoules'
+  | 'degsToRad'
+  | 'zeroOneToBoolean'
+
+type DbusServiceMatchMode = 'none' | 'exact' | 'prefix'
+
+export type CustomMappingConfig = {
+  venusPath: string
+  venusPathIsRegex?: boolean
+  dbusService?: string
+  dbusServiceMatchMode?: DbusServiceMatchMode
+  signalkPath: string
+  units?: string
+  conversion?: CustomConversion
+}
+
 export const getMappings = (
   app: ServerAPI,
   options: any,
   state: any
 ): VenusToSignalKMappings => {
-  return {
+  const mappings: VenusToSignalKMappings = {
     '/CustomName': [
       {
         path: (m) => {
@@ -1313,6 +1334,19 @@ export const getMappings = (
     },
     */
   }
+
+  getCustomExactMappings(app, options, state).forEach(({ venusPath, mapping }) => {
+    const existing = mappings[venusPath]
+    if (existing === undefined) {
+      mappings[venusPath] = mapping
+    } else if (Array.isArray(existing)) {
+      existing.push(mapping)
+    } else {
+      mappings[venusPath] = [existing, mapping]
+    }
+  })
+
+  return mappings
 }
 
 export const getDIMappings = (
@@ -1368,10 +1402,11 @@ export const getDIMappings = (
 
 export const getRegExMappings = (
   app: any,
-  _options: any,
+  options: any,
   state: any
 ): VenusToSignalKRegExMapping[] => {
   return [
+    ...getCustomRegExMappings(app, options, state),
     {
       regex: /^\/SwitchableOutput\/([^/]+)\/State$/,
       mappings: getSwitchStateMapping(app, state)
@@ -1389,6 +1424,187 @@ export const getRegExMappings = (
       mappings: getSwitchSettingsMapping(app, state)
     }
   ]
+}
+
+const getCustomExactMappings = (
+  app: ServerAPI,
+  options: any,
+  state: any
+): Array<{ venusPath: string; mapping: VenusToSignalKMapping }> => {
+  const customMappings = normalizeCustomMappings(app, options, state)
+
+  return customMappings
+    .filter((mapping) => mapping.venusPath)
+    .map((mapping) => {
+      return {
+        venusPath: mapping.venusPath!,
+        mapping: buildCustomMapping(mapping)
+      }
+    })
+}
+
+const getCustomRegExMappings = (
+  app: ServerAPI,
+  options: any,
+  state: any
+): VenusToSignalKRegExMapping[] => {
+  return normalizeCustomMappings(app, options, state)
+    .filter((mapping) => mapping.venusPathRegex)
+    .map((mapping) => {
+      return {
+        regex: mapping.venusPathRegex!,
+        mappings: [buildCustomMapping(mapping)]
+      }
+    })
+}
+
+type NormalizedCustomMapping = {
+  venusPath?: string
+  venusPathRegex?: RegExp
+  senderNameExact?: string
+  senderNamePrefix?: string
+  signalkPath: string
+  units?: string
+  conversion?: MappingConversion
+}
+
+const normalizeCustomMappings = (
+  app: ServerAPI,
+  options: any,
+  _state: any
+): NormalizedCustomMapping[] => {
+  const customMappings = options?.customMappings
+
+  if (!Array.isArray(customMappings)) {
+    return []
+  }
+
+  return customMappings
+    .map((mapping: CustomMappingConfig, index: number) =>
+      normalizeCustomMapping(app, mapping, index)
+    )
+    .filter((mapping): mapping is NormalizedCustomMapping => mapping !== undefined)
+}
+
+const normalizeCustomMapping = (
+  app: ServerAPI,
+  mapping: CustomMappingConfig,
+  index: number
+): NormalizedCustomMapping | undefined => {
+  if (
+    !mapping ||
+    typeof mapping.signalkPath !== 'string' ||
+    !mapping.signalkPath.length
+  ) {
+    app.error(
+      `customMappings[${index}] skipped: signalkPath is required and must be a non-empty string`
+    )
+    return
+  }
+
+  if (typeof mapping.venusPath !== 'string' || !mapping.venusPath.length) {
+    app.error(
+      `customMappings[${index}] skipped: venusPath is required and must be a non-empty string`
+    )
+    return
+  }
+
+  const normalized: NormalizedCustomMapping = {
+    signalkPath: mapping.signalkPath,
+    units: mapping.units
+  }
+
+  if (mapping.venusPathIsRegex) {
+    try {
+      normalized.venusPathRegex = new RegExp(mapping.venusPath)
+    } catch (err: any) {
+      app.error(
+        `customMappings[${index}] skipped: invalid venusPath regex: ${err.message}`
+      )
+      return
+    }
+  } else {
+    normalized.venusPath = mapping.venusPath
+  }
+
+  const dbusServiceMatchMode = mapping.dbusServiceMatchMode || 'none'
+
+  if (mapping.dbusService && !['none', 'exact', 'prefix'].includes(dbusServiceMatchMode)) {
+    app.error(
+      `customMappings[${index}] skipped: invalid dbusServiceMatchMode "${dbusServiceMatchMode}"`
+    )
+    return
+  }
+
+  if (mapping.dbusService && mapping.dbusService.length) {
+    if (dbusServiceMatchMode === 'exact') {
+      normalized.senderNameExact = mapping.dbusService
+    } else if (dbusServiceMatchMode === 'prefix') {
+      normalized.senderNamePrefix = mapping.dbusService
+    } else if (dbusServiceMatchMode !== 'none') {
+      app.error(
+        `customMappings[${index}] skipped: invalid dbusServiceMatchMode "${dbusServiceMatchMode}"`
+      )
+      return
+    }
+  }
+
+  const conversion = getCustomConversion(mapping.conversion)
+  if (conversion === null) {
+    app.error(
+      `customMappings[${index}] skipped: unsupported conversion "${mapping.conversion}"`
+    )
+    return
+  }
+  normalized.conversion = conversion || undefined
+
+  return normalized
+}
+
+const buildCustomMapping = (
+  mapping: NormalizedCustomMapping
+): VenusToSignalKMapping => {
+  return {
+    path: (m: Message) => {
+      if (mapping.senderNameExact && m.senderName !== mapping.senderNameExact) {
+        return undefined
+      }
+
+      if (mapping.senderNamePrefix && !m.senderName.startsWith(mapping.senderNamePrefix)) {
+        return undefined
+      }
+
+      return renderCustomPath(mapping.signalkPath, m)
+    },
+    units: mapping.units,
+    conversion: mapping.conversion
+  }
+}
+
+const renderCustomPath = (template: string, m: Message) => {
+  return template.replace(/\$\{(instanceName|venusName|senderName)\}/g, (_match, key) => {
+    const value = m[key as 'instanceName' | 'venusName' | 'senderName']
+    return value === undefined || value === null ? '' : String(value)
+  })
+}
+
+const getCustomConversion = (
+  conversion: CustomConversion | undefined
+): MappingConversion | null | undefined => {
+  if (conversion === undefined || conversion === 'none') {
+    return undefined
+  }
+
+  const conversions: Record<Exclude<CustomConversion, 'none'>, MappingConversion> = {
+    celsiusToKelvin,
+    percentToRatio,
+    ahToCoulomb,
+    kWhToJoules,
+    degsToRad,
+    zeroOneToBoolean: (msg: Message) => msg.value === 1
+  }
+
+  return conversions[conversion] || null
 }
 
 const getSwitchChannelIndex = (m: Message): string => {

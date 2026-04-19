@@ -39,3 +39,48 @@ When using option B or C go enter the hostname or ipaddress of the Venus device 
 Also ensure that MQTT is turned on in the GX-devices Services Settings.
 
 Option D is mostly usefull for developer testing/debugging with other peoples systems, but could also be used if running signalk in a different location or network that the GC device
+
+## Custom mappings
+
+The plugin supports read-only `customMappings` in plugin configuration. This allows extra Venus MQTT/DBus values to be mapped into Signal K without patching the built-in mapping table.
+
+Each custom mapping can define:
+
+- `venusPath` for the Venus path to match
+- `venusPathIsRegex` to interpret `venusPath` as a regex for advanced matching
+- `dbusService` to restrict which D-Bus service the mapping applies to
+- `dbusServiceMatchMode` to interpret `dbusService` as `none`, `prefix`, or `exact`
+- `signalkPath` as the target Signal K path template
+- `units` for Signal K metadata
+- `conversion` for a small set of built-in value conversions
+
+Supported `signalkPath` template tokens:
+
+- `${instanceName}`
+- `${venusName}`
+- `${senderName}`
+
+Example: DVCC system max charge current
+
+```json
+{
+  "venusPath": "/Settings/SystemSetup/MaxChargeCurrent",
+  "signalkPath": "electrical.${venusName}.maxChargeCurrent",
+  "units": "A"
+}
+```
+
+Example: VE.Bus max charge current for all MultiPlus instances
+
+```json
+{
+  "venusPath": "^/Dc/0/MaxChargeCurrent$",
+  "venusPathIsRegex": true,
+  "dbusService": "com.victronenergy.vebus",
+  "dbusServiceMatchMode": "prefix",
+  "signalkPath": "electrical.chargers.${instanceName}.maxChargeCurrent",
+  "units": "A"
+}
+```
+
+This is intended for read-only extension of the data model, for example when Node-RED on a Cerbo GX publishes custom values into the Venus MQTT tree and you want them to appear in Signal K.
