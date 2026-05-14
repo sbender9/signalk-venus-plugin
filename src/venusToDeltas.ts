@@ -529,6 +529,7 @@ export function convertRuuivStatus(msg: Message) {
 const servicesWithCustomNames: string[] = [
   'com.victronenergy.battery',
   'com.victronenergy.dcload',
+  'com.victronenergy.dcdc',
   'com.victronenergy.solarcharger',
   'com.victronenergy.inverter',
   'com.victronenergy.vebus',
