@@ -368,7 +368,10 @@ module.exports = function (app: ServerAPI) {
       }
     }
 
-    if (pluginOptions.installType === 'mqtt') {
+    if (
+      pluginOptions.installType === 'mqtt' ||
+      pluginOptions.installType === 'vrm'
+    ) {
       let wtopic
       if (putPath) {
         // N/985dadcb01dd/system/0/Dc/System/Power
