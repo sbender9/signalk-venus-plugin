@@ -1460,7 +1460,6 @@ const getSwitchMeta = (app: ServerAPI, state: any, m: Message) => {
   const index = getSwitchChannelIndex(m)
   const name = state.switchNames?.[m.senderName]?.[index]
   const settings = state.switchSettings?.[m.senderName]?.[index]
-  const type = m.switchType
   const customName = settings?.CustomName
 
   const meta: any = {}
@@ -1470,6 +1469,18 @@ const getSwitchMeta = (app: ServerAPI, state: any, m: Message) => {
     (customName.length > 0 || name !== undefined)
   ) {
     meta.displayName = customName.length > 0 ? customName : name
+  }
+  return Object.keys(meta).length > 0 ? meta : undefined
+}
+
+const getDimmingSwitchMeta = (app: ServerAPI, state: any, m: Message) => {
+  const index = getSwitchChannelIndex(m)
+  const settings = state.switchSettings?.[m.senderName]?.[index]
+  const type = m.switchType
+
+  let meta: any = getSwitchMeta(app, state, m)
+  if (meta === undefined) {
+    meta = {}
   }
 
   if (type !== undefined) {
@@ -1498,8 +1509,9 @@ const getSwitchMeta = (app: ServerAPI, state: any, m: Message) => {
       // drop down
       if (settings.Labels) {
         meta.possibleValues = []
+        let i = 0
         settings.Labels.forEach((label: string) => {
-          meta.possibleValues.push({ title: label, value: label })
+          meta.possibleValues.push({ title: label, value: i++ })
         })
       }
     }
@@ -1541,12 +1553,16 @@ const getSwitchDimmingMapping = (app: ServerAPI, state: any) => {
     {
       units: 'ratio',
       path: (m: Message) => {
-        return makeSwitchPath(app, state, m, 'dimmingLevel')
+        return m.switchType === 2
+          ? makeSwitchPath(app, state, m, 'dimmingLevel')
+          : undefined
       },
       conversion: (msg: Message) => {
         return msg.value / 100
       },
-      meta: (m: Message) => getSwitchMeta(app, state, m),
+      meta: (m: Message) => {
+        return m.switchType === 2 ? getSwitchMeta(app, state, m) : undefined
+      },
       putSupport: (_m: Message) => {
         return {
           conversion: (value: any) => {
@@ -1556,6 +1572,21 @@ const getSwitchDimmingMapping = (app: ServerAPI, state: any) => {
             return value === input / 100
           }
         }
+      }
+    },
+    {
+      path: (m: Message) => {
+        return m.switchType !== 2
+          ? makeSwitchPath(app, state, m, 'switchValue')
+          : undefined
+      },
+      meta: (m: Message) => {
+        return m.switchType !== 2
+          ? getDimmingSwitchMeta(app, state, m)
+          : undefined
+      },
+      putSupport: (_m: any) => {
+        return {}
       }
     }
   ]
