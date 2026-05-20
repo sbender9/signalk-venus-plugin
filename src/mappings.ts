@@ -1472,24 +1472,31 @@ const getSwitchMeta = (app: ServerAPI, state: any, m: Message) => {
     meta.displayName = customName.length > 0 ? customName : name
   }
 
-  if ( type !== undefined ) {
-    if (type === 8 || type === 7 ) { // Numeric input box or basic slider
+  if (type !== undefined) {
+    if (type === 8 || type === 7) {
+      // Numeric input box or basic slider
       meta.rangeMin = settings.DimmingMin
       meta.rangeMax = settings.DimmingMax
       meta.stepSize = settings.StepSize
       meta.units = settings.Unit
 
       meta.possibleValues = []
-      for (let i = settings.DimmingMin; i <= settings.DimmingMax; i += settings.StepSize) {
+      for (
+        let i = settings.DimmingMin;
+        i <= settings.DimmingMax;
+        i += settings.StepSize
+      ) {
         meta.possibleValues.push({ title: i.toString(), value: i })
       }
-    } else if ( type === 4 ) { // stepped switch
-      meta.possibleValues = [ { title: "Off", value: 0 } ]
-      for (let i = 1; i <= settings.DimmingMax; i++ ) {
+    } else if (type === 4) {
+      // stepped switch
+      meta.possibleValues = [{ title: 'Off', value: 0 }]
+      for (let i = 1; i <= settings.DimmingMax; i++) {
         meta.possibleValues.push({ title: i.toString(), value: i })
       }
-    } else if ( type === 6 ) { // drop down
-      if ( settings.Labels ) {
+    } else if (type === 6) {
+      // drop down
+      if (settings.Labels) {
         meta.possibleValues = []
         settings.Labels.forEach((label: string) => {
           meta.possibleValues.push({ title: label, value: label })
