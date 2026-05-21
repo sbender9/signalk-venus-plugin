@@ -202,6 +202,13 @@ export const getMappings = (
       conversion: percentToRatio,
       units: 'ratio'
     },
+    '/Soh': {
+      path: (m) => {
+        return makePath(m, `${m.instanceName}.capacity.stateOfHealth`)
+      },
+      conversion: percentToRatio,
+      units: 'ratio'
+    },
     '/TimeToGo': {
       path: (m) =>
         `electrical.batteries.${m.instanceName}.capacity.timeRemaining`,
