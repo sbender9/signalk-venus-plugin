@@ -130,3 +130,186 @@ files.forEach((item) => {
     })
   })
 })
+
+describe('customMappings', () => {
+  it('maps an exact Venus path to a system-level Signal K path', () => {
+    const vsk = new VenusToSignalK(
+      {
+        getSelfPath: (_path: string) => undefined
+      } as ServerAPI,
+      {
+        customMappings: [
+          {
+            venusPath: '/Settings/SystemSetup/MaxChargeCurrent',
+            signalkPath: 'electrical.${venusName}.maxChargeCurrent',
+            units: 'A'
+          }
+        ]
+      },
+      {},
+      () => undefined
+    )
+
+    const deltas = vsk.toDelta({
+      path: '/Settings/SystemSetup/MaxChargeCurrent',
+      instanceName: '0',
+      senderName: 'com.victronenergy.settings.0',
+      venusName: 'venus',
+      value: 0
+    })
+
+    expect(deltas).to.deep.equal([
+      {
+        updates: [
+          {
+            meta: [
+              {
+                path: 'electrical.venus.maxChargeCurrent',
+                value: { units: 'A' }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        updates: [
+          {
+            $source: 'venus.com.victronenergy.settings.0',
+            values: [
+              {
+                path: 'electrical.venus.maxChargeCurrent',
+                value: 0
+              }
+            ]
+          }
+        ]
+      }
+    ])
+  })
+
+  it('maps a regex Venus path to wildcard VE.Bus charger paths', () => {
+    const vsk = new VenusToSignalK(
+      {
+        getSelfPath: (_path: string) => undefined
+      } as ServerAPI,
+      {
+        customMappings: [
+          {
+            venusPath: '^/Dc/0/MaxChargeCurrent$',
+            venusPathIsRegex: true,
+            senderFilter: 'com.victronenergy.vebus',
+            senderMatchMode: 'prefix',
+            signalkPath: 'electrical.chargers.${instanceName}.maxChargeCurrent',
+            units: 'A'
+          }
+        ]
+      },
+      {},
+      () => undefined
+    )
+
+    const first = vsk.toDelta({
+      path: '/Dc/0/MaxChargeCurrent',
+      instanceName: '276',
+      senderName: 'com.victronenergy.vebus.276',
+      venusName: 'venus',
+      value: 240
+    })
+
+    const second = vsk.toDelta({
+      path: '/Dc/0/MaxChargeCurrent',
+      instanceName: '288',
+      senderName: 'com.victronenergy.vebus.288',
+      venusName: 'venus',
+      value: 240
+    })
+
+    expect(first).to.deep.equal([
+      {
+        updates: [
+          {
+            meta: [
+              {
+                path: 'electrical.chargers.276.maxChargeCurrent',
+                value: { units: 'A' }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        updates: [
+          {
+            $source: 'venus.com.victronenergy.vebus.276',
+            values: [
+              {
+                path: 'electrical.chargers.276.maxChargeCurrent',
+                value: 240
+              }
+            ]
+          }
+        ]
+      }
+    ])
+
+    expect(second).to.deep.equal([
+      {
+        updates: [
+          {
+            meta: [
+              {
+                path: 'electrical.chargers.288.maxChargeCurrent',
+                value: { units: 'A' }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        updates: [
+          {
+            $source: 'venus.com.victronenergy.vebus.288',
+            values: [
+              {
+                path: 'electrical.chargers.288.maxChargeCurrent',
+                value: 240
+              }
+            ]
+          }
+        ]
+      }
+    ])
+  })
+
+  it('respects sender filters for custom mappings', () => {
+    const vsk = new VenusToSignalK(
+      {
+        getSelfPath: (_path: string) => undefined
+      } as ServerAPI,
+      {
+        customMappings: [
+          {
+            venusPath: '^/Dc/0/MaxChargeCurrent$',
+            venusPathIsRegex: true,
+            senderFilter: 'com.victronenergy.vebus',
+            senderMatchMode: 'prefix',
+            signalkPath: 'electrical.chargers.${instanceName}.maxChargeCurrent',
+            units: 'A'
+          }
+        ]
+      },
+      {},
+      () => undefined
+    )
+
+    const deltas = vsk.toDelta({
+      path: '/Dc/0/MaxChargeCurrent',
+      instanceName: '512',
+      senderName: 'com.victronenergy.battery.512',
+      venusName: 'venus',
+      value: 99
+    })
+
+    expect(deltas).to.deep.equal([])
+  })
+})

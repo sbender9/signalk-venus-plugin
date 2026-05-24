@@ -219,6 +219,78 @@ module.exports = function (app: ServerAPI) {
               }
             }
           },
+          customMappings: {
+            title: 'Custom Mappings',
+            description:
+              'Read-only custom mappings from Venus MQTT/DBus paths to Signal K paths',
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                venusPath: {
+                  title: 'Venus Path',
+                  type: 'string',
+                  description:
+                    'Venus path to match, for example /Settings/SystemSetup/MaxChargeCurrent'
+                },
+                venusPathIsRegex: {
+                  title: 'Interpret Venus Path As Regex',
+                  type: 'boolean',
+                  description:
+                    'Enable for advanced matching such as ^/Dc/0/MaxChargeCurrent$',
+                  default: false
+                },
+                senderFilter: {
+                  title: 'D-Bus Sender Filter',
+                  type: 'string',
+                  description:
+                    'Optional D-Bus sender filter, for example com.victronenergy.vebus. Leave blank for no restriction.'
+                },
+                senderMatchMode: {
+                  title: 'D-Bus Sender Match Mode',
+                  type: 'string',
+                  enum: ['prefix', 'exact'],
+                  enumNames: ['Prefix', 'Exact'],
+                  default: 'prefix',
+                  description: 'How to interpret the optional D-Bus service filter'
+                },
+                signalkPath: {
+                  title: 'Signal K Path',
+                  type: 'string',
+                  description:
+                    'Target Signal K path template. Supported tokens: ${instanceName}, ${venusName}, ${senderName}'
+                },
+                units: {
+                  title: 'Units',
+                  type: 'string',
+                  description: 'Optional Signal K meta.units value'
+                },
+                conversion: {
+                  title: 'Conversion',
+                  type: 'string',
+                  enum: [
+                    'none',
+                    'celsiusToKelvin',
+                    'percentToRatio',
+                    'ahToCoulomb',
+                    'kWhToJoules',
+                    'degsToRad',
+                    'zeroOneToBoolean'
+                  ],
+                  enumNames: [
+                    'None',
+                    'Celsius to Kelvin',
+                    'Percent to Ratio',
+                    'Amp-hours to Coulomb',
+                    'kWh to Joules',
+                    'Degrees to Radians',
+                    '0/1 to Boolean'
+                  ],
+                  default: 'none'
+                }
+              }
+            }
+          },
           blacklist: {
             title: 'Block List',
             description: 'These paths will be ignored',
