@@ -511,7 +511,7 @@ export const getMappings = (
       path: (m) => {
         return typeof m.temperatureType === 'undefined'
           ? undefined
-          : getTemperaturePath(m, options, 'humidity')
+          : getTemperaturePath(m, options, 'relativeHumidity')
       },
       conversion: percentToRatio,
       units: 'ratio'
