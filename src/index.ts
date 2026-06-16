@@ -547,8 +547,12 @@ module.exports = function (app: ServerAPI) {
 
     debug('using mqtt url %s', url)
 
+    const initialReconnectPeriod = 1000
+    const maxReconnectPeriod = 60000
+
     const connectOptions: any = {
-      rejectUnauthorized: false
+      rejectUnauthorized: false,
+      reconnectPeriod: initialReconnectPeriod
     }
 
     if (password && password.length) {
@@ -569,6 +573,7 @@ module.exports = function (app: ServerAPI) {
     app.debug(`connecting to ${url}`)
 
     client.on('connect', function () {
+      client!.options.reconnectPeriod = initialReconnectPeriod
       app.debug(`connected to ${url}`)
       app.setPluginStatus(`Connected to ${url}`)
 
@@ -600,7 +605,10 @@ module.exports = function (app: ServerAPI) {
     })
 
     client.on('reconnect', () => {
-      app.debug(`mqtt reconnect`)
+      const currentPeriod = client!.options.reconnectPeriod as number
+      const nextPeriod = Math.min(currentPeriod * 2, maxReconnectPeriod)
+      client!.options.reconnectPeriod = nextPeriod
+      app.debug(`mqtt reconnect (next attempt in ${nextPeriod / 1000}s)`)
     })
 
     client.on('message', function (topic, json) {
