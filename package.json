@@ -15,7 +15,7 @@
   "devDependencies": {
     "@signalk/github-create-release": "^1.2.1",
     "@signalk/server-api": "^2.7.1",
-    "@signalk/signalk-schema": "0.0.1-12",
+    "@signalk/signalk-schema": "1.7.2",
     "@tsconfig/node20": "^20.1.6",
     "@types/chai": "^5.2.2",
     "@types/debug": "^4.1.12",
