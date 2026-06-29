@@ -92,6 +92,21 @@ export const getMappings = (
         }
       }
     ],
+    '/Count': {
+      path: (m) => {
+        return m.senderName.startsWith('com.victronenergy.pulsemeter')
+          ? makePath(m, `${m.instanceName}.count`)
+          : undefined
+      }
+    },
+    '/Aggregate': {
+      path: (m) => {
+        return m.senderName.startsWith('com.victronenergy.pulsemeter')
+          ? makePath(m, `${m.instanceName}.aggregate`)
+          : undefined
+      },
+      units: 'm3'
+    },
     '/Settings/SystemSetup/SystemName': {
       path: (m) => {
         return makePath(m, `name`)
