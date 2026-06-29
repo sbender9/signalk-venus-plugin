@@ -2304,3 +2304,5 @@
 {"message":{"path":"/Settings/Vrmlogger/Http/Proxy","senderName":"com.victronenergy.settings","value":"","venusName":"venus"},"deltas":[]}
 {"message":{"path":"/Settings/Vrmlogger/Http/ProxyPort","senderName":"com.victronenergy.settings","value":"","venusName":"venus"},"deltas":[]}
 {"message":{"path":"/Settings/Watchdog/VrmTimeout","senderName":"com.victronenergy.settings","value":0,"venusName":"venus"},"deltas":[]}
+{"message":{"path":"/Count","senderName":"com.victronenergy.pulsemeter.input_1","value":127,"instanceName":1,"venusName":"venus"},"deltas":[{"updates":[{"$source":"venus.com.victronenergy.pulsemeter.input_1","values":[{"path":"electrical.pulsemeter.1.count","value":127}]}]}]}
+{"message":{"path":"/Aggregate","senderName":"com.victronenergy.pulsemeter.input_1","value":0.127,"instanceName":1,"venusName":"venus"},"deltas":[{"updates":[{"meta":[{"path":"electrical.pulsemeter.1.aggregate","value":{"units":"m3"}}]}]},{"updates":[{"$source":"venus.com.victronenergy.pulsemeter.input_1","values":[{"path":"electrical.pulsemeter.1.aggregate","value":0.127}]}]}]}
