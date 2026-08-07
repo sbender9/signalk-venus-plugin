@@ -1387,8 +1387,84 @@ export const getRegExMappings = (
     {
       regex: /^\/SwitchableOutput\/([^/]+)\/Settings\/(.*)$/,
       mappings: getSwitchSettingsMapping(app, state)
+    },
+    // Individual battery cell data (see getCellMapping below). Three rules
+    // cover every dbus-serialbattery BATTERY_CELL_DATA_FORMAT: the cell number
+    // is captured dynamically, so any pack size and any number of battery
+    // instances are handled without further code.
+    {
+      regex: CELL_VOLTAGE_FORMAT_1_RE,
+      mappings: getCellMapping(CELL_VOLTAGE_FORMAT_1_RE, 'voltage', 'V')
+    },
+    {
+      regex: CELL_VOLTAGE_FORMAT_2_RE,
+      mappings: getCellMapping(CELL_VOLTAGE_FORMAT_2_RE, 'voltage', 'V')
+    },
+    {
+      regex: CELL_BALANCING_RE,
+      mappings: getCellMapping(CELL_BALANCING_RE, 'balancing')
     }
   ]
+}
+
+/*
+ * Individual battery cell voltage and balancing state.
+ *
+ * BMS drivers on Venus OS — most commonly dbus-serialbattery, which supports
+ * JK, JBD/Xiaoxiang, Daly, ANT, Seplos and many other BMSs — publish per-cell
+ * data on dbus. The exact paths depend on the driver's BATTERY_CELL_DATA_FORMAT
+ * setting (bit 1 selects the voltage layout, bit 0 enables balancing):
+ *
+ *   format 1  ->  /Voltages/Cell<n>   and  /Balances/Cell<n>
+ *   format 2  ->  /Cell/<n>/Volts     (no balancing)
+ *   format 3  ->  /Cell/<n>/Volts     and  /Balances/Cell<n>
+ *
+ * All layouts are mapped onto a single, driver-independent Signal K shape:
+ *
+ *   electrical.batteries.<instance>.cellVoltages.<n>.voltage    (V)
+ *   electrical.batteries.<instance>.cellVoltages.<n>.balancing  (0 | 1)
+ *
+ * The cell index is 1-based, matching the dbus paths and the convention used by
+ * the signalk-bms-ble plugin, so downstream consumers behave the same whether
+ * the data arrives through this plugin or via direct BLE.
+ */
+
+// One anchored regex per dbus layout, at module scope so each is compiled once
+// and reused for both dispatch (in getRegExMappings) and cell-number extraction
+// (in getCellMapping) — the pattern is written exactly once.
+const CELL_VOLTAGE_FORMAT_1_RE = /^\/Voltages\/Cell(\d+)$/
+const CELL_VOLTAGE_FORMAT_2_RE = /^\/Cell\/(\d+)\/Volts$/
+const CELL_BALANCING_RE = /^\/Balances\/Cell(\d+)$/
+
+/**
+ * Build the mapping for one cell-data layout.
+ *
+ * @param pathRegex the regex used to dispatch the dbus path; its first capture
+ *   group is the 1-based cell number. The dispatcher only reports that a regex
+ *   matched, not what it captured, so we re-run the same already-compiled regex
+ *   here to read the cell number — the approach the SwitchableOutput mappings
+ *   also take with m.path. The cost is a single anchored match on a short string
+ *   per update, negligible next to the delta the server then builds and emits.
+ * @param leaf the Signal K leaf under cellVoltages.<n>: 'voltage' or 'balancing'.
+ * @param units optional units metadata; only voltage carries units.
+ */
+const getCellMapping = (
+  pathRegex: RegExp,
+  leaf: 'voltage' | 'balancing',
+  units?: string
+): VenusToSignalKMapping[] => {
+  const mapping: VenusToSignalKMapping = {
+    path: (m: Message) => {
+      const cell = m.path.match(pathRegex)?.[1]
+      return cell === undefined
+        ? undefined
+        : makePath(m, `${m.instanceName}.cellVoltages.${cell}.${leaf}`)
+    }
+  }
+  if (units !== undefined) {
+    mapping.units = units
+  }
+  return [mapping]
 }
 
 const getSwitchChannelIndex = (m: Message): string => {
