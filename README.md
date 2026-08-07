@@ -39,3 +39,28 @@ When using option B or C go enter the hostname or ipaddress of the Venus device 
 Also ensure that MQTT is turned on in the GX-devices Services Settings.
 
 Option D is mostly usefull for developer testing/debugging with other peoples systems, but could also be used if running signalk in a different location or network that the GC device
+
+## Battery cell voltages
+
+If a battery is driven by a BMS that publishes per-cell data on dbus — most
+commonly [dbus-serialbattery](https://github.com/mr-manuel/venus-os_dbus-serialbattery),
+which supports JK, JBD/Xiaoxiang, Daly, ANT, Seplos and many other BMSs — the
+individual cell voltages and balancing state are exposed under the battery
+instance:
+
+```
+electrical.batteries.<instance>.cellVoltages.<n>.voltage     # volts
+electrical.batteries.<instance>.cellVoltages.<n>.balancing   # 0 = idle, 1 = balancing
+```
+
+`<n>` is the 1-based cell number, matching the dbus paths and the convention
+used by the `signalk-bms-ble` plugin. Any pack size and any number of battery
+instances are handled automatically.
+
+This requires the BMS driver to actually publish cell data. For
+dbus-serialbattery that means its `BATTERY_CELL_DATA_FORMAT` is left at the
+default (`1`) or set to `2`/`3`; with `0` no per-cell data is placed on dbus and
+nothing can be mapped. Balancing is only available when that setting includes
+bit 0 (values `1` and `3`). Managed/native batteries that only publish the
+min/max cell summary rather than a full per-cell list will not produce these
+paths.
