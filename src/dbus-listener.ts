@@ -18,6 +18,11 @@ export class DbusListener {
   private reconnectTimer: NodeJS.Timeout | null = null
   private reconnectDelay: number = 5000
   private options: any
+  private heartbeatTimer: NodeJS.Timeout | null = null
+  private heartbeatInterval: number = 15000
+  private linkLossTimeout: number
+  private lastActivity: number = Date.now()
+  private stopped: boolean = false
 
   constructor(
     app: ServerAPI,
@@ -31,6 +36,7 @@ export class DbusListener {
     this.address = address
     this.plugin = plugin
     this.pollInterval = options.pollInterval || 20
+    this.linkLossTimeout = (options.linkLossTimeout || 60) * 1000
     this.options = options
     this.connect()
   }
@@ -57,6 +63,15 @@ export class DbusListener {
       throw new Error(msg)
     }
 
+    // Enable TCP keepalive so a dead socket on a remote/TCP connection gets
+    // noticed by the OS. This alone isn't reliable enough (keepalive timeouts
+    // can be very long/disabled on some platforms), so it's paired with the
+    // application-level watchdog started below.
+    const stream = this.bus.connection && this.bus.connection.stream
+    if (stream && typeof stream.setKeepAlive === 'function') {
+      stream.setKeepAlive(true, 10000)
+    }
+
     // get info on all existing D-Bus services at startup
     this.bus.listNames((_props: any, args: string[]) => {
       args.forEach((name) => {
@@ -78,6 +93,7 @@ export class DbusListener {
           this.pollInterval * 1000
         )
       }
+      this.startWatchdog()
     })
 
     // if resolved within timeout reject has no effect
@@ -104,6 +120,7 @@ export class DbusListener {
   }
 
   stop() {
+    this.stopped = true
     if (this.pollingTimer) {
       clearInterval(this.pollingTimer)
       this.pollingTimer = null
@@ -112,12 +129,19 @@ export class DbusListener {
       clearTimeout(this.reconnectTimer)
       this.reconnectTimer = null
     }
+    this.stopWatchdog()
+    if (this.bus && this.bus.connection) {
+      this.bus.connection.removeAllListeners()
+    }
     this.bus = null
     this.services = {}
     this.app.setPluginStatus('D-Bus connection stopped')
   }
 
   connectionLost(err: any) {
+    if (this.stopped) {
+      return
+    }
     const msg = `no connection to D-Bus ${err ? err.message : ''}`
     this.app.setPluginError(msg)
     this.app.error(msg)
@@ -125,13 +149,74 @@ export class DbusListener {
       clearInterval(this.pollingTimer)
       this.pollingTimer = null
     }
+    this.stopWatchdog()
     this.bus = null
     this.services = {}
     this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = null
       this.app.setPluginStatus('retrying D-Bus connection')
       this.app.error('retrying D-Bus connection')
       this.connect()
     }, this.reconnectDelay)
+  }
+
+  // Detects a D-Bus connection that has gone silently dead (no socket
+  // 'error'/'end' event fires for a half-open TCP connection or a wedged
+  // dbus-native stream). Actively pings the bus at heartbeatInterval and
+  // forces a reconnect if no activity at all is observed within
+  // linkLossTimeout, regardless of whether the ping itself ever comes back.
+  private startWatchdog() {
+    this.stopWatchdog()
+    this.lastActivity = Date.now()
+    this.heartbeatTimer = setInterval(
+      this.checkLinkHealth.bind(this),
+      this.heartbeatInterval
+    )
+  }
+
+  private stopWatchdog() {
+    if (this.heartbeatTimer) {
+      clearInterval(this.heartbeatTimer)
+      this.heartbeatTimer = null
+    }
+  }
+
+  private checkLinkHealth() {
+    if (this.stopped || !this.bus) {
+      return
+    }
+
+    const idleTime = Date.now() - this.lastActivity
+    if (idleTime > this.linkLossTimeout) {
+      this.app.debug(
+        `D-Bus watchdog: no activity for ${Math.round(idleTime / 1000)}s, forcing reconnect`
+      )
+      this.forceReconnect()
+      return
+    }
+
+    // Actively probe the bus so silence doesn't just mean "nothing changed" -
+    // if the socket is dead this call will simply never return, and the
+    // idleTime check above will eventually trip.
+    this.bus.listNames((_props: any, _args: any) => {
+      this.lastActivity = Date.now()
+    })
+  }
+
+  private forceReconnect() {
+    const bus = this.bus
+    if (bus && bus.connection) {
+      bus.connection.removeAllListeners()
+      if (bus.connection.stream) {
+        try {
+          bus.connection.stream.destroy()
+        } catch (_e) {
+          // socket already gone, nothing to clean up
+        }
+      }
+    }
+    this.bus = null
+    this.connectionLost(new Error('watchdog: no D-Bus activity detected'))
   }
 
   private pollDbus() {
@@ -232,6 +317,7 @@ export class DbusListener {
         member: 'GetValue'
       },
       (err: any, res: any) => {
+        this.lastActivity = Date.now()
         if (err) {
           // Some services don't support requesting the root path. They are not
           // interesting to signalk, see above in the comments on /DeviceInstance
@@ -322,6 +408,7 @@ export class DbusListener {
   }
 
   private signal_receive(m: any) {
+    this.lastActivity = Date.now()
     if (
       m.interface === 'com.victronenergy.BusItem' &&
       (m.member === 'PropertiesChanged' || m.member === 'ItemsChanged')
