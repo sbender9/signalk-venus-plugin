@@ -140,6 +140,12 @@ module.exports = function (app: ServerAPI) {
             title: 'Interval (in seconds) to poll venus for current values',
             default: 20
           },
+          linkLossTimeout: {
+            type: 'number',
+            title:
+              'Seconds without D-Bus activity before assuming the connection is lost and reconnecting (dbus only)',
+            default: 60
+          },
           useDeviceNames: {
             type: 'boolean',
             title: 'Use the device names for paths',
