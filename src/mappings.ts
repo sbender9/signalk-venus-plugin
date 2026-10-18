@@ -1424,7 +1424,9 @@ const getSwitchSettingsMapping = (app: ServerAPI, state: any) => {
         const parts = m.path.split('/')
         const index = parts[2]
         const setting = parts[4]
-        const prevState = JSON.stringify(state.switchSettings?.[m.senderName]?.[index])
+        const prevState = JSON.stringify(
+          state.switchSettings?.[m.senderName]?.[index]
+        )
 
         if (state.switchSettings === undefined) {
           state.switchSettings = {}
@@ -1438,10 +1440,21 @@ const getSwitchSettingsMapping = (app: ServerAPI, state: any) => {
 
         state.switchSettings[m.senderName][index][setting] = m.value
 
-        const path = makeSwitchPath(app, state, m, m.switchType !== 2 ? 'switchValue' : 'dimmingLevel')
+        const path = makeSwitchPath(
+          app,
+          state,
+          m,
+          m.switchType !== 2 ? 'switchValue' : 'dimmingLevel'
+        )
 
-        if ( path && prevState !== JSON.stringify(state.switchSettings?.[m.senderName]?.[index]) ) {
-          state.knownPaths = state.knownPaths?.filter((item: string) => item !== path);
+        if (
+          path &&
+          prevState !==
+            JSON.stringify(state.switchSettings?.[m.senderName]?.[index])
+        ) {
+          state.knownPaths = state.knownPaths?.filter(
+            (item: string) => item !== path
+          )
         }
 
         return undefined
