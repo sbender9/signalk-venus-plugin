@@ -286,7 +286,7 @@ export class VenusToSignalK {
       }
 
       value = {
-        state: m.value == 1 ? 'warning' : 'alarm',
+        state: m.value == 1 ? 'warn' : 'alarm',
         message: message,
         method
       }
