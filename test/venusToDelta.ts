@@ -55,7 +55,13 @@ const files = [
       'electrical.inverters.274.acin.1.currentLimit',
       'electrical.inverters.274.acState.ignoreAcIn1.state',
       'electrical.switches.venus-1.state',
-      'electrical.switches.venus-0.state'
+      'electrical.switches.venus-0.state',
+      'electrical.switches.100.cabinLights.state',
+      'electrical.switches.100.anchorWashdown.state',
+      'electrical.switches.101.cockpitLights.state',
+      'electrical.switches.101.foredeck.state',
+      'electrical.switches.102.runningLights.state',
+      'electrical.switches.gx.gxInternalRelay1.state'
     ]
   }
 ]
