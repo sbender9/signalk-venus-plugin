@@ -281,7 +281,8 @@ export class VenusToSignalK {
       }
     } else {
       let method = ['visual', 'sound']
-      if (existing && existing.value) {
+      // a notification cleared to normal carries no method
+      if (existing && existing.value && Array.isArray(existing.value.method)) {
         method = existing.value.method
       }
 
@@ -337,7 +338,8 @@ export function convertErrorToNotification(
     }
 
     let method = ['visual', 'sound']
-    if (existing && existing.value) {
+    // a notification cleared to normal carries no method
+    if (existing && existing.value && Array.isArray(existing.value.method)) {
       method = existing.value.method
     }
 
