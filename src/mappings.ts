@@ -698,7 +698,11 @@ export const getMappings = (
           return `electrical.${m.venusName}.acSource`
         },
         conversion: convertSource,
-        requiresInstance: false
+        requiresInstance: false,
+        meta: {
+          description:
+            'Active AC input of the Victron system: grid, genset (generator), shore (shore power), battery when inverting, or unknown.'
+        }
       },
       {
         path: (m) => {
@@ -948,7 +952,11 @@ export const getMappings = (
         return `electrical.${m.venusName}.totalPanelPower`
       },
       requiresInstance: false,
-      units: 'W'
+      units: 'W',
+      meta: {
+        description:
+          'Total power produced by all solar chargers of the Victron system.'
+      }
     },
     '/Course': {
       path: 'navigation.courseOverGroundTrue',
@@ -1033,7 +1041,11 @@ export const getMappings = (
           return `electrical.${m.venusName}.state`
         },
         conversion: convertSystemState,
-        requiresInstance: false
+        requiresInstance: false,
+        meta: {
+          description:
+            'State of the Victron system, such as bulk, absorption, float, inverting or battery sustain.'
+        }
       },
       {
         path: (m) => {
