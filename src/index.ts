@@ -495,8 +495,13 @@ module.exports = function (app: ServerAPI) {
   }
 
   function setupSubscription(options: any, client: MqttClient) {
+    // a local install already subscribed to N/+/+/# on connect; a second,
+    // overlapping subscription makes the broker deliver every message twice
+    const subscribeToPortal = options.installType === 'vrm'
     client.publish(`R/${portalID}/system/0/Serial`, '')
-    client.subscribe(`N/${portalID}/+/#`)
+    if (subscribeToPortal) {
+      client.subscribe(`N/${portalID}/+/#`)
+    }
     if (options.pollInterval !== -1) {
       if (pollInterval) {
         clearInterval(pollInterval)
@@ -511,7 +516,9 @@ module.exports = function (app: ServerAPI) {
       keepAlive = setInterval(() => {
         app.debug('sending keep alive')
         client.publish(`R/${portalID}/system/0/Serial`, '')
-        client.subscribe(`N/${portalID}/+/#`)
+        if (subscribeToPortal) {
+          client.subscribe(`N/${portalID}/+/#`)
+        }
       }, 50 * 1000)
     }
   }
