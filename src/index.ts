@@ -181,9 +181,16 @@ module.exports = function (app: ServerAPI) {
                     'com.victronenergy.battery',
                     'com.victronenergy.tank',
                     'com.victronenergy.solarcharger',
-                    'com.victronenergy.vebus'
+                    'com.victronenergy.vebus',
+                    'com.victronenergy.motordrive'
                   ],
-                  enumNames: ['Battery', 'Tank', 'Solar Charger', 'VE.Bus']
+                  enumNames: [
+                    'Battery',
+                    'Tank',
+                    'Solar Charger',
+                    'VE.Bus',
+                    'Motor Drive'
+                  ]
                 },
 
                 venusId: {

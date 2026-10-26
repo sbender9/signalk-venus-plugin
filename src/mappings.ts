@@ -64,6 +64,13 @@ export type VenusToSignalKRegExMapping = {
   mappings: VenusToSignalKMapping[]
 }
 
+// com.victronenergy.motordrive reports under the SignalK propulsion tree,
+// not electrical.*, so it gets its own path builder.
+const propulsionPath = (m: Message, name: string) =>
+  m.senderName.startsWith('com.victronenergy.motordrive')
+    ? `propulsion.${m.instanceName}.${name}`
+    : undefined
+
 export const getMappings = (
   app: ServerAPI,
   options: any,
@@ -176,6 +183,30 @@ export const getMappings = (
       },
       conversion: celsiusToKelvin,
       units: 'K'
+    },
+    '/Motor/RPM': {
+      path: (m) => propulsionPath(m, 'revolutions'),
+      conversion: (m: Message) => Number(m.value) / 60,
+      units: 'Hz'
+    },
+    '/Motor/Temperature': {
+      path: (m) => propulsionPath(m, 'temperature'),
+      conversion: celsiusToKelvin,
+      units: 'K'
+    },
+    '/Controller/Temperature': {
+      path: (m) => propulsionPath(m, 'controllerTemperature'),
+      conversion: celsiusToKelvin,
+      units: 'K'
+    },
+    // newton metres, as shown on the Cerbo GX boat page
+    '/Motor/Torque': {
+      path: (m) => propulsionPath(m, 'torque'),
+      units: 'Nm'
+    },
+    // raw direction code (0 = neutral, 1 and 2 = the two drive directions)
+    '/Motor/Direction': {
+      path: (m) => propulsionPath(m, 'direction')
     },
     '/Dc/0/MidVoltageDeviation': {
       path: (m) => {
