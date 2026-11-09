@@ -140,6 +140,13 @@ module.exports = function (app: ServerAPI) {
             title: 'Interval (in seconds) to poll venus for current values',
             default: 20
           },
+          ignoreNonVictronN2k: {
+            type: 'boolean',
+            title: 'Ignore non-Victron NMEA 2000 devices',
+            description:
+              "Only when running on the GX device. Disable if Signal K doesn't read the CAN port these devices are on",
+            default: true
+          },
           useDeviceNames: {
             type: 'boolean',
             title: 'Use the device names for paths',
