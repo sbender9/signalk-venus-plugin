@@ -238,6 +238,7 @@ export class DbusListener {
           this.app.debug(
             `warning: error during GetValue on / for ${service.name} ${err}`
           )
+          service.ignored ??= false
         } else {
           const data: any = {}
 
@@ -253,6 +254,18 @@ export class DbusListener {
           }
 
           service.deviceInstance = data.DeviceInstance
+
+          const manufacturerCode = data['Mgmt/N2kManufacturerCode']
+          service.ignored =
+            this.ignoringN2k() &&
+            typeof manufacturerCode === 'number' &&
+            manufacturerCode !== 358 // Victron
+          if (service.ignored) {
+            this.app.debug(
+              `Ignoring non-Victron NMEA 2000 device ${service.name}`
+            )
+            return
+          }
 
           if (!_.isUndefined(data.FluidType)) {
             service.fluidType = data.FluidType
@@ -321,6 +334,14 @@ export class DbusListener {
     )
   }
 
+  // On a GX, Signal K reads the CAN bus itself: leave non-Victron devices to it
+  private ignoringN2k() {
+    return (
+      this.options.installType === 'local' &&
+      this.options.ignoreNonVictronN2k !== false
+    )
+  }
+
   private signal_receive(m: any) {
     if (
       m.interface === 'com.victronenergy.BusItem' &&
@@ -383,6 +404,11 @@ export class DbusListener {
       // See comment above explaining why some services don't have the
       // /DeviceInstance path
       // this.app.debug(`warning: unknown service; ${m.sender}`)
+      return
+    }
+
+    // unknown until requestRoot has read the manufacturer code
+    if (service.ignored ?? this.ignoringN2k()) {
       return
     }
 
